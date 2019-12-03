@@ -1,0 +1,179 @@
+/* import what we need to override */
+@import 'scss/functions';
+@import 'scss/variables';
+@import 'scss/mixins';
+
+/* set the overriding variables */
+$grid-breakpoints: (
+  xxxs: 0,
+  xxs: 320px,
+  xs: 568px,
+  sm: 667px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+  xxl: 1440px,
+  xxxl: 1600px,
+  xxxxl: 1920px,
+  xxxxxl: 3840px
+);
+$container-max-widths: (
+  xxxs: 0,
+  xxs: 320px,
+  xs: 568px,
+  sm: 667px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+  xxl: 1440px,
+  xxxl: 1600px,
+  xxxxl: 1920px,
+  xxxxxl: 3840px
+);
+
+$enable-rounded: false;
+
+/* override the !default vars with the values we set above */
+@import 'scss/bootstrap.scss';
+
+/* CUSTOM CSS */
+.hidden {
+  display: none;
+}
+
+body {
+  font-size: 10px;
+  font-weight: 400;
+  line-height: normal;
+  color: #000000;
+  text-align: left;
+  background-color: #fff;
+}
+
+#maincontainer {
+  padding: 0;
+}
+
+// static width styles
+.px10 {
+  width: 10px;
+}
+.px20 {
+  width: 20px;
+}
+.px30 {
+  width: 30px;
+}
+.px40 {
+  width: 40px;
+}
+.px50 {
+  width: 50px;
+}
+.px60 {
+  width: 60px;
+}
+.px70 {
+  width: 70px;
+}
+.px80 {
+  width: 80px;
+}
+.px90 {
+  width: 90px;
+}
+.px100 {
+  width: 100px;
+}
+.px110 {
+  width: 110px;
+}
+.px120 {
+  width: 120px;
+}
+.px130 {
+  width: 130px;
+}
+.px140 {
+  width: 140px;
+}
+.px150 {
+  width: 150px;
+}
+.px160 {
+  width: 160px;
+}
+.px170 {
+  width: 170px;
+}
+.px180 {
+  width: 180px;
+}
+.px190 {
+  width: 190px;
+}
+.px200 {
+  width: 200px;
+}
+.px210 {
+  width: 210px;
+}
+.px220 {
+  width: 220px;
+}
+.px230 {
+  width: 230px;
+}
+.px240 {
+  width: 240px;
+}
+.px250 {
+  width: 250px;
+}
+.px260 {
+  width: 260px;
+}
+.px270 {
+  width: 270px;
+}
+.px280 {
+  width: 280px;
+}
+.px290 {
+  width: 290px;
+}
+.px300 {
+  width: 300px;
+}
+
+.pw10 {
+  width: 10%;
+}
+.pw20 {
+  width: 20%;
+}
+.pw30 {
+  width: 30%;
+}
+.pw40 {
+  width: 40%;
+}
+.pw50 {
+  width: 50%;
+}
+.pw60 {
+  width: 60%;
+}
+.pw70 {
+  width: 70%;
+}
+.pw80 {
+  width: 80%;
+}
+.pw90 {
+  width: 90%;
+}
+.pw100 {
+  width: 100%;
+}
+
