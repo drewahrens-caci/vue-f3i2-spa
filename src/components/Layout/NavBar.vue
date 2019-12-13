@@ -18,7 +18,7 @@
         <ul class="navbar-nav mr-auto">
           <li class="nav-item dropdown dropdown-left">
             <a class="nav-link menu-hover" href="/" id="TeamsMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Teams
+              <span class="menutext">Teams</span>
             </a>
             <ul class="dropdown-menu" id="ulTeams" aria-labelledby="TeamsMenuLink">
               <li class="dropdown-submenu">
@@ -81,7 +81,7 @@
           </li>
           <li class="nav-item dropdown dropdown-left">
             <a class="nav-link menu-hover" href="/" id="ProcessesMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Processes
+              <span class="menutext">Processes</span>
             </a>
             <ul class="dropdown-menu" id="ulProcesses" aria-labelledby="ProcessesMenuLink">
               <li class="dropdown-submenu">
@@ -130,7 +130,7 @@
           </li>
           <li class="nav-item dropdown dropdown-left">
             <a class="nav-link menu-hover" href="/" id="ProgramManagementMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Program Management
+              <span class="menutext">Program Management</span>
             </a>
             <ul class="dropdown-menu" id="ulProgramManagement" aria-labelledby="ProgramManagementMenuLink">
               <li class="dropdown-submenu">
@@ -193,7 +193,7 @@
           </li>
           <li class="nav-item dropdown dropdown-left">
             <a class="nav-link menu-hover" href="/" id="ToolsMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Tools
+              <span class="menutext">Tools</span>
             </a>
             <ul class="dropdown-menu" id="ulTools" aria-labelledby="ToolsMenuLink">
               <li class="dropdown-submenu">
@@ -293,7 +293,7 @@ export default {
     this.$nextTick(function() {
       console.log('Getting Navigation')
       // this.$store.dispatch('navbar/getNavigation')
-      this.$store.dispatch('navbar/getSiteActions')
+      // this.$store.dispatch('navbar/getSiteActions')
     })
   },
   methods: {
@@ -305,229 +305,4 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.navbar {
-  padding: 0.5rem 0;
-}
-.navbar-header {
-  width: 200px;
-}
-.navbar-brand-svg {
-  fill: #f4a94c; /* #5aa0f0; */
-}
-.navbar .navbar-brand {
-  color: #000000;
-  position: absolute;
-  top: 0;
-  left: 0;
-  padding: 13px 20px;
-  font-size: 20px;
-  font-weight: 400;
-  line-height: 20px;
-  height: 48px;
-  width: 225px;
-  margin: 0 !important;
-  background-color: #f4a94c;
-}
-.menutext {
-  transform: none;
-}
-.bg-dark {
-  background-color: #000000 !important;
-}
-
-.dropdown-left {
-  min-width: 150px;
-}
-
-.menu-hover:hover {
-  background-color: #f4a94c;
-  /* transform: skew(-25deg); */
-}
-
-/* BEGIN SEARCH */
-.app-search {
-  position: relative;
-  margin: 0px;
-}
-.app-search a {
-  position: absolute;
-  top: 18px;
-  right: 20px;
-  color: #ffffff;
-}
-.app-search .form-control {
-  border: none;
-  font-size: 13px;
-  color: #ffffff;
-  padding-left: 20px;
-  padding-right: 40px;
-  background: rgba(255, 255, 255, 0.1);
-  box-shadow: none;
-  height: 50px;
-  font-weight: 600;
-  width: 180px;
-  display: inline-block;
-  line-height: 50px;
-  transition: 0.5s ease-out;
-}
-.app-search .form-control:focus {
-  border: none;
-  font-size: 13px;
-  color: #ffffff;
-  padding-left: 20px;
-  padding-right: 40px;
-  background: rgba(255, 255, 255, 0.1);
-  box-shadow: none;
-  height: 50px;
-  font-weight: 600;
-  width: 250px;
-  display: inline-block;
-  line-height: 50px;
-  transition: 0.5s ease-out;
-}
-.app-search .form-control::-moz-placeholder {
-  color: #fafafa;
-  opacity: 0.5;
-}
-.app-search .form-control::-webkit-input-placeholder {
-  color: #fafafa;
-  opacity: 0.5;
-}
-.app-search .form-control::-ms-placeholder {
-  color: #fafafa;
-  opacity: 0.5;
-}
-/* END SEARCH */
-.icon {
-  color: white;
-  font-size: 18px;
-}
-.badge {
-  display: inline-block;
-  min-width: 6px;
-  font-size: 10px;
-  font-weight: 700;
-  line-height: 1;
-  color: #fff;
-  text-align: center;
-  white-space: nowrap;
-  vertical-align: middle;
-  border-radius: 6px;
-  margin-top: -7px;
-}
-
-.navbar {
-  height: 48px;
-  font-size: 18px;
-  line-height: 18px;
-}
-.navbar-nav {
-  height: 48px;
-}
-.nav-link {
-  display: block;
-  height: 48px;
-  padding: 15px;
-  color: #ffffff;
-}
-.navbar-dark .navbar-nav .nav-link {
-  color: rgba(255, 255, 255, 1);
-}
-.navbar-nav li:hover > ul.dropdown-menu {
-  display: block;
-}
-a:hover > ul.dropdown-menu {
-  display: block;
-}
-
-.dropdown-menu {
-  position: absolute;
-  top: 48px;
-  z-index: 1000;
-  display: none;
-  float: left;
-  min-width: 10rem;
-  padding: 0;
-  margin: 0;
-  font-size: 1rem;
-  color: #ffffff !important;
-  text-align: left;
-  list-style: none;
-  background-color: #000000 !important;
-  background-clip: padding-box;
-  border: 1px solid #000000;
-}
-
-li:hover > .dropdown-item {
-  background-color: #f4a94c;
-  color: #000000;
-}
-
-.dropdown-item {
-  display: block;
-  width: 100%;
-  padding: 0.25rem 1.5rem;
-  clear: both;
-  font-weight: 400;
-  color: #ffffff;
-  text-align: inherit;
-  white-space: nowrap;
-  background-color: #000000;
-  border: 0;
-}
-
-#ulSettings .dropdown-item {
-  display: block;
-  width: 100%;
-  padding: 0.25rem 0.5rem;
-  clear: both;
-  font-weight: 400;
-  color: #ffffff;
-  text-align: inherit;
-  white-space: nowrap;
-  background-color: #000000;
-  border: 0;
-}
-
-.settingsli {
-  display: inline-flex;
-  width: 200px;
-}
-
-#ulSettings li:hover {
-  background-color: #f4a94c;
-}
-
-#ulSettings li:hover > .icon {
-  background-color: #f4a94c;
-  color: #000000;
-}
-
-#ulSettings li:hover > .dropdown-item {
-  background-color: #f4a94c;
-  color: #000000;
-}
-
-#ulSettings .icon {
-  color: white;
-  font-size: 18px;
-  width: 20px;
-  margin: 4px;
-}
-
-.dropdown-submenu {
-  position: relative;
-}
-.dropdown-submenu > .dropdown-menu {
-  top: 0;
-  left: 100%;
-  margin-top: 0;
-}
-.dropdown-toggle::after {
-  transform: rotate(-90deg);
-}
-#suiteBar {
-  display: none;
-}
-</style>
+<style lang="scss" scoped></style>

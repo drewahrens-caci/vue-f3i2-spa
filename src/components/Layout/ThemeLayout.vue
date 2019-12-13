@@ -18,7 +18,6 @@ export default {
     ThemeNavbar,
     ThemeFooter,
     ThemeContent
-    // MobileMenu
   },
   methods: {}
 }

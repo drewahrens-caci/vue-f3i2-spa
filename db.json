@@ -4271,5 +4271,278 @@
       "delete": "N",
       "uri": "http://localhost:3000/milestones/513"
     }
+  ],
+  "news": [
+    {
+      "id": 1,
+      "title": "A Great Turnout",
+      "project" : "Project 1",
+      "activity" : "Food Drive",
+      "poc": "Officer Barbrady",
+      "location": "Police Headquarters",
+      "impact": "Although there was a prevailing Kantian consensus at the time, once non-Euclidean geometries had been formalised, some began to wonder whether or not physical space is curved. Carl Friedrich Gauss, a German mathematician, was the first to consider an empirical investigation of the geometrical structure of space. He thought of making a test of the sum of the angles of an enormous stellar triangle, and there are reports that he actually carried out a test, on a small scale, by triangulating mountain tops in Germany."
+    },
+    {
+      "id": 2,
+      "title": "Wires Wires Everywhere",
+      "project" : "Project 17",
+      "activity" : "Network Installation",
+      "poc": "Chairman Cartman",
+      "location": "Southpark Elementary",
+      "impact": "Space is one of the few fundamental quantities in physics, meaning that it cannot be defined via other quantities because nothing more fundamental is known at the present. On the other hand, it can be related to other fundamental quantities. Thus, similar to other fundamental quantities (like time and mass), space can be explored via measurement and experiment."
+    },
+    {
+      "id": 4,
+      "title": "Show Me The Money",
+      "project" : "Project Alpha",
+      "activity" : "Fund Raiser",
+      "poc": "Daffy Duck",
+      "location": "Studio 54",
+      "impact": "Before Einstein's work on relativistic physics, time and space were viewed as independent dimensions. Einstein's discoveries showed that due to relativity of motion our space and time can be mathematically combined into one object–spacetime. It turns out that distances in space or in time separately are not invariant with respect to Lorentz coordinate transformations, but distances in Minkowski space-time along space-time intervals are—which justifies the name."
+    },
+    {
+      "id": 6,
+      "title": "Got Tickets?",
+      "project" : "Project Buttercup",
+      "activity" : "Ticket Sales",
+      "poc": "Milton Hershey",
+      "location": "Hershey Park",
+      "impact": "The Cartesian notion of space is closely linked to his theories about the nature of the body, mind and matter.  He is famously known for his 'cogito ergo sum' (I think therefore I am), or the idea that we can only be certain of the fact that we can doubt, and therefore think and therefore exist. His theories belong to the rationalist tradition, which attributes knowledge about the world to our ability to think rather than to our experiences, as the empiricists believe. He posited a clear distinction between the body and mind, which is referred to as the Cartesian dualism."
+    },
+    {
+      "id": 9,
+      "title": "Star Wars Rules",
+      "project" : "Project Padawan",
+      "activity" : "Group Training",
+      "poc": "Yoda",
+      "location": "A Galaxy Far Far Away",
+      "impact": "It is a period of civil war. Rebel spaceships, striking from a hidden base, have won their first victory against the evil Galactic Empire. During the battle, Rebel spies managed to steal secret plans to the Empire's ultimate weapon, the DEATH STAR, an armored space station with enough power to destroy an entire planet."
+    }
+  ],
+  "contracts": [
+    {
+      "id": 1,
+      "company": "ACES/Everwatch",
+      "manager" : "Bernie Doerr",
+      "ponumber" : "P000079290",
+      "status": 100
+    },
+    {
+      "id": 2,
+      "company": "Ascolta",
+      "manager" : "Bob Burgin",
+      "ponumber" : "P000079060",
+      "status": 100
+    },
+    {
+      "id": 3,
+      "company": "BAE",
+      "manager" : "Bob Burgin",
+      "ponumber" : "P000081461",
+      "status": 20
+    },
+    {
+      "id": 4,
+      "company": "Ball Aerospace",
+      "manager" : "Bernie Doerr",
+      "ponumber" : "Draft",
+      "status": 50
+    },
+    {
+      "id": 5,
+      "company": "Clear Creek Applied Tech",
+      "manager" : "Maggie Fenton",
+      "ponumber" : "Not in P2P",
+      "status": 40
+    },
+    {
+      "id": 6,
+      "company": "Collins Aerospace",
+      "manager" : "Bob Burgin",
+      "ponumber" : "Draft",
+      "status": 20
+    },
+    {
+      "id": 7,
+      "company": "Connexta",
+      "manager" : "Bernie Doerr",
+      "ponumber" : "Draft",
+      "status": 60
+    },
+    {
+      "id": 8,
+      "company": "DAC",
+      "manager" : "Bernie Doerr",
+      "ponumber" : "Not in P2P",
+      "status": 20
+    },
+    {
+      "id": 9,
+      "company": "DAC",
+      "manager" : "Bob Burgin",
+      "ponumber" : "Not in P2P",
+      "status": 50
+    },
+    {
+      "id": 10,
+      "company": "Dell/EMC",
+      "manager" : "Bernie Doerr",
+      "ponumber" : "P000079560",
+      "status": 10
+    },
+    {
+      "id": 11,
+      "company": "Dhara IT",
+      "manager" : "Bernie Doerr",
+      "ponumber" : "P000081491",
+      "status": 80
+    },
+    {
+      "id": 12,
+      "company": "Dynamic Systems",
+      "manager" : "Bernie Doerr",
+      "ponumber" : "P000081204",
+      "status": 50
+    },
+    {
+      "id": 13,
+      "company": "Engility",
+      "manager" : "Maggie Fenton",
+      "ponumber" : "P000081502",
+      "status": 20
+    },
+    {
+      "id": 14,
+      "company": "Expansia",
+      "manager" : "Bernie Doerr",
+      "ponumber" : "P000081008",
+      "status": 50
+    },
+    {
+      "id": 15,
+      "company": "GDIT/CSRA",
+      "manager" : "Maggie Fenton",
+      "ponumber" : "P000080148",
+      "status": 100
+    },
+    {
+      "id": 16,
+      "company": "GDMS",
+      "manager" : "Bob Burgin",
+      "ponumber" : "Not in P2P",
+      "status": 30
+    },
+    {
+      "id": 17,
+      "company": "Intelligent Waves",
+      "manager" : "Bernie Doerr",
+      "ponumber" : "P000080997",
+      "status": 100
+    },
+    {
+      "id": 18,
+      "company": "Intuidex",
+      "manager" : "Bob Burgin",
+      "ponumber" : "P000078826",
+      "status": 0
+    },
+    {
+      "id": 19,
+      "company": "ISYS",
+      "manager" : "Bernie Doerr",
+      "ponumber" : "P000079742",
+      "status": 100
+    },
+    {
+      "id": 20,
+      "company": "Leidos",
+      "manager" : "Bob Burgin",
+      "ponumber" : "P000079905",
+      "status": 100
+    },
+    {
+      "id": 21,
+      "company": "Lockheed Martin",
+      "manager" : "Bernie Doerr",
+      "ponumber" : "Not in P2P",
+      "status": 100
+    },
+    {
+      "id": 22,
+      "company": "Markesman",
+      "manager" : "Maggie Fenton",
+      "ponumber" : "Not in P2P",
+      "status": 0
+    },
+    {
+      "id": 23,
+      "company": "Orbis",
+      "manager" : "Bob Burgin",
+      "ponumber" : "P000077419",
+      "status": 20
+    },
+    {
+      "id": 24,
+      "company": "Ortman Consulting",
+      "manager" : "?",
+      "ponumber" : "Not in P2P",
+      "status": 0
+    },
+    {
+      "id": 25,
+      "company": "Peraton",
+      "manager" : "Mark Casadei",
+      "ponumber" : "P000078928",
+      "status": 0
+    },
+    {
+      "id": 26,
+      "company": "Riverside Research",
+      "manager" : "Bob Burgin",
+      "ponumber" : "P000080997",
+      "status": 60
+    },
+    {
+      "id": 27,
+      "company": "Select Innovation",
+      "manager" : "Maggie Fenton",
+      "ponumber" : "Draft",
+      "status": 10
+    },
+    {
+      "id": 28,
+      "company": "Sierra Nevada",
+      "manager" : "Bernie Doerr",
+      "ponumber" : "Draft",
+      "status": 50
+    },
+    {
+      "id": 29,
+      "company": "SRC",
+      "manager" : "Bernie Doerr",
+      "ponumber" : "P000078597",
+      "status": 100
+    },
+    {
+      "id": 30,
+      "company": "Sterling",
+      "manager" : "Not Assigned",
+      "ponumber" : "P000081213",
+      "status": 40
+    },
+    {
+      "id": 31,
+      "company": "Technergetics",
+      "manager" : "Not Assigned",
+      "ponumber" : "Draft",
+      "status": 20
+    },
+    {
+      "id": 32,
+      "company": "Trusted QA",
+      "manager" : "Maggie Fenton",
+      "ponumber" : "P000078241",
+      "status": 80
+    }
   ]
 }
