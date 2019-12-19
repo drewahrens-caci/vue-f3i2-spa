@@ -113,17 +113,12 @@
                 </ul>
               </li>
               <li class="dropdown-submenu">
-                <a class="dropdown-item dropdown-toggle" href="#">Travel Authorization</a>
+                <!-- <a class="dropdown-item dropdown-toggle" href="#">Travel Authorization</a> -->
+                <router-link :to="{ name: 'Travel' }" class="dropdown-item dropdown-toggle">Travel Authorization</router-link>
                 <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="#">Submenu</a></li>
-                  <li><a class="dropdown-item" href="#">Submenu 0</a></li>
-                  <li class="dropdown-submenu">
-                    <a class="dropdown-item dropdown-toggle" href="#">Submenu 1</a>
-                    <ul class="dropdown-menu">
-                      <li><a class="dropdown-item" href="#">Subsubmenu1</a></li>
-                      <li><a class="dropdown-item" href="#">Subsubmenu2</a></li>
-                    </ul>
-                  </li>
+                  <li><router-link :to="{ name: 'Travel Request' }" class="dropdown-item">New Travel Request</router-link></li>
+                  <li><router-link :to="{ name: 'Travel Approval' }" class="dropdown-item">Travel Approval</router-link></li>
+                  <li><router-link :to="{ name: 'Update Travel' }" class="dropdown-item">Update Travel</router-link></li>
                 </ul>
               </li>
             </ul>

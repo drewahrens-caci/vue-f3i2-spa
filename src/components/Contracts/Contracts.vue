@@ -5,10 +5,10 @@
         <h3 class="contractsbar">Contracts</h3>
       </b-navbar>
     </b-row>
-    <b-row class="ml-0 mr-0 mb-1" v-for="bar in contracts" :key="bar.id">
-      <b-col xs="1" class="pt-1">{{ bar.company }}</b-col>
-      <b-col xs="11" class="pt-1">
-        <b-progress :value="bar.status"></b-progress>
+    <b-row class="ml-0 mr-0 mb5px" v-for="bar in contracts" :key="bar.id">
+      <b-col sm="4" class="p-0 text-left font-weight-bold mt-1">{{ bar.company }}</b-col>
+      <b-col sm="8" class="p-0">
+        <b-progress :value="bar.status" :variant="getVariant(bar.status)" show-progress></b-progress>
       </b-col>
     </b-row>
   </div>
@@ -56,6 +56,19 @@ export default {
         .catch(error => {
           console.log('There was an error getting Contracts: ', error)
         })
+    },
+    getVariant: function(v) {
+      let variant = 'danger'
+      switch (true) {
+        case v == 100:
+          variant = 'success'
+          break
+
+        case v >= 50 && v <= 99:
+          variant = 'warning'
+          break
+      }
+      return variant
     },
     drawContracts: function(j) {
       console.log('DRAWING News')

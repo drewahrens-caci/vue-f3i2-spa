@@ -5,7 +5,7 @@ import Bootstrap from './f3i2bootstrap'
 import App from './components/App.vue'
 import routes from './routes/routes'
 import axios from 'axios'
-import Vuex from 'vuex'
+import store from './store/store'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { dom } from '@fortawesome/fontawesome-svg-core'
@@ -19,8 +19,6 @@ dom.watch()
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
-Vue.use(Vuex)
-
 Vue.use(VueRouter)
 Vue.use(Bootstrap)
 Vue.use(axios)
@@ -31,7 +29,7 @@ const router = new VueRouter({
 })
 
 new Vue({
-  el: '#app',
-  render: h => h(App),
-  router
-})
+  router,
+  store,
+  render: h => h(App)
+}).$mount('#app')
