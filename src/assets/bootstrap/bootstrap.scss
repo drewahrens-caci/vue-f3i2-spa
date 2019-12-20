@@ -33,7 +33,7 @@ $container-max-widths: (
 
 $enable-rounded: false;
 
-$blue:    #007bff; /* #007bff; */
+$blue:    #007bff; /* #007bff; #00e1ff;*/
 $indigo:  #6610f2;
 $purple:  #6f42c1;
 $pink:    #e83e8c;
@@ -285,6 +285,11 @@ li:hover > .dropdown-item {
 .dropdown-toggle::after {
   transform: rotate(-90deg);
 }
+
+.dropdown-tasks {
+  width: 250px;
+}
+
 #suiteBar {
   display: none;
 }
@@ -360,6 +365,27 @@ li:hover > .dropdown-item {
   border-radius: 6px;
   margin-top: -7px;
 }
+
+/* TRAVEL CALENDAR */
+
+.travel-new {
+  background-color: $warning !important;
+  color: $white !important;
+}
+.travel-approved {
+  background-color: $info !important;
+  color: $white !important;
+}
+.travel-report {
+  background-color: $success !important;
+  color: $white !important;
+}
+.travel-no-report {
+  background-color: $danger !important;
+  color: $white !important;
+}
+
+/* END TRAVEL CALENDAR */
 
 // static width styles
 .px10 {

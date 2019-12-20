@@ -58,12 +58,47 @@ export const actions = {
 function formatTravel(j) {
   var p = []
   for (var i = 0; i < j.length; i++) {
+    var c = ''
+    var classes = []
+    var report = j[i]['report']
+    var status = j[i]['status']
+    var start = moment(j[i]['start']).isValid() ? moment(j[i]['start']) : ''
+    var end = moment(j[i]['end']).isValid() ? moment(j[i]['end']) : ''
+    var today = moment()
+    var diff = 0
+    if (end !== '') {
+      diff = end.diff(today, 'days')
+      console.log('end: ' + moment(end).format('MM/DD/YYYY') + ', diff: ' + diff)
+    } else {
+      if (start !== '') {
+        diff = start.diff(today, 'days')
+        console.log('start: ' + moment(start).format('MM/DD/YYYY') + ', diff: ' + diff)
+      }
+    }
+    switch(true) {
+      case diff < -4 && report == false:
+        c = 'travel-no-report'
+        break
+
+      case diff < -4 && report == true:
+        c = 'travel-report'
+        break
+
+      case status == 'approved':
+        c = 'travel-approved'
+        break
+
+      case status == 'new':
+        c = 'travel-new'
+        break
+    }
+    classes.push(c)
     p.push({
       title: j[i]['title'] !== null ? String(j[i]['title']) : '',
       start: j[i]['start'],
       end: j[i]['end'],
       rendering: j[i]['rendering'] !== null ? String(j[i]['rendering']) : '',
-      classNames: j[i]['classNames']
+      classNames: classes
     })
   }
   return p

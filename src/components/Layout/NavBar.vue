@@ -116,9 +116,15 @@
                 <!-- <a class="dropdown-item dropdown-toggle" href="#">Travel Authorization</a> -->
                 <router-link :to="{ name: 'Travel' }" class="dropdown-item dropdown-toggle">Travel Authorization</router-link>
                 <ul class="dropdown-menu">
-                  <li><router-link :to="{ name: 'Travel Request' }" class="dropdown-item">New Travel Request</router-link></li>
-                  <li><router-link :to="{ name: 'Travel Approval' }" class="dropdown-item">Travel Approval</router-link></li>
-                  <li><router-link :to="{ name: 'Update Travel' }" class="dropdown-item">Update Travel</router-link></li>
+                  <li>
+                    <router-link :to="{ name: 'Travel Request' }" class="dropdown-item">New Travel Request</router-link>
+                  </li>
+                  <li>
+                    <router-link :to="{ name: 'Travel Approval' }" class="dropdown-item">Travel Approval</router-link>
+                  </li>
+                  <li>
+                    <router-link :to="{ name: 'Update Travel' }" class="dropdown-item">Update Travel</router-link>
+                  </li>
                 </ul>
               </li>
             </ul>
@@ -248,6 +254,125 @@
                 </ul>
               </li>
             </ul>
+          </li>
+        </ul>
+        <ul class="navbar-nav ml-auto hidden-xs">
+          <li class="nav-item dropdown dropdown-right">
+            <a class="nav-link dropdown-toggle" id="TasksMenu" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <font-awesome-icon fas icon="tasks" class="icon"></font-awesome-icon>
+              <span id="taskmenubadge" class="badge badge-xs badge-warning">5</span>
+            </a>
+            <ul class="dropdown-menu dropdown-tasks" aria-labelledby="TasksMenu">
+              <li>
+                <a href="#">
+                  <div>
+                    <p>
+                      <strong>Task 1</strong>
+                      <span class="pull-right text-muted">40% Complete</span>
+                    </p>
+                    <div class="progress progress-striped active">
+                      <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%">
+                        <span class="sr-only">40% Complete (success)</span>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </li>
+              <li class="divider"></li>
+              <li>
+                <a href="#">
+                  <div>
+                    <p>
+                      <strong>Task 2</strong>
+                      <span class="pull-right text-muted">20% Complete</span>
+                    </p>
+                    <div class="progress progress-striped active">
+                      <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 20%">
+                        <span class="sr-only">20% Complete</span>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </li>
+              <li class="divider"></li>
+              <li>
+                <a href="#">
+                  <div>
+                    <p>
+                      <strong>Task 3</strong>
+                      <span class="pull-right text-muted">60% Complete</span>
+                    </p>
+                    <div class="progress progress-striped active">
+                      <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%">
+                        <span class="sr-only">60% Complete (warning)</span>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </li>
+              <li class="divider"></li>
+              <li>
+                <a href="#">
+                  <div>
+                    <p>
+                      <strong>Task 4</strong>
+                      <span class="pull-right text-muted">80% Complete</span>
+                    </p>
+                    <div class="progress progress-striped active">
+                      <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%">
+                        <span class="sr-only">80% Complete (danger)</span>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </li>
+              <li class="divider"></li>
+              <li>
+                <a class="text-center" href="#">
+                  <strong>See All Tasks</strong>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown dropdown-right">
+            <a class="nav-link dropdown-toggle" id="ProfileMenu" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <font-awesome-icon far icon="user-circle" class="icon"></font-awesome-icon>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="ProfileMenu">
+              <ul class="dropdown-user">
+                <li>
+                  <div class="dw-user-box">
+                    <div class="u-img">
+                      <font-awesome-icon far icon="user-cirlce" class="icon"></font-awesome-icon>
+                    </div>
+                    <div class="u-text">
+                      <h4>YOU</h4>
+                      <p class="text-muted">varun@gmail.com</p>
+                      <a href="" class="btn btn-rounded btn-danger btn-sm">View Profile</a>
+                    </div>
+                  </div>
+                </li>
+                <li role="separator" class="divider"></li>
+                <li>
+                  <a href="#"><i class="ti-user"></i> My Profile</a>
+                </li>
+                <li>
+                  <a href="#"><i class="ti-wallet"></i> My Balance</a>
+                </li>
+                <li>
+                  <a href="#"><i class="ti-email"></i> Inbox</a>
+                </li>
+                <li role="separator" class="divider"></li>
+                <li>
+                  <a href="#"><i class="ti-settings"></i> Account Setting</a>
+                </li>
+                <li role="separator" class="divider"></li>
+                <li>
+                  <a href="#"><i class="fa fa-power-off"></i> Logout</a>
+                </li>
+              </ul>
+            </div>
           </li>
         </ul>
         <form role="search" class="form-inline my-2 app-search hidden-xs ">
