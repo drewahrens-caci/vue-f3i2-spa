@@ -1,8 +1,8 @@
 <template>
   <b-container fluid>
     <b-row>
+      <b-col md="9" xs="12"><calendar :events="trips" title="Scheduled Travel" type="travel"></calendar></b-col>
       <b-col md="3" xs="12"></b-col>
-      <b-col md="9" xs="12"><calendar :events="trips"></calendar></b-col>
     </b-row>
   </b-container>
 </template>
@@ -10,7 +10,7 @@
 <script>
 import Calendar from '@/components/Calendar/Calendar.vue'
 import { mapState } from 'vuex'
-// import Contracts from '@/components/Contracts/Contracts.vue'
+
 export default {
   name: 'home',
   computed: {

@@ -42,7 +42,7 @@
   </ul>
 </template>
 <script>
-import DropDown from '../../components/Dropdown.vue'
+import DropDown from '@/components/Dropdown.vue'
 
 export default {
   components: {

@@ -3,7 +3,7 @@ module.exports = {
     host: 'localhost'
   },
   assetsDir: 'static',
-  publicPath: './',
+  publicPath: '/sites/f3i2/SiteAssets/html/',
 
   // publicPath: './',
   // transpileDependencies: ['strip-ansi', 'ansi-regex', 'xlsx-populate']

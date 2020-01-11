@@ -1,12 +1,12 @@
 <template>
   <div class="user">
     <div class="photo">
-      <img src="static/img/default-avatar.png" alt="avatar" />
+      <img id="UserImage" :src="profiledata.PictureUrl" alt="Personal Photo" />
     </div>
     <div class="info">
       <a data-toggle="collapse" :aria-expanded="!isClosed" @click.stop="toggleMenu" href="#">
-        <span>
-          {{ title }}
+        <span class="UserName">
+          {{ profiledata.DisplayName }}
           <b class="caret"></b>
         </span>
       </a>
@@ -16,21 +16,9 @@
           <ul class="nav" v-show="!isClosed">
             <slot>
               <li>
-                <a class="profile-dropdown" href="#pablo">
-                  <span class="sidebar-mini">MP</span>
+                <a class="profile-dropdown" :href="profiledata.PersonalUrl">
+                  <span class="sidebar-mini"><font-awesome-icon fas icon="cog" class="icon"></font-awesome-icon></span>
                   <span class="sidebar-normal">My Profile</span>
-                </a>
-              </li>
-              <li>
-                <a class="profile-dropdown" href="#pablo">
-                  <span class="sidebar-mini">EP</span>
-                  <span class="sidebar-normal">Edit Profile</span>
-                </a>
-              </li>
-              <li>
-                <a class="profile-dropdown" href="#pablo">
-                  <span class="sidebar-mini">S</span>
-                  <span class="sidebar-normal">Settings</span>
                 </a>
               </li>
             </slot>
@@ -47,6 +35,11 @@ export default {
   components: {
     [CollapseTransition.name]: CollapseTransition
   },
+  computed: {
+    profiledata() {
+      return this.$store.state.support.profile
+    }
+  },
   props: {
     title: {
       type: String,
@@ -58,6 +51,12 @@ export default {
       isClosed: true
     }
   },
+  mounted: function() {
+    this.$nextTick(function() {
+      console.log('Getting User Profile')
+      this.$store.dispatch('support/getUserProfile')
+    })
+  },
   methods: {
     toggleMenu() {
       this.isClosed = !this.isClosed
@@ -68,5 +67,8 @@ export default {
 <style>
 .collapsed {
   transition: opacity 1s;
+}
+.UserName {
+  font-size: 14px;
 }
 </style>

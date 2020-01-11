@@ -79,7 +79,7 @@ $primary:       $blue;
 $secondary:     $white;
 $success:       $green;
 $info:          $cyan;
-$warning:       $yellow;
+$warning:       $orange;
 $danger:        $red;
 $light:         $gray-100;
 $dark:          $gray-800;
@@ -125,15 +125,14 @@ body {
   background: repeating-linear-gradient(45deg, $hoho-red, $hoho-red $stripeWidth, $white $stripeWidth, $white $stripeWidth * 2) !important;
   opacity: 1 !important;
 }
-.navbar {
+
+/* .navbar {
   padding: 0.5rem 0;
 }
 .navbar-header {
   width: 200px;
 }
-.navbar-brand-svg {
-  fill: #f4a94c; /* #5aa0f0; */
-}
+
 .navbar .navbar-brand {
   color: $black;
   position: absolute;
@@ -146,9 +145,7 @@ body {
   height: 48px;
   width: 200px;
   margin: 0 !important;
-  /* background: repeating-linear-gradient(45deg, $hoho-red, $hoho-red $stripeWidth, $white $stripeWidth, $white $stripeWidth * 2) */
   background-color: $primary;
-  /* background-color: #f4a94c; */
 }
 .navbar-dark .navbar-brand:hover, .navbar-dark .navbar-brand:focus {
   color: #000;
@@ -162,12 +159,9 @@ body {
 }
 .menu-hover:hover > .menutext {
   color: $black;
-  /* background-color: $white; */
 }
 .menu-hover:hover {
-  /* background-color: #f4a94c; */
   background-color: $primary;
-  /* background: repeating-linear-gradient(45deg, $hoho-red, $hoho-red $stripeWidth, $white $stripeWidth, $white $stripeWidth * 2) */
 }
 
 .navbar {
@@ -187,6 +181,7 @@ body {
 .navbar-dark .navbar-nav .nav-link {
   color: rgba(255, 255, 255, 1);
 }
+
 .navbar-nav li:hover > ul.dropdown-menu {
   display: block;
 }
@@ -210,11 +205,9 @@ a:hover > ul.dropdown-menu {
   background-color: $black !important;
   background-clip: padding-box;
   border: 1px solid $black;
-  /* background: repeating-linear-gradient(45deg, $hoho-red, $hoho-red $stripeWidth, $white $stripeWidth, $white $stripeWidth * 2); */
 }
 
 li:hover > .dropdown-item {
-  /* background-color: #f4a94c; */
   background-color: $primary;
   color: $black;
 }
@@ -228,9 +221,8 @@ li:hover > .dropdown-item {
   color: #ffffff;
   text-align: inherit;
   white-space: nowrap;
-  /* background-color: #000000; */
   border: 0;
-}
+} */
 
 #ulSettings .dropdown-item {
   display: block;
@@ -274,6 +266,108 @@ li:hover > .dropdown-item {
   margin: 4px;
 }
 
+/*   Navbar Brand Dropdown   */
+#BrandDropdown .dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 0.25rem 0.5rem;
+  clear: both;
+  font-weight: 400;
+  color: #ffffff;
+  text-align: inherit;
+  white-space: nowrap;
+  background-color: #000000;
+  border: 0;
+}
+
+#BrandDropdown li:hover {
+  /* background-color: #f4a94c; */
+  background-color: $primary;
+}
+
+#BrandDropdown li:hover > .icon {
+  /* background-color: #f4a94c; */
+  background-color: $primary;
+  color: #000000;
+}
+
+#BrandDropdown li:hover > .dropdown-item {
+  /* background-color: #f4a94c; */
+  background-color: $primary;
+  color: #000000;
+}
+
+#BrandDropdown .icon {
+  color: white;
+  font-size: 18px;
+  width: 20px;
+  margin: 4px;
+}
+
+#TasksMenu .dropdown-menu {
+  width: 300px;
+  background-color: $white !important;
+}
+
+#TasksMenu li:hover > .dropdown-item {
+  /* background-color: #f4a94c; */
+  background-color: $gray-300;
+  color: #000000;
+}
+
+#ulUser .dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 0.25rem 0.5rem;
+  clear: both;
+  font-weight: 400;
+  color: #ffffff;
+  text-align: inherit;
+  white-space: nowrap;
+  background-color: #000000;
+  border: 0;
+}
+
+.userli {
+  display: inline-flex;
+  width: 250px;
+}
+
+#ulUser li:hover {
+  /* background-color: #f4a94c; */
+  background-color: $primary;
+}
+
+#ulUser li:hover > .icon {
+  /* background-color: #f4a94c; */
+  background-color: $primary;
+  color: #000000;
+}
+
+#ulUser li:hover > .dropdown-item {
+  /* background-color: #f4a94c; */
+  background-color: $primary;
+  color: #000000;
+}
+
+#ulUser .icon {
+  color: white;
+  font-size: 18px;
+  width: 20px;
+  margin: 4px;
+}
+
+#UserName {
+  margin-left: 5px;
+  margin-top: 18px;
+}
+
+#UserEmail {
+  color: white !important;
+}
+
+#SettingsMenuLink { padding-top: 12px; } /*  offset due to size of icon  */
+
 .dropdown-submenu {
   position: relative;
 }
@@ -286,7 +380,7 @@ li:hover > .dropdown-item {
   transform: rotate(-90deg);
 }
 
-.dropdown-tasks {
+.dd-tasks {
   width: 250px;
 }
 
@@ -347,7 +441,9 @@ li:hover > .dropdown-item {
   color: #fafafa;
   opacity: 0.5;
 }
+
 /* END SEARCH */
+
 .icon {
   color: white;
   font-size: 18px;

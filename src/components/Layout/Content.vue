@@ -1,7 +1,6 @@
 <template>
-  <div class="content" id="contentbody">
+  <div class="content">
     <div class="container-fluid">
-      <NotificationContainer />
       <transition name="fade" mode="out-in">
         <!-- your content here -->
         <router-view></router-view>
@@ -10,12 +9,7 @@
   </div>
 </template>
 <script>
-import NotificationContainer from '@/components/NotificationContainer.vue'
-export default {
-  components: {
-    NotificationContainer
-  }
-}
+export default {}
 </script>
 <style>
 .fade-enter-active,
