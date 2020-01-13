@@ -1,12 +1,15 @@
 import { Model } from '@vuex-orm/core'
-//import User from './User'
 
 export default class Travel extends Model {
-  static entity = 'trips'
+  static entity = 'travel'
 
   static fields() {
     return {
-      id: this.number()
+      id: this.number(null),
+      title: this.attr(''),
+      start: this.attr(''),
+      end: this.attr(''),
+      classNames: this.attr('')
     }
   }
 }
