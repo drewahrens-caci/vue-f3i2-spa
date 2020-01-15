@@ -4,13 +4,22 @@ import User from './User'
 export default class Todo extends Model {
   static entity = 'todos'
 
+  static state() {
+    return {
+      loaded: false
+    }
+  }
+
   static fields() {
     return {
-      id: this.uid(),
-      user_id: this.string(null).nullable(),
-      title: this.string(''),
-      done: this.boolean(false),
-      assignee: this.belongsTo(User, 'user_id')
+      id: this.attr(''),
+      user_id: this.attr(null),
+      Title: this.attr(''),
+      Status: this.attr(''),
+      StartDate: this.attr(''),
+      DueDate: this.attr(''),
+      Priority: this.attr('') /* ,
+      user: this.belongsTo(User, 'user_id', 'userid') */
     }
   }
 }

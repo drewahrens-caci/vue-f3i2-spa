@@ -29,6 +29,9 @@
   </div>
 </template>
 <script>
+let vm = null
+import User from '@/models/User'
+import Todo from '@/models/Todo'
 import CollapseTransition from 'element-ui/lib/transitions/collapse-transition'
 
 export default {
@@ -37,29 +40,57 @@ export default {
   },
   computed: {
     profiledata() {
-      return this.$store.state.support.profile
+      /* return User.all() */
+      return User.query().first()
+    },
+    todosloaded() {
+      return Todo.getters('Loaded')
     }
   },
   props: {
     title: {
       type: String,
-      default: 'Tania Andrew'
+      default: ''
     }
   },
   data() {
     return {
       isClosed: true
+      // profiledata: null
     }
   },
   mounted: function() {
+    vm = this
     this.$nextTick(function() {
-      console.log('Getting User Profile')
-      this.$store.dispatch('support/getUserProfile')
+      // this.getUserProfile()
+      this.getTodos()
     })
   },
   methods: {
     toggleMenu() {
       this.isClosed = !this.isClosed
+    },
+    getUserProfile: function() {
+      if (this.todosloaded) {
+        clearInterval(this.$options.interval)
+        console.log('Getting User Profile')
+        // this.$store.dispatch('support/getUserProfile')
+        // User.dispatch('getUserId').then(function() {
+        User.dispatch('getUserProfile').then(function() {
+          console.log('User Returned.')
+          // Todo.dispatch('getTodos')
+        })
+        // })
+      }
+    },
+    getTodos: function() {
+      User.dispatch('getUserId').then(function() {
+        Todo.dispatch('getTodos').then(function() {
+          // set interval to wait for todos to be loaded then call the user method.
+          // Hopeful that this will have time to ensure todos exist before setting up the user.
+          vm.$options.interval = setInterval(vm.getUserProfile, 1000)
+        })
+      })
     }
   }
 }

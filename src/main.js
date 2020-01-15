@@ -5,7 +5,7 @@ import Bootstrap from './f3i2bootstrap'
 import App from './components/App.vue'
 import routes from './routes/routes'
 import axios from 'axios'
-import store from './store/index'
+import store from './store/store'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { dom } from '@fortawesome/fontawesome-svg-core'

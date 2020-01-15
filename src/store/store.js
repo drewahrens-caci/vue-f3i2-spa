@@ -5,16 +5,18 @@ import * as support from '@/store/modules/support.js'
 import * as travel from '@/store/modules/travel.js'
 import * as notification from '@/store/modules/notification.js'
 import User from '@/models/User'
+import usermodule from '@/modules/usermodule'
 import Todo from '@/models/Todo'
+import todomodule from '@/modules/todomodule'
 import Travel from '@/models/Travel'
 
 Vue.use(Vuex)
 const database = new VuexORM.Database()
 
 // Register Models.
-database.register(User)
-database.register(Todo)
-database.register(Travel)
+database.register(User, usermodule)
+database.register(Todo, todomodule)
+// database.register(Travel)
 
 Vue.config.devtools = true
 
