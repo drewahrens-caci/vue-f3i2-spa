@@ -2,10 +2,6 @@
   "name": "vue-f3i2-spa",
   "version": "0.1.5",
   "private": false,
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/danwalker-caci/vue-f3i2-spa.git"
-  },
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -32,8 +28,9 @@
     "jquery": "^3.4.1",
     "moment": "^2.24.0",
     "perfect-scrollbar": "^1.4.0",
-    "sweetalert2": "^9.5.4",
+    "push.js": "^1.0.12",
     "sortablejs": "^1.10.1",
+    "sweetalert2": "^9.5.4",
     "v-tooltip": "^2.0.2",
     "vue": "^2.6.10",
     "vue-clickaway": "^2.2.2",
@@ -46,9 +43,9 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.7.4",
-    "@vue/cli-plugin-babel": "^4.0.5",
-    "@vue/cli-plugin-eslint": "^4.0.5",
-    "@vue/cli-service": "^4.0.5",
+    "@vue/cli-plugin-babel": "^4.1.2",
+    "@vue/cli-plugin-eslint": "^4.1.2",
+    "@vue/cli-service": "^4.1.2",
     "@vue/eslint-config-prettier": "^6.0.0",
     "babel-eslint": "^10.0.3",
     "eslint": "^6.7.1",
@@ -58,7 +55,7 @@
     "node-sass": "^4.13.0",
     "sass-loader": "^8.0.0",
     "vue-cli-plugin-bootstrap": "^1.0.0-alpha.1",
-    "vue-cli-plugin-bootstrap-vue": "^0.5.0",
+    "vue-cli-plugin-bootstrap-vue": "^0.6.0",
     "vue-template-compiler": "^2.6.10"
   },
   "postcss": {
@@ -70,5 +67,9 @@
     "> 1%",
     "last 2 versions",
     "not ie <= 8"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/danwalker-caci/vue-f3i2-spa.git"
+  }
 }

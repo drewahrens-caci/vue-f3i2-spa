@@ -2,10 +2,11 @@
 import ThemeLayout from '@/components/Layout/DashboardLayout.vue'
 import calendar from '@/components/Pages/calendar.vue'
 import home from '@/components/Pages/home.vue'
-import travel from '@/components/Pages/travel/travel.vue'
-import newtravel from '@/components/Pages/travel/newtravel.vue'
+import travel from '@/components/Pages/travel.vue'
+import todos from '@/components/Pages/todos.vue'
+/* import newtravel from '@/components/Pages/travel/newtravel.vue'
 import approvetravel from '@/components/Pages/travel/approvetravel.vue'
-import updatetravel from '@/components/Pages/travel/updatetravel.vue'
+import updatetravel from '@/components/Pages/travel/updatetravel.vue' */
 
 let travelMenu = {
   path: '/travel',
@@ -13,24 +14,10 @@ let travelMenu = {
   redirect: '/travel/home',
   children: [
     {
-      path: 'home',
+      path: 'home/:mode',
       name: 'Travel',
-      component: travel
-    },
-    {
-      path: 'request',
-      name: 'Travel Request',
-      component: newtravel
-    },
-    {
-      path: 'approve',
-      name: 'Travel Approval',
-      component: approvetravel
-    },
-    {
-      path: 'update',
-      name: 'Update Travel',
-      component: updatetravel
+      component: travel,
+      props: true
     }
   ]
 }
@@ -55,6 +42,11 @@ const routes = [
         path: 'calendar',
         name: 'Team Calendar',
         component: calendar
+      },
+      {
+        path: 'todos',
+        name: 'Tasks',
+        component: todos
       }
     ]
   }

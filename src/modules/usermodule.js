@@ -7,6 +7,11 @@ const getters = {
   CurrentUser () {
     return User.all()
   },
+  CurrentUserWithTodos () {
+    return User.query()
+      .with('todos')
+      .first()
+  },
   CurrentUserId: state => {
     return state.userid
   }
@@ -31,8 +36,8 @@ const actions = {
         let profile = {}
         let userid = User.getters('CurrentUserId')
         let properties = response.data.d.UserProfileProperties.results
-        profile.id = userid
-        profile.userid = userid
+        profile.id = String(userid)
+        // profile.userid = userid
         profile.Account = response.data.d.AccountName
         profile.PictureUrl = response.data.d.PictureUrl
         profile.PersonalUrl = response.data.d.PersonalUrl
@@ -56,7 +61,7 @@ const actions = {
               break
           }
         }
-        console.log('Inserting User Data.')
+        // console.log('Inserting User Data.')
         User.insert({ data: profile })        
       })
       .catch(error => {

@@ -42,6 +42,7 @@ $yellow:  #ffc107;
 $green:   #28a745;
 $teal:    #20c997;
 $cyan:    #17a2b8;
+$black:   #000000;
 
 // holiday theme colors
 $hoho-red:    #ff1111;
@@ -94,7 +95,8 @@ $theme-colors: map-merge(
     "warning":    $warning,
     "danger":     $danger,
     "light":      $light,
-    "dark":       $dark
+    "dark":       $dark,
+    "black":      $black
   ),
   $theme-colors
 );
@@ -273,6 +275,27 @@ input[type=button], input[type=reset], input[type=submit], button {
     /* background-color: #f4a94c; */
     background-color: $gray-300;
     color: #000000;
+  }
+
+  /*============================================================================================= CUSTOM BOOTSTRAP OVERRIDES ====================================================================================*/
+
+  .smallbutton {
+    padding: 0.1rem !important;
+    line-height: 1;
+    min-width: 1em;
+    font-size: 0.5rem !important;
+  }
+  
+  .actionbutton {
+    padding: 0.1rem !important;
+    line-height: 1;
+    min-width: 1em;
+    font-size: .75rem !important;
+  }
+
+  .mb-2,
+  .my-2 {
+    margin-bottom: 0.25rem !important;
   }
   
   // static width styles

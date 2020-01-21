@@ -3,7 +3,8 @@
     <b-modal id="modal-prompt" centered hide-footer>
       <template v-slot:modal-title> Add Event For {{ selectedDate }} </template>
       <b-button class="mt-3 float-right" variant="success" @click="addEvent">Yes</b-button>
-      <b-button class="mt-3 float-right" variant="danger" @click="$bvModal.hide('modal-prompt')">No</b-button>&nbsp;
+      <b-button class="mt-3 float-right" variant="danger" @click="cancelTravel">No</b-button>&nbsp;
+      <!-- <b-button class="mt-3 float-right" variant="danger" @click="$bvModal.hide('modal-prompt')">No</b-button>&nbsp; -->
     </b-modal>
     <b-modal id="event-wizard" size="lg" centered hide-footer>
       <template v-slot:modal-title> Add Event For {{ selectedDate }} </template>
@@ -80,13 +81,13 @@
                 <b-col md="6">
                   <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.from" :state="ValidateMe('from')" ref="from"></b-form-input>
                   <b-form-invalid-feedback>
-                    Enter at least 5 letters
+                    Enter at least 3 letters
                   </b-form-invalid-feedback>
                 </b-col>
                 <b-col md="6">
                   <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.to" :state="ValidateMe('to')" ref="to"></b-form-input>
                   <b-form-invalid-feedback>
-                    Enter at least 5 letters
+                    Enter at least 3 letters
                   </b-form-invalid-feedback>
                 </b-col>
               </b-row>
@@ -96,49 +97,56 @@
             <b-row>
               <b-col cols="12" class="px-0">
                 <b-form>
-                  <b-table id="TravelersTable" ref="TravelersTable" v-model="shownData" responsive :tbody-tr-class="rowClass" :striped="striped" :bordered="bordered" :small="small" :hover="hover" :items="travelers" :fields="fields" style="table-layout: fixed;">
-                    <!-- <template slot="actions" slot-scope="row">
-                      <b-button
-                        size="sm"
-                        variant="outline"
-                        v-bind:id="getID('DELETE_', shownData[row.index].guid)"
-                        class="actionbutton trashred"
-                        v-bind:class="{ whiteButton: shownData[row.index].delete === 'Y', redButton: shownData[row.index].delete === 'N' }"
-                        @click="deleteme(shownData[row.index].guid, shownData[row.index].delete)"
-                      >
-                        <font-awesome-icon far icon="trash-alt"></font-awesome-icon>
-                      </b-button>
-                      <b-button size="sm" variant="outline" class="actionbutton" @click="row.toggleDetails">
-                        <font-awesome-icon v-if="row.detailsShowing" far class="ml-1" icon="minus-square" :style="{ color: 'black' }"></font-awesome-icon>
-                        <font-awesome-icon v-else-if="shownData[row.index].comms !== ''" far class="ml-1" icon="plus-square" :style="{ color: 'green' }"></font-awesome-icon>
-                        <font-awesome-icon v-else far class="ml-1" icon="plus-square" :style="{ color: 'black' }"></font-awesome-icon>
-                      </b-button>
-                    </template> -->
-                    <template v-slot:cell(firstName)="data">
-                      <b-form-input class="form-control-sm" v-model="shownData[data.index].firstName" title="First Name" :state="validateLength(shownData[data.index].firstName, 1)"></b-form-input>
+                  <!-- <b-table id="TravelersTable" ref="TravelersTable" v-model="travelmodel.travelers" responsive :tbody-tr-class="rowClass" :striped="striped" :bordered="bordered" :small="small" :hover="hover" :items="travelmodel.travelers" :fields="fields" style="table-layout: fixed;"> -->
+                  <!-- <template v-slot:cell(firstName)="data">
+                      <b-form-input class="form-control-sm" v-bind:ref="getRef('trvl_firstName', data.index)" v-model="travelmodel.travelers[data.index].firstName" title="First Name" :state="validateLength(travelmodel.travelers[data.index].firstName, 1)"></b-form-input>
                       <b-form-invalid-feedback>
                         Enter at least 2 letters
                       </b-form-invalid-feedback>
                     </template>
                     <template v-slot:cell(lastName)="data">
-                      <b-form-input class="form-control-sm" v-model="shownData[data.index].lastName" title="Last Name" :state="validateLength(shownData[data.index].lastName, 1)"></b-form-input>
+                      <b-form-input class="form-control-sm" v-bind:ref="getRef('trvl_lastName', data.index)" v-model="travelmodel.travelers[data.index].lastName" title="Last Name" :state="validateLength(travelmodel.travelers[data.index].lastName, 1)"></b-form-input>
                       <b-form-invalid-feedback>
                         Enter at least 2 letters
                       </b-form-invalid-feedback>
                     </template>
                     <template v-slot:cell(email)="data">
-                      <b-form-input class="form-control-sm" v-model="shownData[data.index].email" title="Email" :state="validateEmail(shownData[data.index].email)"></b-form-input>
+                      <b-form-input class="form-control-sm" v-bind:ref="getRef('trvl_email', data.index)" v-model="travelmodel.travelers[data.index].email" title="Email" :state="validateEmail(travelmodel.travelers[data.index].email)"></b-form-input>
                       <b-form-invalid-feedback>
                         Enter a proper email address
                       </b-form-invalid-feedback>
                     </template>
                     <template v-slot:cell(phone)="data">
-                      <b-form-input class="form-control-sm" v-model="shownData[data.index].phone" title="Phone" :state="validatePhone(shownData[data.index].phone)"></b-form-input>
+                      <b-form-input class="form-control-sm" v-bind:ref="getRef('trvl_phone', data.index)" v-model="travelmodel.travelers[data.index].phone" title="Phone" :state="validatePhone(travelmodel.travelers[data.index].phone)"></b-form-input>
                       <b-form-invalid-feedback>
                         Enter a number in (###)-###-#### format
                       </b-form-invalid-feedback>
+                    </template> -->
+                  <!-- <template v-slot:cell(firstName)="data">
+                      <b-form-input class="form-control-sm" v-bind:ref="getRef('trvl_firstName', data.index)" title="First Name" :state="validateLength(travelmodel.travelers[data.index].firstName, 1)"></b-form-input>
+                      <b-form-invalid-feedback>
+                        Enter at least 2 letters
+                      </b-form-invalid-feedback>
                     </template>
-                  </b-table>
+                    <template v-slot:cell(lastName)="data">
+                      <b-form-input class="form-control-sm" v-bind:ref="getRef('trvl_lastName', data.index)" title="Last Name" :state="validateLength(travelmodel.travelers[data.index].lastName, 1)"></b-form-input>
+                      <b-form-invalid-feedback>
+                        Enter at least 2 letters
+                      </b-form-invalid-feedback>
+                    </template>
+                    <template v-slot:cell(email)="data">
+                      <b-form-input class="form-control-sm" v-bind:ref="getRef('trvl_email', data.index)" title="Email" :state="validateEmail(travelmodel.travelers[data.index].email)"></b-form-input>
+                      <b-form-invalid-feedback>
+                        Enter a proper email address
+                      </b-form-invalid-feedback>
+                    </template>
+                    <template v-slot:cell(phone)="data">
+                      <b-form-input class="form-control-sm" v-bind:ref="getRef('trvl_phone', data.index)" title="Phone" :state="validatePhone(travelmodel.travelers[data.index].phone)"></b-form-input>
+                      <b-form-invalid-feedback>
+                        Enter a number in (###)-###-#### format
+                      </b-form-invalid-feedback>
+                    </template> -->
+                  <!-- </b-table> -->
                 </b-form>
               </b-col>
             </b-row>
@@ -151,20 +159,27 @@
           <tab-content title="Additional Info" icon="ti-settings" :before-change="validateThirdTab">
             <b-form>
               <b-row>
-                <b-col md="6">Gov Sponsor</b-col>
-                <b-col md="6">Estimated Cost</b-col>
+                <b-col md="4">Gov Sponsor</b-col>
+                <b-col md="4">Estimated Cost</b-col>
+                <b-col md="4">Travel Index #</b-col>
               </b-row>
               <b-row>
-                <b-col md="6">
+                <b-col md="4">
                   <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.sponsor" ref="sponsor" :state="ValidateMe('sponsor')"></b-form-input>
                   <b-form-invalid-feedback>
                     Enter at least 5 letters
                   </b-form-invalid-feedback>
                 </b-col>
-                <b-col md="6">
+                <b-col md="4">
                   <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.cost" ref="cost" :state="ValidateMe('cost')"></b-form-input>
                   <b-form-invalid-feedback>
                     Enter at least 5 letters
+                  </b-form-invalid-feedback>
+                </b-col>
+                <b-col md="4">
+                  <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.travelindex" ref="cost" :state="ValidateMe('travelindex')"></b-form-input>
+                  <b-form-invalid-feedback>
+                    Enter in YY-XXXX-ZZ format (Proper index format)
                   </b-form-invalid-feedback>
                 </b-col>
               </b-row>
@@ -252,6 +267,7 @@
         :events="events"
         :fixedWeekCount="fixedWeekCount"
         @dateClick="handleDateClick"
+        @eventClick="handleEventClick"
       />
     </b-row>
   </b-container>
@@ -275,7 +291,8 @@ export default {
   props: {
     events: Array,
     title: String,
-    type: String
+    type: String,
+    mode: String
   },
   components: {
     FullCalendar,
@@ -284,6 +301,7 @@ export default {
   },
   data: function() {
     return {
+      currentmode: 'default',
       calendarPlugins: [bootstrapPlugin, dayGridPlugin, timeGridPlugin, interactionPlugin],
       calendarWeekends: true,
       fixedWeekCount: false,
@@ -314,7 +332,14 @@ export default {
         end: '',
         from: '',
         to: '',
-        travelers: '',
+        travelers: [
+          {
+            firstName: '',
+            lastName: '',
+            email: '',
+            phone: ''
+          }
+        ],
         sponsor: '',
         poc: {
           name: '',
@@ -325,16 +350,16 @@ export default {
         clearance: 'Select',
         request: false,
         cost: '',
-        index: ''
+        travelindex: ''
       },
       fieldsFirstTab: ['workplan', 'company', 'start', 'end', 'from', 'to'],
-      fieldsThirdTab: ['sponsor', 'pocname', 'pocemail', 'pocphone', 'purpose', 'clearance', 'cost'],
+      fieldsThirdTab: ['sponsor', 'travelindex', 'pocname', 'pocemail', 'pocphone', 'purpose', 'clearance', 'cost'],
       travelers: [
         {
-          firstName: 'first',
-          lastName: 'last',
-          email: 'email',
-          phone: 'phone'
+          firstName: '',
+          lastName: '',
+          email: '',
+          phone: ''
         }
       ],
       formOptions: {
@@ -370,7 +395,13 @@ export default {
     this.calendarEvents = this.events
   },
   mounted: function() {
+    console.log('Mounted Mode: ' + this.mode)
+    this.currentmode = this.mode
     v = this
+    if (this.currentmode === 'new') {
+      this.currentmode = 'default'
+      this.addTravel(moment())
+    }
   },
   methods: {
     getID: function(text, id) {
@@ -383,8 +414,8 @@ export default {
     getRandomInt(max) {
       return Math.floor(Math.random() * Math.floor(max))
     },
-    getRef(id) {
-      return 'traveler_' + id
+    getRef(text, idx) {
+      return text + '_' + idx
     },
     onComplete: function() {
       alert('Yay. Done!')
@@ -402,6 +433,10 @@ export default {
           ret = this.travelmodel.workplan.length > 6 ? true : false
           break
 
+        case 'travelindex':
+          ret = this.travelmodel.travelindex.length > 8 ? true : false
+          break
+
         case 'start':
           ret = moment(this.travelmodel.start).isValid() ? true : false
           break
@@ -411,11 +446,11 @@ export default {
           break
 
         case 'from':
-          ret = this.travelmodel.from.length > 4 ? true : false
+          ret = this.travelmodel.from.length > 2 ? true : false
           break
 
         case 'to':
-          ret = this.travelmodel.to.length > 4 ? true : false
+          ret = this.travelmodel.to.length > 2 ? true : false
           break
 
         case 'sponsor':
@@ -479,10 +514,10 @@ export default {
       return valid
     },
     validateSecondTab: function() {
-      // check all the fields in the first tab to see that they are properly validated. This will require looping through the travlers model and checking each one
+      // check all the fields in the second tab to see that they are properly validated. This will require looping through the travelmodel.travelers and checking each one
       this.$refs.travelwizard.subtitle = ''
       let valid = true
-
+      console.log('TESTING TAB 2: ' + this.$refs.TravelerTable.$refs.length)
       return valid
     },
     validateThirdTab: function() {
@@ -530,9 +565,18 @@ export default {
         return f
       }
     },
+    handleEventClick: function(evt) {
+      alert(evt.event.title)
+    },
     handleDateClick(arg) {
       // Ask the user if they want to create an event. If yes, start the add event wizard.
       this.selectedDate = this.formatme(arg.date, 'native')
+      this.travelmodel.start = this.selectedDate
+      this.$bvModal.show('modal-prompt')
+    },
+    addTravel(d) {
+      this.currentmode = 'default' // Reset for change checking
+      this.selectedDate = this.formatme(d, 'native')
       this.travelmodel.start = this.selectedDate
       this.$bvModal.show('modal-prompt')
     },
@@ -547,28 +591,59 @@ export default {
           this.$bvModal.show('event-wizard')
       }
     },
+    handleModalClose: function(mid) {
+      // Test what triggers this event
+      console.log('Closed modal: ' + mid)
+      this.$router.push({ name: 'Travel', params: { mode: 'default' } })
+    },
+    cancelTravel: function() {
+      this.$router.push({ name: 'Travel', params: { mode: 'default' } })
+    },
     visitrequest(checked) {
       this.travelmodel.request = checked ? true : false
     },
     btnAddClick: function() {
-      this.travelers.push({
+      this.travelmodel.travelers.push({
         firstName: '',
         lastName: '',
         email: '',
         phone: ''
       })
     }
+  },
+  watch: {
+    $route(to, from) {
+      this.mode = to.params.mode
+      console.log('Mode changes from Calendar.vue: ' + this.currentmode + ', ' + this.mode)
+      switch (this.mode) {
+        case 'new':
+          if (this.currentmode !== 'new') {
+            this.addTravel(moment())
+          }
+          break
+      }
+    }
   }
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import '~@fullcalendar/core/main.css';
 @import '~@fullcalendar/daygrid/main.css';
 @import '~@fullcalendar/timegrid/main.css';
 @import '~@fullcalendar/list/main.css';
 @import '~@fullcalendar/bootstrap/main.css';
 @import '~vue-form-wizard/dist/vue-form-wizard.min.css';
+
+table {
+  border-collapse: collapse;
+}
+
+table,
+th,
+td {
+  border: 1px solid black !important;
+}
 
 .titlebar {
   width: 100%;

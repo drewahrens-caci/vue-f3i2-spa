@@ -19,7 +19,7 @@ export default {
       })
   },
   getUserProfile() {
-    console.log('getUserProfile called from UserProfileService')
+    // console.log('getUserProfile called from UserProfileService')
     return axios
       .get(userurl, {
         headers: {
@@ -27,6 +27,7 @@ export default {
         }
       })
       .then(function (response) {
+        // console.log('getUserProfile() Response: ' + response)
         return response
       })
   }

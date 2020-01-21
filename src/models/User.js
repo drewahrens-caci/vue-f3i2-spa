@@ -4,16 +4,18 @@ import Todo from './Todo'
 export default class User extends Model {
   static entity = 'users'
 
+  // static primaryKey = 'userid'
+
   static state() {
     return {
-      userid: null
+      userid: 0
     }
   }
 
   static fields() {
     return {
-      id: this.attr(null),
-      userid: this.attr(null),
+      id: this.uid(),
+      // userid: this.string(null),
       Account: this.attr(''),
       PictureUrl: this.attr(''),
       PersonalUrl: this.attr(''),
@@ -23,7 +25,7 @@ export default class User extends Model {
       Phone: this.attr(''),
       CellPhone: this.attr(''),
       Manager: this.attr(''),
-      todos: this.hasMany(Todo, 'user_id', 'userid')
+      todos: this.hasMany(Todo, 'user_id')
     }
   }
 }

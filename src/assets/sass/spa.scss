@@ -1,3 +1,4 @@
+@import "spa/functions";
 @import "spa/variables";
 @import "spa/mixins";
 
@@ -8,44 +9,29 @@
 @import "spa/sidebar-and-main-panel";
 
 @import "spa/buttons";
-@import "spa/social-buttons";
 @import "spa/inputs";
-
 @import "spa/alerts";
 @import "spa/tables";
-
-@import "spa/checkbox-radio-switch";
 @import "spa/navbars";
 @import "spa/footers";
-@import "spa/tabs-navs-pagination";
-@import "spa/progress_bars";
-
+@import "spa/utilities";
 
 // Fancy Stuff
 @import "spa/cards";
-@import "spa/chartist";
 @import "spa/tooltip";
 @import "spa/responsive";
-@import "spa/bootstrap-switch";
 
 //plugins css
 @import "spa/plugins/animate";
 @import "spa/plugins/sweetalert2";
-@import "spa/plugins/jquery.jvectormap";
-@import "spa/plugins/fullcalendar";
-@import "spa/plugins/chartist";
 @import "spa/plugins/perfect-scrollbar";
-@import "spa/plugins/vue-tabs";
 
 // element-ui customizations
 @import "spa/element/collapse";
-@import "spa/element/tags";
+/* @import "spa/element/tags";
 @import "spa/element/tables";
 @import "spa/element/slider";
 @import "spa/element/date_picker";
 @import "spa/element/select";
 @import "spa/element/input";
-@import "spa/element/modal";
-
-// pages
-@import "spa/pages";
+@import "spa/element/modal"; */

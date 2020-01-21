@@ -76,7 +76,7 @@ export default {
     }
   },
   mounted: function() {
-    this.$options.interval = setInterval(this.getNews, 2000)
+    // this.$options.interval = setInterval(this.getNews, 2000)
   },
   methods: {
     getNews: function() {

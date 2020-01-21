@@ -1,7 +1,7 @@
 <template>
   <b-container fluid>
     <b-row>
-      <b-col md="9" xs="12"><calendar :events="trips" title="Scheduled Travel" type="travel"></calendar></b-col>
+      <b-col md="9" xs="12"><calendar :events="trips" title="Scheduled Travel" type="travel" :mode="mode"></calendar></b-col>
       <b-col md="3" xs="12"></b-col>
     </b-row>
   </b-container>
@@ -13,6 +13,12 @@ import { mapState } from 'vuex'
 
 export default {
   name: 'home',
+  props: {
+    mode: {
+      type: String,
+      default: 'default'
+    }
+  },
   computed: {
     tripsloaded() {
       return this.$store.state.travel.loaded
@@ -44,6 +50,12 @@ export default {
         this.$store.dispatch('travel/getTRIPS')
       }
     })
+  },
+  watch: {
+    $route(to, from) {
+      this.mode = to.params.mode
+      console.log('Mode change from travel.vue: ' + this.mode)
+    }
   }
 }
 </script>

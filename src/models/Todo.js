@@ -6,20 +6,28 @@ export default class Todo extends Model {
 
   static state() {
     return {
-      loaded: false
+      digest: null,
+      loaded: false,
+      mytodosloaded: false,
+      mytodos: [],
+      tempid: null
     }
   }
 
   static fields() {
     return {
-      id: this.attr(''),
-      user_id: this.attr(null),
+      id: this.uid(),
+      user_id: this.string(null).nullable(),
       Title: this.attr(''),
+      PercentComplete: this.attr(null),
+      Body: this.attr(''),
       Status: this.attr(''),
-      StartDate: this.attr(''),
-      DueDate: this.attr(''),
-      Priority: this.attr('') /* ,
-      user: this.belongsTo(User, 'user_id', 'userid') */
+      StartDate: this.attr(null),
+      DueDate: this.attr(null),
+      Priority: this.attr(null),
+      assignee: this.belongsTo(User, 'user_id'),
+      etag: this.attr(null), // Used for updating
+      uri: this.attr(null) // Used for updating
     }
   }
 }

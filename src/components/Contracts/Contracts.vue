@@ -26,7 +26,7 @@ export default {
     }
   },
   mounted: function() {
-    this.$options.interval = setInterval(this.getContracts, 1000)
+    // this.$options.interval = setInterval(this.getContracts, 1000)
   },
   methods: {
     getContracts: function() {
