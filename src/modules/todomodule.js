@@ -35,11 +35,11 @@ const actions = {
         console.log('There was an error getting digest data: ', error.response)
       })
   },
-  getTodos() {
+  getTodos({ state, commit }) {
     TodoService.getTodos()
       .then(response => {
         // console.log('Todo Data: ' + response)
-        Todo.insert({ data: formatTodos(response)})
+        Todo.insert({ data: formatAllTodos(response)})
         Todo.commit((state) => {
           state.loaded = true
         }) 
@@ -85,7 +85,7 @@ function formatTodos(j) {
   let todos = []
   for (let i = 0; i < j.length; i++) {
     let body = ''
-    if (!isNullOrUndefined(j[i]['Body']) { body = String(j[i]['Body']) }
+    if (!isNullOrUndefined(j[i]['Body'])) { body = String(j[i]['Body']) }
     todos.push({
       id: String(j[i]['Id']),
       user_id: String(j[i]['AssignedToId']['results'][0]),
@@ -95,6 +95,32 @@ function formatTodos(j) {
       StartDate: moment(j[i]['StartDate']).format('MM/DD/YYYY'),
       DueDate: moment(j[i]['DueDate']).format('MM/DD/YYYY'),
       Priority: j[i]['Priority'],
+      etag: j[i]['__metadata']['etag'],
+      uri: j[i]['__metadata']['uri']
+    })
+  }
+  return todos
+}
+
+function formatAllTodos(j) {
+  let todos = []
+  for (let i = 0; i < j.length; i++) {
+    let body = ''
+    if (!isNullOrUndefined(j[i]['Body'])) { body = String(j[i]['Body']) }
+    todos.push({
+      id: String(j[i]['Id']),
+      Title: j[i]['Title'],
+      Body: body.length > 0 ? body : '',
+      Status: j[i]['Status'],
+      StartDate: moment(j[i]['StartDate']).format('MM/DD/YYYY'),
+      DueDate: moment(j[i]['DueDate']).format('MM/DD/YYYY'),
+      PercentComplete: j[i]['PercentComplete'],
+      Priority: j[i]['Priority'],
+      FirstName: j[i]['AssignedTo']['FirstName'],
+      LastName: j[i]['AssignedTo']['LastName'],
+      EMail: j[i]['AssignedTo']['EMail'],
+      IsMilestone: j[i]['IsMilestone'],
+      Milestone: isNullOrUndefined(j[i]['Milestone']) ? '' : j[i]['Milestone'],
       etag: j[i]['__metadata']['etag'],
       uri: j[i]['__metadata']['uri']
     })

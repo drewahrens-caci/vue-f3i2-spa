@@ -6,6 +6,12 @@ import App from './components/App.vue'
 import routes from './routes/routes'
 import axios from 'axios'
 import store from './store/store'
+/* import Highcharts from "highcharts"
+import Gantt from "highcharts/modules/gantt"
+import HighchartsVue from "highcharts-vue" */
+
+/* Gantt(Highcharts);
+Vue.use(HighchartsVue); */
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { dom } from '@fortawesome/fontawesome-svg-core'
@@ -26,6 +32,8 @@ Vue.config.productionTip = false
 const router = new VueRouter({
   routes
 })
+
+Vue.config.devtools = true
 
 new Vue({
   router,

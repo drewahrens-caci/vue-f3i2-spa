@@ -26,6 +26,11 @@ export default class Todo extends Model {
       DueDate: this.attr(null),
       Priority: this.attr(null),
       assignee: this.belongsTo(User, 'user_id'),
+      FirstName: this.attr(null),
+      LastName: this.attr(null),
+      EMail: this.attr(null),
+      IsMilestone: this.boolean(false),
+      Milestone: this.attr(null),
       etag: this.attr(null), // Used for updating
       uri: this.attr(null) // Used for updating
     }

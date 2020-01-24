@@ -27,12 +27,12 @@
       </b-form>
     </b-modal>
     <div class="photo">
-      <img id="UserImage" :src="profiledata.PictureUrl" alt="Personal Photo" />
+      <img id="UserImage" :src="userpic" alt="Personal Photo" />
     </div>
     <div class="info">
       <a data-toggle="collapse" :aria-expanded="!isClosed" @click.stop="toggleMenu" href="#">
         <span class="UserName">
-          {{ profiledata.DisplayName }}
+          {{ userdisplayname }}
           <span id="userbadgeA" class="badge badge-xs badge-warning">{{ mytodos.length }}</span>
           <b class="caret"></b>
         </span>
@@ -43,7 +43,7 @@
           <ul class="nav" v-show="!isClosed">
             <slot>
               <li>
-                <a class="profile-dropdown" :href="profiledata.PersonalUrl">
+                <a class="profile-dropdown" :href="userurl">
                   <span class="sidebar-mini"><font-awesome-icon fas icon="cog" class="icon"></font-awesome-icon></span>
                   <span class="sidebar-normal">My Profile</span>
                 </a>
@@ -102,6 +102,9 @@ export default {
   data: function() {
     return {
       todocount: 0,
+      userdisplayname: '',
+      userpic: 'https://infoplus.caci.com/sites/f3i2/SiteAssets/html/static/img/user.png',
+      userurl: '#',
       isClosed: true,
       variants: ['primary', 'secondary', 'success', 'warning', 'danger', 'info', 'light', 'dark', 'black'],
       headerBgVariant: 'black',
@@ -163,8 +166,17 @@ export default {
                 this.close()
               }
             }) */
+            vm.$options.interval = setInterval(vm.updateUserPic, 1000)
           }
         })
+      }
+    },
+    updateUserPic: function() {
+      if (!isNullOrUndefined(this.profiledata.PictureUrl)) {
+        clearInterval(this.$options.interval)
+        this.userpic = this.profiledata.PictureUrl
+        this.userdisplayname = this.profiledata.DisplayName
+        this.userurl = this.profiledata.PersonalUrl
       }
     },
     getUserId: function() {

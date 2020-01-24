@@ -22,12 +22,27 @@ let travelMenu = {
   ]
 }
 
+let todosMenu = {
+  path: '/tasks',
+  component: ThemeLayout,
+  redirect: '/tasks/home',
+  children: [
+    {
+      path: 'home',
+      name: 'Tasks And Milestones',
+      component: todos,
+      props: true
+    }
+  ]
+}
+
 const routes = [
   {
     path: '/',
     redirect: '/pages/home'
   },
   travelMenu,
+  todosMenu,
   {
     path: '/pages',
     component: ThemeLayout,
@@ -42,11 +57,6 @@ const routes = [
         path: 'calendar',
         name: 'Team Calendar',
         component: calendar
-      },
-      {
-        path: 'todos',
-        name: 'Tasks',
-        component: todos
       }
     ]
   }

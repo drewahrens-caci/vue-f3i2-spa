@@ -18,7 +18,7 @@ export default {
         taskurl =
           _spPageContextInfo.webServerRelativeUrl +
           "/_api/lists/getbytitle('Tasks')/items?"
-        taskurl += '$select=*'
+        taskurl += '$select=*,AssignedTo/Id,AssignedTo/FirstName,AssignedTo/LastName,AssignedTo/EMail&$expand=AssignedTo'
       }
       return axios
         .get(taskurl, {
