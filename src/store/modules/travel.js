@@ -84,13 +84,21 @@ function formatTravel(j) {
         c = 'travel-new'
         break
     }
-    classes.push(c)
+    // classes.push(c)
+    /* start = moment(start).toDate()
+    end = moment(end).toDate() */
+    start = moment(start).format('MM/DD/YYYY')
+    end = moment(end).format('MM/DD/YYYY')
+    /* start = new Date(j[i]['StartDate'])
+    end = new Date(j[i]['EndDate']) */
+    // start = Date.UTC(start.getFullYear(), start.getMonth() + 1, start.getDate())
+    // end = Date.UTC(end.getFullYear(), end.getMonth() + 1, end.getDate())
     p.push({
-      title: j[i]['Title'] !== null ? String(j[i]['Title']) : '',
-      start: start.format('YYYY-MM-DD'),
-      end: end.format('YYYY-MM-DD'),
-      /* rendering: j[i]['rendering'] !== null ? String(j[i]['rendering']) : '', */
-      classNames: classes
+      Id: j[i]['Id'],
+      Subject: j[i]['Title'] !== null ? String(j[i]['Title']) : '',
+      StartTime: start,
+      EndTime: end,
+      class: c
     })
   }
   return p

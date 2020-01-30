@@ -1,6 +1,6 @@
 // import ThemeLayout from '@/components/Layout/ThemeLayout.vue'
 import ThemeLayout from '@/components/Layout/DashboardLayout.vue'
-import calendar from '@/components/Pages/calendar.vue'
+/* import calendar from '@/components/Pages/calendar.vue' */
 import home from '@/components/Pages/home.vue'
 import travel from '@/components/Pages/travel.vue'
 import todos from '@/components/Pages/todos.vue'
@@ -52,11 +52,6 @@ const routes = [
         path: 'home',
         name: 'Home',
         component: home
-      },
-      {
-        path: 'calendar',
-        name: 'Team Calendar',
-        component: calendar
       }
     ]
   }

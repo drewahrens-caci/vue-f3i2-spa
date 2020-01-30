@@ -6,7 +6,7 @@
       </b-navbar>
     </b-row>
     <b-row class="ml-0 mr-0 mb5px" v-for="bar in contracts" :key="bar.id">
-      <b-col sm="4" class="p-0 text-left font-weight-bold mt-1">{{ bar.company }}</b-col>
+      <b-col sm="4" class="p-0 text-left font-weight-bold mt-1">{{ bar.Company }}</b-col>
       <b-col sm="8" class="p-0">
         <b-progress :value="bar.status" :variant="getVariant(bar.status)" show-progress></b-progress>
       </b-col>
@@ -81,7 +81,7 @@ export default {
         for (let i = 0; i < j.length; i++) {
           this.contracts.push({
             id: j[i]['id'],
-            company: j[i]['company'],
+            Company: j[i]['Company'],
             manager: j[i]['manager'],
             ponumber: j[i]['ponumber'],
             status: j[i]['status']

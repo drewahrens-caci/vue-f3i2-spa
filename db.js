@@ -124,7 +124,7 @@ module.exports = () => {
         let c = getRandomInt(pcount) // get a random number of the projects and these will be completed
         let d = pcount - c
         let manager = getRandomInt(10)
-        let sponsor = getRandomInt(10)
+        let Sponsor = getRandomInt(10)
         let day = getRandomInt(23) + 5 // get a random day in any month
         // we are going to count as we go and just set the completed ones first and then the completed on time
         let erpid = 'DR-' + years[i] + '.0' + k * getRandomInt(500)
@@ -142,7 +142,7 @@ module.exports = () => {
             pjm: org,
             level: level,
             manager: users[manager],
-            sponsor: users[sponsor],
+            Sponsor: users[Sponsor],
             md: 'Y',
             month: month,
             FY: years[i],
@@ -221,7 +221,7 @@ module.exports = () => {
             div: org,
             pjm: org,
             manager: users[manager],
-            sponsor: users[sponsor],
+            Sponsor: users[Sponsor],
             md: 'Y',
             FY: years[i],
             month: month,

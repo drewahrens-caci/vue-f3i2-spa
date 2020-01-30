@@ -12,7 +12,7 @@ if (location.indexOf('localhost') >= 0) {
 } else {
   baseUrl = _spPageContextInfo.webServerRelativeUrl
 }
-  // used for dev purposes with json-server
+  // used for dev Commentss with json-server
 const apiClient = axios.create({
   baseURL: baseUrl,
   withCredentials: false,

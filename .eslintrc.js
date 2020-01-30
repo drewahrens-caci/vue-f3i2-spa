@@ -17,8 +17,8 @@ module.exports = {
         singleQuote: true,
         semi: false,
         trailingComma: 'none',
-        code: 300,
-        printWidth: 300,
+        code: 250,
+        printWidth: 250,
         ignoreComments: true,
         ignoreStrings: true,
         ignoreTemplateLiterals: true

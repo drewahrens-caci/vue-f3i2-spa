@@ -8,7 +8,7 @@
       "div": "MP",
       "pjm": "MP",
       "manager": "Donald Duck",
-      "sponsor": "Yosimite Sam",
+      "Sponsor": "Yosimite Sam",
       "md": "Y",
       "pstart": "",
       "pfinish": "",
@@ -23,7 +23,7 @@
       "div": "MZ",
       "pjm": "MZ",
       "manager": "Mickey Mouse",
-      "sponsor": "Roger Rabbit",
+      "Sponsor": "Roger Rabbit",
       "md": "Y",
       "pstart": "",
       "pfinish": "",
@@ -38,7 +38,7 @@
       "div": "MP",
       "pjm": "MP",
       "manager": "Goofy",
-      "sponsor": "Tom and Jerry",
+      "Sponsor": "Tom and Jerry",
       "md": "Y",
       "pstart": "",
       "pfinish": "",
@@ -53,7 +53,7 @@
       "div": "MP",
       "pjm": "MP",
       "manager": "Donald Duck",
-      "sponsor": "Yosimite Sam",
+      "Sponsor": "Yosimite Sam",
       "md": "Y",
       "pstart": "",
       "pfinish": "",
@@ -68,7 +68,7 @@
       "div": "MZ",
       "pjm": "MZ",
       "manager": "Mickey Mouse",
-      "sponsor": "Roger Rabbit",
+      "Sponsor": "Roger Rabbit",
       "md": "Y",
       "pstart": "",
       "pfinish": "",
@@ -83,7 +83,7 @@
       "div": "MP",
       "pjm": "MP",
       "manager": "Goofy",
-      "sponsor": "Tom and Jerry",
+      "Sponsor": "Tom and Jerry",
       "md": "Y",
       "pstart": "",
       "pfinish": "",
@@ -98,7 +98,7 @@
       "div": "MP",
       "pjm": "MP",
       "manager": "Donald Duck",
-      "sponsor": "Yosimite Sam",
+      "Sponsor": "Yosimite Sam",
       "md": "Y",
       "pstart": "",
       "pfinish": "",
@@ -113,7 +113,7 @@
       "div": "MZ",
       "pjm": "MZ",
       "manager": "Mickey Mouse",
-      "sponsor": "Roger Rabbit",
+      "Sponsor": "Roger Rabbit",
       "md": "Y",
       "pstart": "",
       "pfinish": "",
@@ -128,7 +128,7 @@
       "div": "MP",
       "pjm": "MP",
       "manager": "Goofy",
-      "sponsor": "Tom and Jerry",
+      "Sponsor": "Tom and Jerry",
       "md": "Y",
       "pstart": "",
       "pfinish": "",
@@ -157,7 +157,7 @@
       "div": "MZ",
       "pjm": "MZ",
       "manager": "Mickey Mouse",
-      "sponsor": "Roger Rabbit",
+      "Sponsor": "Roger Rabbit",
       "md": "Y",
       "pstart": "",
       "pfinish": "",
@@ -172,7 +172,7 @@
       "div": "MP",
       "pjm": "MP",
       "manager": "Goofy",
-      "sponsor": "Tom and Jerry",
+      "Sponsor": "Tom and Jerry",
       "md": "Y",
       "pstart": "",
       "pfinish": "",
@@ -187,7 +187,7 @@
       "div": "MP",
       "pjm": "MP",
       "manager": "Donald Duck",
-      "sponsor": "Yosimite Sam",
+      "Sponsor": "Yosimite Sam",
       "md": "Y",
       "pstart": "",
       "pfinish": "",
@@ -202,7 +202,7 @@
       "div": "MZ",
       "pjm": "MZ",
       "manager": "Minnie Mouse",
-      "sponsor": "Tom and Jerry",
+      "Sponsor": "Tom and Jerry",
       "md": "Y",
       "pstart": "",
       "pfinish": "",
@@ -217,7 +217,7 @@
       "div": "MP",
       "pjm": "MP",
       "manager": "Goofy",
-      "sponsor": "Tom and Jerry",
+      "Sponsor": "Tom and Jerry",
       "md": "Y",
       "pstart": "",
       "pfinish": "",
@@ -232,7 +232,7 @@
       "div": "MP",
       "pjm": "MP",
       "manager": "Donald Duck",
-      "sponsor": "Yosimite Sam",
+      "Sponsor": "Yosimite Sam",
       "md": "Y",
       "pstart": "",
       "pfinish": "",
@@ -247,7 +247,7 @@
       "div": "MZ",
       "pjm": "MZ",
       "manager": "Mickey Mouse",
-      "sponsor": "Roger Rabbit",
+      "Sponsor": "Roger Rabbit",
       "md": "Y",
       "pstart": "",
       "pfinish": "",
@@ -262,7 +262,7 @@
       "div": "MP",
       "pjm": "MP",
       "manager": "Goofy",
-      "sponsor": "Tom and Jerry",
+      "Sponsor": "Tom and Jerry",
       "md": "Y",
       "pstart": "",
       "pfinish": "",
@@ -277,7 +277,7 @@
       "div": "MP",
       "pjm": "MP",
       "manager": "Donald Duck",
-      "sponsor": "Yosimite Sam",
+      "Sponsor": "Yosimite Sam",
       "md": "Y",
       "pstart": "",
       "pfinish": "",
@@ -292,7 +292,7 @@
       "div": "MZ",
       "pjm": "MZ",
       "manager": "Mickey Mouse",
-      "sponsor": "Roger Rabbit",
+      "Sponsor": "Roger Rabbit",
       "md": "Y",
       "pstart": "",
       "pfinish": "",
@@ -307,7 +307,7 @@
       "div": "MP",
       "pjm": "MP",
       "manager": "Bugs Bunny",
-      "sponsor": "Tom and Jerry",
+      "Sponsor": "Tom and Jerry",
       "md": "Y",
       "pstart": "",
       "pfinish": "",
@@ -4322,224 +4322,224 @@
   "contracts": [
     {
       "id": 1,
-      "company": "ACES/Everwatch",
+      "Company": "ACES/Everwatch",
       "manager" : "Bernie Doerr",
       "ponumber" : "P000079290",
       "status": 100
     },
     {
       "id": 2,
-      "company": "Ascolta",
+      "Company": "Ascolta",
       "manager" : "Bob Burgin",
       "ponumber" : "P000079060",
       "status": 100
     },
     {
       "id": 3,
-      "company": "BAE",
+      "Company": "BAE",
       "manager" : "Bob Burgin",
       "ponumber" : "P000081461",
       "status": 20
     },
     {
       "id": 4,
-      "company": "Ball Aerospace",
+      "Company": "Ball Aerospace",
       "manager" : "Bernie Doerr",
       "ponumber" : "Draft",
       "status": 50
     },
     {
       "id": 5,
-      "company": "Clear Creek Applied Tech",
+      "Company": "Clear Creek Applied Tech",
       "manager" : "Maggie Fenton",
       "ponumber" : "Not in P2P",
       "status": 40
     },
     {
       "id": 6,
-      "company": "Collins Aerospace",
+      "Company": "Collins Aerospace",
       "manager" : "Bob Burgin",
       "ponumber" : "Draft",
       "status": 20
     },
     {
       "id": 7,
-      "company": "Connexta",
+      "Company": "Connexta",
       "manager" : "Bernie Doerr",
       "ponumber" : "Draft",
       "status": 60
     },
     {
       "id": 8,
-      "company": "DAC",
+      "Company": "DAC",
       "manager" : "Bernie Doerr",
       "ponumber" : "Not in P2P",
       "status": 20
     },
     {
       "id": 9,
-      "company": "DAC",
+      "Company": "DAC",
       "manager" : "Bob Burgin",
       "ponumber" : "Not in P2P",
       "status": 50
     },
     {
       "id": 10,
-      "company": "Dell/EMC",
+      "Company": "Dell/EMC",
       "manager" : "Bernie Doerr",
       "ponumber" : "P000079560",
       "status": 10
     },
     {
       "id": 11,
-      "company": "Dhara IT",
+      "Company": "Dhara IT",
       "manager" : "Bernie Doerr",
       "ponumber" : "P000081491",
       "status": 80
     },
     {
       "id": 12,
-      "company": "Dynamic Systems",
+      "Company": "Dynamic Systems",
       "manager" : "Bernie Doerr",
       "ponumber" : "P000081204",
       "status": 50
     },
     {
       "id": 13,
-      "company": "Engility",
+      "Company": "Engility",
       "manager" : "Maggie Fenton",
       "ponumber" : "P000081502",
       "status": 20
     },
     {
       "id": 14,
-      "company": "Expansia",
+      "Company": "Expansia",
       "manager" : "Bernie Doerr",
       "ponumber" : "P000081008",
       "status": 50
     },
     {
       "id": 15,
-      "company": "GDIT/CSRA",
+      "Company": "GDIT/CSRA",
       "manager" : "Maggie Fenton",
       "ponumber" : "P000080148",
       "status": 100
     },
     {
       "id": 16,
-      "company": "GDMS",
+      "Company": "GDMS",
       "manager" : "Bob Burgin",
       "ponumber" : "Not in P2P",
       "status": 30
     },
     {
       "id": 17,
-      "company": "Intelligent Waves",
+      "Company": "Intelligent Waves",
       "manager" : "Bernie Doerr",
       "ponumber" : "P000080997",
       "status": 100
     },
     {
       "id": 18,
-      "company": "Intuidex",
+      "Company": "Intuidex",
       "manager" : "Bob Burgin",
       "ponumber" : "P000078826",
       "status": 0
     },
     {
       "id": 19,
-      "company": "ISYS",
+      "Company": "ISYS",
       "manager" : "Bernie Doerr",
       "ponumber" : "P000079742",
       "status": 100
     },
     {
       "id": 20,
-      "company": "Leidos",
+      "Company": "Leidos",
       "manager" : "Bob Burgin",
       "ponumber" : "P000079905",
       "status": 100
     },
     {
       "id": 21,
-      "company": "Lockheed Martin",
+      "Company": "Lockheed Martin",
       "manager" : "Bernie Doerr",
       "ponumber" : "Not in P2P",
       "status": 100
     },
     {
       "id": 22,
-      "company": "Markesman",
+      "Company": "Markesman",
       "manager" : "Maggie Fenton",
       "ponumber" : "Not in P2P",
       "status": 0
     },
     {
       "id": 23,
-      "company": "Orbis",
+      "Company": "Orbis",
       "manager" : "Bob Burgin",
       "ponumber" : "P000077419",
       "status": 20
     },
     {
       "id": 24,
-      "company": "Ortman Consulting",
+      "Company": "Ortman Consulting",
       "manager" : "?",
       "ponumber" : "Not in P2P",
       "status": 0
     },
     {
       "id": 25,
-      "company": "Peraton",
+      "Company": "Peraton",
       "manager" : "Mark Casadei",
       "ponumber" : "P000078928",
       "status": 0
     },
     {
       "id": 26,
-      "company": "Riverside Research",
+      "Company": "Riverside Research",
       "manager" : "Bob Burgin",
       "ponumber" : "P000080997",
       "status": 60
     },
     {
       "id": 27,
-      "company": "Select Innovation",
+      "Company": "Select Innovation",
       "manager" : "Maggie Fenton",
       "ponumber" : "Draft",
       "status": 10
     },
     {
       "id": 28,
-      "company": "Sierra Nevada",
+      "Company": "Sierra Nevada",
       "manager" : "Bernie Doerr",
       "ponumber" : "Draft",
       "status": 50
     },
     {
       "id": 29,
-      "company": "SRC",
+      "Company": "SRC",
       "manager" : "Bernie Doerr",
       "ponumber" : "P000078597",
       "status": 100
     },
     {
       "id": 30,
-      "company": "Sterling",
+      "Company": "Sterling",
       "manager" : "Not Assigned",
       "ponumber" : "P000081213",
       "status": 40
     },
     {
       "id": 31,
-      "company": "Technergetics",
+      "Company": "Technergetics",
       "manager" : "Not Assigned",
       "ponumber" : "Draft",
       "status": 20
     },
     {
       "id": 32,
-      "company": "Trusted QA",
+      "Company": "Trusted QA",
       "manager" : "Maggie Fenton",
       "ponumber" : "P000078241",
       "status": 80
@@ -4556,7 +4556,7 @@
       "end": "2019-12-17T12:00:00-05:00",
       "report": true,
       "status": "approved",
-      "workplan": "",
+      "WorkPlan": "",
       "uri": "http://localhost:3000/travel/1"
     },
     {
@@ -4569,7 +4569,7 @@
       "end": "2019-12-20T00:50:00-05:00",
       "report": true,
       "status": "approved",
-      "workplan": "",
+      "WorkPlan": "",
       "uri": "http://localhost:3000/travel/2"
     },
     {
@@ -4586,7 +4586,7 @@
       "end": "2019-12-07T12:00:00-05:00",
       "report": false,
       "status": "approved",
-      "workplan": "",
+      "WorkPlan": "",
       "uri": "http://localhost:3000/travel/3"
     },
     {
@@ -4603,7 +4603,7 @@
       "end": "2019-12-12T22:30:00-05:00",
       "report": true,
       "status": "approved",
-      "workplan": "",
+      "WorkPlan": "",
       "uri": "http://localhost:3000/travel/4"
     },
     {
@@ -4620,7 +4620,7 @@
       "end": "2019-12-10T12:00:00-05:00",
       "report": false,
       "status": "approved",
-      "workplan": "",
+      "WorkPlan": "",
       "uri": "http://localhost:3000/travel/5"
     },
     {
@@ -4637,7 +4637,7 @@
       "end": "2019-12-19T11:30:00-05:00",
       "report": true,
       "status": "approved",
-      "workplan": "",
+      "WorkPlan": "",
       "uri": "http://localhost:3000/travel/6"
     },
     {
@@ -4654,7 +4654,7 @@
       "end": "2019-12-30T16:00:00-05:00",
       "report": true,
       "status": "approved",
-      "workplan": "",
+      "WorkPlan": "",
       "uri": "http://localhost:3000/travel/7"
     },
     {
@@ -4671,7 +4671,7 @@
       "end": "2020-01-17T12:00:00-05:00",
       "report": false,
       "status": "approved",
-      "workplan": "",
+      "WorkPlan": "",
       "uri": "http://localhost:3000/travel/8"
     },
     {
@@ -4688,7 +4688,7 @@
       "end": "2020-01-09T16:00:00-05:00",
       "report": true,
       "status": "new",
-      "workplan": "",
+      "WorkPlan": "",
       "uri": "http://localhost:3000/travel/9"
     },
     {
@@ -4705,7 +4705,7 @@
       "end": "2019-11-27T12:00:00-05:00",
       "report": true,
       "status": "approved",
-      "workplan": "",
+      "WorkPlan": "",
       "uri": "http://localhost:3000/travel/10"
     },
     {

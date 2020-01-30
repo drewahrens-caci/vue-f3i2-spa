@@ -2,7 +2,7 @@ import { Model } from '@vuex-orm/core'
 //import User from './User'
 
 export default class WorkPlan extends Model {
-  static entity = 'workplans'
+  static entity = 'WorkPlans'
 
   static fields() {
     return {
@@ -10,7 +10,7 @@ export default class WorkPlan extends Model {
       spid: this.number(),
       wpnumber: this.string(''),
       title: this.attr(null),
-      travelindex: this.number(),
+      IndexNumber: this.number(),
       pop: this.string(''),
       rev: this.number(),
       summary: this.string(''),
