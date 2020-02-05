@@ -49,19 +49,13 @@ const actions = {
       })
     }
     let response = await TravelService.addTrip(payload, state.digest)
-    // let id = await response.d.ID
-    // console.log('ADD TRIP RESPONSE: ' + response)
     return response
-
-    /* TravelService.addTrip(payload, state.digest)
-      .then(function(response) {
-        console.log('ADD TRIP RESPONSE: ' + response)
-        return response
-      })
-      .catch(error => {
-        console.log('There was an error added the trip to SharePoint: ', error.response)
-      }) */
   },
+  async getTripById({ state }, id) {
+    console.log('ID PASSED TO ACTION: ' + id)
+    let trip = await Travel.query().where('Id', id).get()
+    return trip
+  }, 
   createTodo({ state, commit }) {
     // this will be called if there is a need to send security notice
   },
@@ -119,10 +113,12 @@ function formatTravel(j) {
     start = moment(start).format('MM/DD/YYYY')
     end = moment(end).format('MM/DD/YYYY')
     p.push({
+      id: j[i]['Id'],
       Id: j[i]['Id'],
       Subject: j[i]['Title'] !== null ? String(j[i]['Title']) : '',
-      StartTime: start,
-      EndTime: end,
+      Status: j[i]['Status'] !== null ? String(j[i]['Status']) : '',
+      StartTime: moment(j[i]['StartDate']).format('YYYY-MM-DD[T]HH:MM:[00Z]'),
+      EndTime: moment(j[i]['EndDate']).format('YYYY-MM-DD[T]HH:MM:[00Z]'),
       class: c,
       WorkPlan: j[i]['WorkPlan'] !== null ? String(j[i]['WorkPlan']) : '',
       Company: j[i]['Company'] !== null ? String(j[i]['Company']) : '',

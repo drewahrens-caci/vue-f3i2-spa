@@ -15,9 +15,6 @@ const getters = {
   MyTodosLoaded: state => {
     return state.mytodosloaded
   },
-  /* TodosByUser: id => {
-    return Todo.query().where('user_id', id).get()
-  } */
   mytodos: state => {
     return state.mytodos
   }
@@ -47,6 +44,9 @@ const actions = {
       .catch(error => {
         console.log('There was an error getting todo data: ', error.response)
       })
+  },
+  getTodoById({ state }, id) {
+
   },
   getTodosByUser({ state, commit }, userid) {
     // console.log('getTodosByUser: Getting Todos By User Id: ' + userid)

@@ -6,12 +6,6 @@
       <user-menu></user-menu>
       <!-- <mobile-menu></mobile-menu> -->
       <template slot="links">
-        <!-- <sidebar-item :link="{ name: 'Teams', library: 'fas', icon: 'users' }">
-          <sidebar-item :link="{ name: 'Team 1', path: '/components/buttons' }"></sidebar-item>
-          <sidebar-item :link="{ name: 'Team 2', path: '/components/grid-system' }"></sidebar-item>
-          <sidebar-item :link="{ name: 'Team 3', path: '/components/panels' }"></sidebar-item>
-          <sidebar-item :link="{ name: 'Team 4', path: '/components/sweet-alert' }"></sidebar-item>
-        </sidebar-item> -->
         <sidebar-item :link="{ name: 'Travel', library: 'fas', icon: 'plane', path: '/travel/home' }">
           <sidebar-item :link="{ name: 'Travel Calendar', library: 'fas', icon: 'calendar', path: '/travel/home/default' }"></sidebar-item>
           <sidebar-item :link="{ name: 'New Travel Request', library: 'fas', icon: 'plane-departure', path: '/travel/home/new' }"></sidebar-item>
@@ -23,15 +17,6 @@
           <sidebar-item :link="{ name: 'Offboarding', library: 'fas', icon: 'user-times', path: '/personnel/offboarding' }"></sidebar-item>
           <sidebar-item :link="{ name: 'Reports', library: 'fas', icon: 'id-card', path: '/personnel/reports' }"></sidebar-item>
         </sidebar-item>
-        <!-- <sidebar-item :link="{ name: 'Processes', library: 'fas', icon: 'project-diagram' }">
-          <sidebar-item :link="{ name: 'CDRL Management', path: '/forms/regular' }"></sidebar-item>
-          <sidebar-item :link="{ name: 'CDRL Government Review', path: '/forms/extended' }"></sidebar-item>
-        </sidebar-item> -->
-        <!-- <sidebar-item :link="{ name: 'Program Management', library: 'fas', icon: 'tasks' }">
-          <sidebar-item :link="{ name: 'Regular Tables', path: '/table-list/regular' }"></sidebar-item>
-          <sidebar-item :link="{ name: 'Extended Tables', path: '/table-list/extended' }"></sidebar-item>
-          <sidebar-item :link="{ name: 'Paginated Tables', path: '/table-list/paginated' }"></sidebar-item>
-        </sidebar-item> -->
         <sidebar-item :link="{ name: 'Tools', library: 'fas', icon: 'tools' }">
           <sidebar-item :link="{ name: 'Tasks', library: 'fas', icon: 'tasks', path: '/tasks/home' }"></sidebar-item>
         </sidebar-item>
@@ -69,7 +54,7 @@ export default {
 }
 </script>
 <style lang="scss">
-.vue-notifyjs.notifications {
+/* .vue-notifyjs.notifications {
   .list-move {
     transition: transform 0.3s, opacity 0.4s;
   }
@@ -92,5 +77,5 @@ export default {
     opacity: 0;
     transform: scale(1.2, 0.7);
   }
-}
+} */
 </style>

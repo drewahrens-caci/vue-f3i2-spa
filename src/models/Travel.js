@@ -16,8 +16,10 @@ export default class Travel extends Model {
 
   static fields() {
     return {
-      Id: this.number(null),
+      id: this.number(null), // id here is for module/model but must be same as Id from SharePoint
+      Id: this.number(null), // this is the actual field from SharePoint
       Subject: this.attr(''),
+      Status: this.attr(''),
       StartTime: this.attr(''),
       EndTime: this.attr(''),
       class: this.attr(''),

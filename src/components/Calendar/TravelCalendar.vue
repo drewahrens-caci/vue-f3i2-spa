@@ -246,6 +246,142 @@
         </e-views>
       </ejs-schedule>
     </b-row>
+    <b-modal id="ViewModal" ref="ViewModal" size="xl" centered hide-footer :header-bg-variant="headerBgVariant">
+      <template v-slot:modal-title>{{ selectedtrip.Subject }}</template>
+      <b-container fluid>
+        <b-table-simple id="ViewTable" hover small responsive>
+          <b-tbody>
+            <b-tr variant="dark">
+              <b-th>Workplan</b-th>
+              <b-th>Company</b-th>
+              <b-th>Start</b-th>
+              <b-th>End</b-th>
+              <b-th>From</b-th>
+              <b-th>To</b-th>
+            </b-tr>
+            <b-tr>
+              <b-td>{{ selectedtrip.WorkPlan }}</b-td>
+              <b-td>{{ selectedtrip.Company }}</b-td>
+              <b-td>{{ selectedtrip.StartTime }}</b-td>
+              <b-td>{{ selectedtrip.EndTime }}</b-td>
+              <b-td>{{ selectedtrip.TravelFrom }}</b-td>
+              <b-td>{{ selectedtrip.TravelTo }}</b-td>
+            </b-tr>
+            <b-tr variant="dark">
+              <b-th>Sponsor</b-th>
+              <b-th>POC Name</b-th>
+              <b-th>POC Email</b-th>
+              <b-th>POC Phone</b-th>
+              <b-th>Estimated Cost</b-th>
+              <b-th>Index #</b-th>
+            </b-tr>
+            <b-tr>
+              <b-td>{{ selectedtrip.Sponsor }}</b-td>
+              <b-td>{{ selectedtrip.POCName }}</b-td>
+              <b-td>{{ selectedtrip.POCEmail }}</b-td>
+              <b-td>{{ selectedtrip.POCPhone }}</b-td>
+              <b-td>{{ selectedtrip.EstimatedCost }}</b-td>
+              <b-td>{{ selectedtrip.IndexNumber }}</b-td>
+            </b-tr>
+            <b-tr variant="dark">
+              <b-th colspan="4">Purpose</b-th>
+              <b-th>Visit Request</b-th>
+              <b-th>Required Clearance</b-th>
+            </b-tr>
+            <b-tr>
+              <b-td colspan="4">{{ selectedtrip.Comments }}</b-td>
+              <b-td>{{ selectedtrip.VisitRequest }}</b-td>
+              <b-td>{{ selectedtrip.Clearance }}</b-td>
+            </b-tr>
+            <b-tr variant="dark">
+              <b-th colspan="6">Travelers</b-th>
+            </b-tr>
+            <b-tr>
+              <b-td colspan="6">
+                <b-table-simple hover small responsive>
+                  <b-tbody>
+                    <b-tr variant="dark">
+                      <b-th>First Name</b-th>
+                      <b-th>Last Name</b-th>
+                      <b-th>Email</b-th>
+                      <b-th>Phone</b-th>
+                    </b-tr>
+                    <b-tr v-for="traveler in selectedtrip.Travelers" :key="traveler">
+                      <b-td>{{ traveler.firstName }}</b-td>
+                      <b-td>{{ traveler.lastName }}</b-td>
+                      <b-td>{{ traveler.email }}</b-td>
+                      <b-td>{{ traveler.phone }}</b-td>
+                    </b-tr>
+                  </b-tbody>
+                </b-table-simple>
+              </b-td>
+            </b-tr>
+          </b-tbody>
+        </b-table-simple>
+      </b-container>
+    </b-modal>
+    <b-modal id="ApproveModal" ref="ApproveModal" size="xl" centered hide-footer :header-bg-variant="headerBgVariant">
+      <template v-slot:modal-title>{{ selectedtrip.Subject }}</template>
+      <b-container fluid>
+        <b-form>
+          <b-table
+            id="ApprovalsTable"
+            :ref="ApprovalsTable"
+            v-model="approvalData"
+            responsive
+            :striped="striped"
+            :bordered="bordered"
+            :small="small"
+            :hover="hover"
+            :items="approvalItems"
+            :fields="approvalfields"
+            :primary-key="ID"
+            style="table-layout: fixed;"
+          >
+            <template v-slot:cell(actions)="data">
+              <b-button size="sm" class="actionbutton" @click="approveme(data.index)" title="Mark Complete">
+                <font-awesome-icon far icon="check-circle" class="icon" :style="{ color: 'green' }"></font-awesome-icon>
+              </b-button>
+              <b-button size="sm" class="actionbutton" @click="data.toggleDetails">
+                <font-awesome-icon v-if="data.detailsShowing" far class="icon" icon="minus-square" :style="{ color: 'black' }"></font-awesome-icon>
+                <font-awesome-icon v-else-if="approvalData[data.index].Comments !== ''" far class="icon" icon="plus-square" :style="{ color: 'green' }"></font-awesome-icon>
+                <font-awesome-icon v-else far class="icon" icon="plus-square" :style="{ color: 'black' }"></font-awesome-icon>
+              </b-button>
+            </template>
+            <template v-slot:row-details="data">
+              <!-- <b-input-group size="sm" prepend="Description">
+                <b-form-input v-model="approvalData[data.index].Comments"></b-form-input>
+              </b-input-group> -->
+              <b-table-simple>
+                <b-tbody>
+                  <b-tr variant="dark">
+                    <b-th colspan="4">Purpose</b-th>
+                  </b-tr>
+                  <b-tr>
+                    <b-th colspan="4">{{ approvalData[data.index].Comments }}</b-th>
+                  </b-tr>
+                  <b-tr variant="dark">
+                    <b-th colspan="4">Travelers</b-th>
+                  </b-tr>
+                  <b-tr variant="dark">
+                    <b-th>First Name</b-th>
+                    <b-th>Last Name</b-th>
+                    <b-th>Email</b-th>
+                    <b-th>Phone</b-th>
+                  </b-tr>
+                  <b-tr v-for="traveler in approvalData[data.index].Travelers" :key="traveler">
+                    <b-td>{{ traveler.firstName }}</b-td>
+                    <b-td>{{ traveler.lastName }}</b-td>
+                    <b-td>{{ traveler.email }}</b-td>
+                    <b-td>{{ traveler.phone }}</b-td>
+                  </b-tr>
+                </b-tbody>
+              </b-table-simple>
+            </template>
+          </b-table>
+        </b-form>
+      </b-container>
+    </b-modal>
   </b-container>
 </template>
 
@@ -253,10 +389,9 @@
 import Vue from 'vue'
 import moment from 'moment'
 import { FormWizard, TabContent } from 'vue-form-wizard'
-import { DataManager } from '@syncfusion/ej2-data'
-import { extend } from '@syncfusion/ej2-base'
-import { SchedulePlugin, Day, Week, Month, View, Resize, DragAndDrop, Ej2Instances } from '@syncfusion/ej2-vue-schedule'
+import { SchedulePlugin, Day, Week, Month, Resize, DragAndDrop } from '@syncfusion/ej2-vue-schedule'
 import Travel from '@/models/Travel'
+import { isNullOrUndefined } from 'util'
 
 Vue.use(SchedulePlugin)
 
@@ -294,6 +429,7 @@ export default {
       eventSettings: {
         dataSource: []
       },
+      headerBgVariant: 'black',
       travelmodel: {
         id: 0,
         WorkPlan: 'TestPlan',
@@ -311,8 +447,8 @@ export default {
             phone: '0000000000'
           }
         ],
-        Sponsor: 'Bugs Bunny',
-        POCName: 'Sylvester',
+        Sponsor: 'Test Sponsor',
+        POCName: 'Test POC',
         POCEmail: 'email@email.com',
         POCPhone: '0000000000',
         Comments: 'This is test',
@@ -321,6 +457,7 @@ export default {
         EstimatedCost: '2000',
         IndexNumber: '0008675309'
       },
+      selectedtrip: {},
       fieldsFirstTab: ['WorkPlan', 'Company', 'start', 'end', 'TravelFrom', 'TravelTo'],
       fieldsThirdTab: ['Sponsor', 'EstimatedCost', 'IndexNumber', 'POCName', 'POCEmail', 'POCPhone', 'Comments', 'Clearance'],
       travelerData: [
@@ -363,29 +500,33 @@ export default {
         { value: 'TS', text: 'TS' },
         { value: 'TSSCI', text: 'TS/SCI' }
       ],
-      requiresSecurity: false,
-      securityEmail: {
-        required: false,
-        From: 'daniel.walker1@caci.com',
-        To: { results: ['michele.dade@caci.com'] },
-        Body: '',
-        Subject: ''
-      }
+      approvalData: [],
+      approvalItems: [],
+      approvalfields: [
+        { key: 'actions', label: 'Action', thClass: 'text-center px40' },
+        { key: 'Subject', label: 'Title', thClass: 'text-center px250' },
+        {
+          key: 'StartTime',
+          label: 'Start Date',
+          thClass: 'text-center px80'
+        },
+        { key: 'End Time', label: 'End Date', thClass: 'text-center px80' },
+        { key: 'Sponsor', label: 'Gov Sponsor', thClass: 'text-center px100' },
+        { key: 'Company', label: 'Company', thClass: 'text-center px100' },
+        { key: 'WorkPlan', label: 'Work Plan', thClass: 'text-center px80' },
+        { key: 'EstimatedCost', label: 'Est. Cost', thClass: 'text-center px60' }
+      ],
+      requiresSecurity: false
     }
   },
   mounted: function() {
     vm = this
+    // this.selectedtrip = this.travelmodel // create a filled 'fake' selected trip until a real trip is added
     console.log('Mounted Mode: ' + this.mode)
     Travel.dispatch('getDigest')
     Travel.dispatch('getTRIPS').then(function() {
       vm.$options.interval = setInterval(vm.waitForEvents, 1000)
     })
-    /* this.currentmode = this.mode
-    
-    if (this.currentmode === 'new') {
-      this.currentmode = 'default'
-      this.addTravel(moment())
-    } */
   },
   methods: {
     getID: function(text, id) {
@@ -395,11 +536,39 @@ export default {
       if (this.travel && this.travel.length > 0) {
         clearInterval(this.$options.interval)
         this.$refs.TravelCalendar.addEvent(this.travel)
+        // here is where we react to mode changes on loading after the initial mounting and receiving of events
+        console.log('currentmode: ' + this.currentmode + ', mode: ' + this.mode)
+        if (!isNullOrUndefined(this.$route.query.id)) {
+          let id = Number(this.$route.query.id)
+          let trip = this.travel.filter(trip => trip.id == id)
+          trip = trip[0]
+          trip.Travelers = JSON.parse(trip.Travelers)
+          trip.StartTime = String(this.formatme(trip.StartTime, 'normal'))
+          trip.EndTime = String(this.formatme(trip.EndTime, 'normal'))
+          console.log('START: ' + trip.StartTime + ', END: ' + trip.EndTime)
+          this.selectedtrip = trip
+          this.$bvModal.show('ViewModal')
+        } else {
+          // what are we here for? default view? Or are we here to edit/update travel requests
+          switch (this.mode) {
+            case 'approval':
+              let items = this.travel.filter(trip => trip.Status == 'New')
+              for (let i = 0; i < items.length; i++) {
+                let item = items[i]
+                item.Travelers = JSON.parse(item.Travelers)
+                item.StartTime = String(moment(item.StartTime).format('MM/DD/YYYY'))
+                item.EndTime = String(moment(item.EndTime).format('MM/DD/YYYY'))
+                this.approvalItems.push(item)
+              }
+              console.log('ITEMS TO APPROVE:' + items + ', ' + items.length)
+              this.$bvModal.show('ApproveModal')
+              break
+          }
+        }
       }
     },
     onModalHide: function() {
       console.log('MODAL HIDE')
-      // this.$refs.TravelWizard.reset()
     },
     onModalCancel: function() {
       this.$bvModal.hide('modal-wizard')
@@ -408,8 +577,8 @@ export default {
       console.log('MODAL SAVE')
       // need to now use the information in the travelmodel and travelerData elements to add the event to the calendar and also to SharePoint list
       let event = []
-      let start = moment(this.travelmodel.StartTime).format('MM/DD/YYYY')
-      let end = moment(this.travelmodel.EndTime).format('MM/DD/YYYY')
+      let start = moment(this.travelmodel.StartTime).format('YYYY-MM-DD[T]HH:MM:[00Z]')
+      let end = moment(this.travelmodel.EndTime).format('YYYY-MM-DD[T]HH:MM:[00Z]')
       event.push({
         Subject: this.travelmodel.Subject,
         StartTime: start,
@@ -433,7 +602,7 @@ export default {
       this.$refs.TravelCalendar.addEvent(event)
       // now push this to the data module to save to sharepoint
       Travel.dispatch('addTrip', event).then(function(response) {
-        console.log('Event added to SharePoint ' + response)
+        // console.log('Event added to SharePoint ' + response)
         // the id of the added item is now in the response object!
         let id = response.data.d.Id
         vm.$bvModal.hide('modal-wizard')
@@ -488,9 +657,9 @@ export default {
       // console.log('getRef: ' + text + '_' + idx)
       return text + '_' + idx
     },
-    onComplete: function() {
+    /* onComplete: function() {
       alert('Yay. Done!')
-    },
+    }, */
     ValidateMe: function(control) {
       let phoneNumberPattern = /^\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/
       let emailPattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
@@ -694,35 +863,85 @@ export default {
   watch: {
     $route(to, from) {
       this.mode = to.params.mode
-      console.log('Mode changes from Calendar.vue: ' + this.currentmode + ', ' + this.mode)
-      /* switch (this.mode) {
-        case 'new':
-          if (this.currentmode !== 'new') {
-            this.addTravel(moment())
-          }
-          break
-      } */
+      console.log('Mode changes from TravelCalendar.vue: ' + this.currentmode + ', ' + this.mode)
+      if (this.mode === 'view') {
+        let id = Number(this.$route.query.id)
+        let trip = this.travel.filter(trip => trip.id == id)
+        trip = trip[0]
+        trip.Travelers = JSON.parse(trip.Travelers)
+        trip.StartTime = String(this.formatme(trip.StartTime, 'normal'))
+        trip.EndTime = String(this.formatme(trip.EndTime, 'normal'))
+        console.log('START: ' + trip.StartTime + ', END: ' + trip.EndTime)
+        this.selectedtrip = trip
+        this.$bvModal.show('ViewModal')
+      }
     }
   }
 }
 </script>
 
-<style lang="scss" scoped>
-@import '~@fullcalendar/core/main.css';
-@import '~@fullcalendar/daygrid/main.css';
-@import '~@fullcalendar/timegrid/main.css';
-@import '~@fullcalendar/list/main.css';
-@import '~@fullcalendar/bootstrap/main.css';
-@import '~vue-form-wizard/dist/vue-form-wizard.min.css';
+<style lang="scss">
+.e-time {
+  display: none !important;
+}
 
-table {
+#ApprovalsTable table {
+  border-collapse: collapse;
+  border-spacing: 2px;
+}
+
+#ApprovalsTable table,
+#ApprovalsTable th,
+#ApprovalsTable td {
+  border: 1px solid black !important;
+}
+
+#ApprovalsTable th,
+#ApprovalsTable td {
+  height: 20px;
+}
+
+#ApprovalsTable td {
+  text-indent: 3px;
+}
+
+#TravelersTable table {
+  border-collapse: collapse;
+  border-spacing: 2px;
+}
+
+#TravelersTable table,
+#TravelersTable th,
+#TravelersTable td {
+  border: 1px solid black !important;
+}
+
+#TravelersTable th,
+#TravelersTable td {
+  height: 20px;
+}
+
+#TravelersTable td {
+  text-indent: 3px;
+}
+
+#ViewTable table {
   border-collapse: collapse;
 }
 
-table,
-th,
-td {
+#ViewTable table,
+#ViewTable th,
+#ViewTable td {
   border: 1px solid black !important;
+}
+
+#ViewTable th,
+#ViewTable td {
+  height: 20px;
+}
+
+#ViewTable td {
+  text-indent: 3px;
 }
 
 #Calendar .titlebar {
@@ -742,6 +961,38 @@ td {
   color: #ffffff;
   margin-left: 10px;
   margin-top: 10px;
+}
+
+#ViewModal .modal-title {
+  margin: 0 auto;
+  line-height: 1.5;
+  width: 100%;
+  text-align: center;
+  color: #ffffff !important;
+}
+
+#ViewModal .close {
+  padding: 1rem 1rem;
+  margin: -1rem -1rem -1rem auto;
+  color: #ffffff !important;
+  background-color: black !important;
+  opacity: 1;
+}
+
+#ApproveModal .modal-title {
+  margin: 0 auto;
+  line-height: 1.5;
+  width: 100%;
+  text-align: center;
+  color: #ffffff !important;
+}
+
+#ApproveModal .close {
+  padding: 1rem 1rem;
+  margin: -1rem -1rem -1rem auto;
+  color: #ffffff !important;
+  background-color: black !important;
+  opacity: 1;
 }
 
 .calendar {

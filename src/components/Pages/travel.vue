@@ -31,12 +31,6 @@ export default {
       }
       this.$store.dispatch('notification/add', notification, { root: true })
     })
-  },
-  watch: {
-    $route(to, from) {
-      this.mode = to.params.mode
-      console.log('Mode change from travel.vue: ' + this.mode)
-    }
   }
 }
 </script>

@@ -1,10 +1,9 @@
 <template>
   <div class="sidebar" :style="sidebarStyle" :data-color="backgroundColor" :data-image="backgroundImage" :data-active-color="activeColor">
-    <div class="sidebar-wrapper" ref="sidebarScrollArea">
+    <div class="sidebar-wrapper">
       <div class="logo">
         <a class="logo-mini" href="https://infoplus.caci.com/sites/f3i2/Pages/Home.aspx">
           <div class="logo-img">
-            <!-- <img :src="logo" alt="logo" /> -->
             <font-awesome-icon fas icon="home" class="icon"></font-awesome-icon>
           </div>
         </a>
@@ -24,8 +23,7 @@
   </div>
 </template>
 <script>
-import PerfectScrollbar from 'perfect-scrollbar'
-
+let vm = null
 export default {
   name: 'sidebar',
   props: {
@@ -78,18 +76,6 @@ export default {
         // backgroundColor: 'azure'
       }
     }
-  },
-  methods: {
-    initScrollBar() {
-      const PerfectScroll = new PerfectScrollbar(this.$refs.sidebarScrollArea, {
-        wheelSpeed: 2,
-        wheelPropagation: true,
-        minScrollbarLength: 20
-      })
-    }
-  },
-  mounted() {
-    this.initScrollBar()
   },
   beforeDestroy() {
     if (this.$sidebar.showSidebar) {
