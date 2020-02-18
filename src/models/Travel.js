@@ -36,7 +36,9 @@ export default class Travel extends Model {
       Clearance: this.attr(''),
       VisitRequest: this.boolean(false),
       EstimatedCost: this.attr(''),
-      IndexNumber: this.attr('')
+      IndexNumber: this.attr(''),
+      etag: this.attr(null), // Used for updating
+      uri: this.attr(null) // Used for updating
     }
   }
 }

@@ -30,5 +30,18 @@ export default {
         // console.log('getUserProfile() Response: ' + response)
         return response
       })
+  },
+  getUserGroups(id) {
+    let groupurl = baseUrl + "/_api/web/getuserbyid(" + id + ")/groups"
+    return axios
+      .get(groupurl, {
+        headers: {
+          accept: 'application/json;odata=verbose'
+        }
+      })
+      .then(function (response) {
+        // console.log('getUserProfile() Response: ' + response)
+        return response
+      })
   }
 }

@@ -1,5 +1,7 @@
 .footer{
-  background-color: $white-color;
+  /* background-color: $white; */
+  background-color: #000000;
+  opacity: 0.7;
   width: 100%;
 
   .footer-menu{
@@ -13,52 +15,32 @@
     font-weight: normal;
 
     a:not(.btn){
-      color: $dark-gray;
+      color: $white;
       display: block;
       margin-bottom: 3px;
       &:hover,
       &:focus{
-        color: $default-states-color;
+        color: $white;
       }
     }
   }
-  .social-area{
-    padding: 15px 0;
-    h5{
-      padding-bottom: 15px;
-    }
-  }
-  .social-area > a:not(.btn){
-    color: $dark-gray;
-    display: inline-block;
-    vertical-align: top;
-    padding: $padding-social-a;
-    font-size: $font-size-large-navbar;
-    font-weight: normal;
-    line-height: $line-height;
-    text-align: center;
-    &:hover,
-    &:focus{
-      color: $default-states-color;
-    }
-  }
   .copyright{
-    color: $black;
+    color: $white;
     padding: 10px 15px;
     /* margin: 10px 3px; */
     line-height: 20px;
     font-size: $font-size-base;
   }
   hr{
-    border-color: $medium-gray;
+    border-color: $white;
   }
   .title{
-    color: $default-states-color;
+    color: $white;
   }
 }
 
 .footer-default{
-  background-color: $smoke-bg;
+  background-color: $black;
 }
 
 .footer:not(.footer-big){

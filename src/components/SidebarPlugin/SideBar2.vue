@@ -2,9 +2,9 @@
   <div class="sidebar" :style="sidebarStyle" :data-color="backgroundColor" :data-image="backgroundImage" :data-active-color="activeColor">
     <div class="sidebar-wrapper">
       <div class="logo">
-        <a class="logo-mini" href="https://infoplus.caci.com/sites/f3i2/Pages/Home.aspx">
+        <a class="logo-mini" href="/sites/f3i2/Pages/Home.aspx">
           <div class="logo-img">
-            <font-awesome-icon fas icon="home" class="icon"></font-awesome-icon>
+            <font-awesome-icon fas icon="fighter-jet" class="icon"></font-awesome-icon>
           </div>
         </a>
         <a href="" class="simple-text logo-normal">
@@ -23,6 +23,7 @@
   </div>
 </template>
 <script>
+// eslint-disable-next-line no-unused-vars
 let vm = null
 export default {
   name: 'sidebar',
@@ -30,6 +31,10 @@ export default {
     title: {
       type: String,
       default: 'F3I-2'
+    },
+    backGround: {
+      type: String,
+      default: 'transparent'
     },
     backgroundColor: {
       type: String,
@@ -41,7 +46,7 @@ export default {
     },
     backgroundImage: {
       type: String,
-      default: '/sites/f3i2/SiteAssets/html/static/img/sidebar-2.jpg'
+      default: '/sites/f3i2/SiteAssets/html/static/img/sidebar-3.jpg'
     },
     activeColor: {
       type: String,
@@ -53,7 +58,7 @@ export default {
     },
     logo: {
       type: String,
-      default: 'static/img/vue-logo.png'
+      default: '/sites/f3i2/SiteAssets/html/static/img/vue-logo.png'
     },
     sidebarLinks: {
       type: Array,
@@ -72,8 +77,9 @@ export default {
   computed: {
     sidebarStyle() {
       return {
-        backgroundImage: `url(${this.backgroundImage})`
-        // backgroundColor: 'azure'
+        // backgroundImage: `url(${this.backgroundImage})`
+        backgroundColor: 'black',
+        opacity: 0.7
       }
     }
   },

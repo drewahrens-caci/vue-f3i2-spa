@@ -1,0 +1,8 @@
+fix imports for all scss files by replacing:
+
+@import 'ej2-
+with
+@import 'node_modules/@syncfusion/ej2-
+
+this is because the syncfusion scss files are relative imports that do not work when added to a seperate scss file. Here we are forcing their imports all the the root of their location
+

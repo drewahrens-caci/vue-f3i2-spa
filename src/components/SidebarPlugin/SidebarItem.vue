@@ -1,5 +1,6 @@
 <template>
-  <component :is="baseComponent" :to="link.path ? link.path : '/'" class="nav-item" :class="{ active: isActive }" tag="li">
+  <component :is="baseComponent" :to="link.path ? link.path : '/'" class="nav-item" tag="li">
+    <!-- :class="link.group ? 'hidden ' + link.group : ''" -->
     <a v-if="isMenu" class="nav-link sidebar-menu-item" :aria-expanded="!collapsed" data-toggle="collapse" @click="collapseMenu">
       <!-- <i :class="link.icon"></i> -->
       <font-awesome-icon v-if="link.library === 'fas'" fas :icon="link.icon" class="icon"></font-awesome-icon>

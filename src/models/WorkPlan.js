@@ -1,26 +1,25 @@
 import { Model } from '@vuex-orm/core'
 //import User from './User'
 
-export default class WorkPlan extends Model {
-  static entity = 'WorkPlans'
+export default class Workplan extends Model {
+  static entity = 'workplan'
+
+  static state() {
+    return {
+      digest: null,
+      loaded: false,
+      dropdown: []
+    }
+  }
 
   static fields() {
     return {
       id: this.attr(null),
-      spid: this.number(),
-      wpnumber: this.string(''),
-      title: this.attr(null),
-      IndexNumber: this.number(),
-      pop: this.string(''),
-      rev: this.number(),
-      summary: this.string(''),
-      location: this.string(''), // will be connected with locations
-      features: this.string(''),
-      assumptions: this.string(''),
-      risks: this.string(''),
-      security: this.string(''),
-      schedule: this.string(''),
-      cdrls: this.string('') // will be connected with CDRLS
+      Id: this.attr(null),
+      Title: this.attr(''),
+      Number: this.attr(''),
+      Revision: this.attr(''), // May not be needed
+      Manager: this.attr('')
     }
   }
 }

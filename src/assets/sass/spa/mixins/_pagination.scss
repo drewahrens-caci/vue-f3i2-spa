@@ -1,13 +1,21 @@
-@mixin pagination-color($name, $color){
-  .pagination.pagination-#{$name} .page-item{
-    &.active .page-link{
-      background-color: $color;
+// Pagination
+
+@mixin pagination-size($padding-y, $padding-x, $font-size, $line-height, $border-radius) {
+  .page-link {
+    padding: $padding-y $padding-x;
+    @include font-size($font-size);
+    line-height: $line-height;
+  }
+
+  .page-item {
+    &:first-child {
+      .page-link {
+        @include border-left-radius($border-radius);
+      }
     }
-    .page-link {
-      &:focus,
-      &:hover {
-        background-color: $color;
-        color: white;
+    &:last-child {
+      .page-link {
+        @include border-right-radius($border-radius);
       }
     }
   }

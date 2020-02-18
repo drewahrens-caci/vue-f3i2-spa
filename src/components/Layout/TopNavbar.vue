@@ -13,16 +13,13 @@
         <span class="navbar-toggler-bar burger-lines"></span>
       </button>
       <div class="collapse navbar-collapse justify-content-end">
-        <!-- <ul class="nav navbar-nav mr-auto">
-          <form role="search" class="form-inline my-2 app-search hidden-xs ">
-            <input type="text" placeholder="Search..." class="form-control" v-model="searchinput" v-on:keyup.enter="searchme" />
-            <a href="#" @click.stop="searchme"><i class="fa fa-search"></i></a>
-          </form>
-        </ul> -->
         <b-navbar-nav class="ml-auto hidden-xs">
+          <b-nav-item-dropdown id="ContactsMenu" right no-caret menu-class="animated bounceInDown">
+            <template slot="button-content"> <font-awesome-icon fas icon="users" class="cog"></font-awesome-icon>Contacts </template>
+          </b-nav-item-dropdown>
           <b-nav-item-dropdown id="SettingsMenu" right no-caret menu-class="animated bounceInDown">
             <template slot="button-content">
-              <font-awesome-icon fas icon="cog" class="icon"></font-awesome-icon>
+              <font-awesome-icon fas icon="cog" class="cog"></font-awesome-icon>
             </template>
             <b-dropdown-item
               href="#"
@@ -104,10 +101,6 @@ export default {
     },
     minimizeSidebar() {
       this.$sidebar.toggleMinimize()
-    },
-    searchme: function() {
-      /* window.location = 'https://navsea.navy.deps.mil/wc/surinhd/td/private/techrigor/Pages/SearchResults.aspx?k=' + this.searchinput */
-      console.log('Woohoo')
     }
   }
 }

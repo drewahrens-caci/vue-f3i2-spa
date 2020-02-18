@@ -56,8 +56,15 @@ const actions = {
     let trip = await Travel.query().where('Id', id).get()
     return trip
   }, 
-  createTodo({ state, commit }) {
-    // this will be called if there is a need to send security notice
+  approveTravel({ state }, payload) {
+    Travel.delete(payload.id) // this removes it from the collection but does not actually delete since we are not deleting the travel item!
+    return TravelService.approveTravel(payload.id, payload.uri, payload.etag, state.digest)
+    .then(response => {
+      return response
+    })
+    .catch(error => {
+      console.log('There was an error approving your travel request: ', error.response)
+    })
   },
   sendEmail({ state }, id) {
     // send email to security that this request needs to have security paperwork
@@ -111,14 +118,14 @@ function formatTravel(j) {
         break
     }
     start = moment(start).format('MM/DD/YYYY')
-    end = moment(end).format('MM/DD/YYYY')
+    end = moment(end).add(8, 'hours').format('MM/DD/YYYY')
     p.push({
       id: j[i]['Id'],
       Id: j[i]['Id'],
       Subject: j[i]['Title'] !== null ? String(j[i]['Title']) : '',
       Status: j[i]['Status'] !== null ? String(j[i]['Status']) : '',
-      StartTime: moment(j[i]['StartDate']).format('YYYY-MM-DD[T]HH:MM:[00Z]'),
-      EndTime: moment(j[i]['EndDate']).format('YYYY-MM-DD[T]HH:MM:[00Z]'),
+      StartTime: start, //moment(j[i]['StartDate']).format('YYYY-MM-DD[T]HH:MM:[00Z]'),
+      EndTime: end, // moment(j[i]['EndDate']).format('YYYY-MM-DD[T]HH:MM:[00Z]'),
       class: c,
       WorkPlan: j[i]['WorkPlan'] !== null ? String(j[i]['WorkPlan']) : '',
       Company: j[i]['Company'] !== null ? String(j[i]['Company']) : '',
@@ -133,8 +140,9 @@ function formatTravel(j) {
       Clearance: j[i]['Clearance'] !== null ? String(j[i]['Clearance']) : '',
       VisitRequest: j[i]['VisitRequest'] !== null ? j[i]['VisitRequest'] : '',
       EstimatedCost: j[i]['EstimatedCost'] !== null ? String(j[i]['EstimatedCost']) : '',
-      IndexNumber:
-        j[i]['IndexNumber'] !== null ? String(j[i]['IndexNumber']) : ''
+      IndexNumber: j[i]['IndexNumber'] !== null ? String(j[i]['IndexNumber']) : '',
+      etag: j[i]['__metadata']['etag'],
+      uri: j[i]['__metadata']['uri']
     })
   }
   return p

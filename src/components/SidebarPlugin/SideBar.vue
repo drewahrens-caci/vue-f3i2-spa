@@ -2,7 +2,7 @@
   <div class="sidebar" :style="sidebarStyle" :data-color="backgroundColor" :data-image="backgroundImage" :data-active-color="activeColor">
     <div class="sidebar-wrapper" ref="sidebarScrollArea">
       <div class="logo">
-        <a class="logo-mini" href="https://infoplus.caci.com/sites/f3i2/Pages/Home.aspx">
+        <a class="logo-mini" href="/sites/f3i2/Pages/Home.aspx">
           <div class="logo-img">
             <img :src="logo" alt="logo" />
           </div>

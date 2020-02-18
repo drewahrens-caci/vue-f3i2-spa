@@ -2,227 +2,220 @@
   <b-container fluid class="p-0" id="Calendar">
     <b-modal id="modal-wizard" size="xl" centered hide-header hide-footer @hide="onModalHide">
       <div class="d-block text-center">
-        <keep-alive>
-          <form-wizard id="TravelWizard" ref="TravelWizard" title="New Travel Request" subtitle="" color="#fd7e14" error-color="#ff0000" shape="tab" @on-complete="onComplete" :start-index="stepIndex">
-            <tab-content id="Tab_0" title="Travel Information" icon="ti-user" :before-change="validateFirstTab">
-              <b-form>
-                <b-row>
-                  <b-col md="12">Subject</b-col>
-                </b-row>
-                <b-row>
-                  <b-col md="12"><b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.Subject" :state="ValidateMe('Subject')" ref="Subject"></b-form-input></b-col>
+        <form-wizard id="TravelWizard" ref="TravelWizard" title="New Travel Request" subtitle="" color="#fd7e14" error-color="#ff0000" shape="tab" @on-complete="onComplete" :start-index="stepIndex">
+          <tab-content id="Tab_0" title="Travel Information" icon="ti-user" :before-change="validateFirstTab">
+            <b-form>
+              <b-row>
+                <b-col md="12">Subject</b-col>
+              </b-row>
+              <b-row>
+                <b-col md="12"><b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.Subject" :state="ValidateMe('Subject')" ref="Subject"></b-form-input></b-col>
+                <b-form-invalid-feedback>
+                  Enter a subject for this travel request
+                </b-form-invalid-feedback>
+              </b-row>
+              <b-row>
+                <b-col md="6">Company</b-col>
+                <b-col md="6">WorkPlan</b-col>
+              </b-row>
+              <b-row>
+                <b-col md="6">
+                  <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.Company" :state="ValidateMe('Company')" ref="Company"></b-form-input>
                   <b-form-invalid-feedback>
-                    Enter a subject for this travel request
+                    Enter at least 3 letters
                   </b-form-invalid-feedback>
-                </b-row>
-                <b-row>
-                  <b-col md="6">Company</b-col>
-                  <b-col md="6">WorkPlan</b-col>
-                </b-row>
-                <b-row>
-                  <b-col md="6">
-                    <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.Company" :state="ValidateMe('Company')" ref="Company"></b-form-input>
-                    <b-form-invalid-feedback>
-                      Enter at least 3 letters
-                    </b-form-invalid-feedback>
-                  </b-col>
-                  <b-col md="6">
-                    <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.WorkPlan" :state="ValidateMe('WorkPlan')" ref="WorkPlan"></b-form-input>
-                    <b-form-invalid-feedback>
-                      Enter in YY-XXXX format (Proper WorkPlan format)
-                    </b-form-invalid-feedback>
-                  </b-col>
-                </b-row>
-                <b-row>
-                  <b-col md="6">Start Date</b-col>
-                  <b-col md="6">End Date</b-col>
-                </b-row>
-                <b-row>
-                  <b-col md="6">
-                    <b-form-input v-model="travelmodel.StartTime" ref="start" type="date" title="Start" :state="ValidateMe('start')"></b-form-input>
-                    <b-form-invalid-feedback>
-                      Enter a valid date (mm/dd/yyyy)
-                    </b-form-invalid-feedback>
-                  </b-col>
-                  <b-col md="6">
-                    <b-form-input v-model="travelmodel.EndTime" ref="end" type="date" title="End" :state="ValidateMe('end')"></b-form-input>
-                    <b-form-invalid-feedback>
-                      Enter a valid date (mm/dd/yyyy)
-                    </b-form-invalid-feedback>
-                  </b-col>
-                </b-row>
-                <b-row>
-                  <b-col md="6">Traveling From</b-col>
-                  <b-col md="6">Traveling To</b-col>
-                </b-row>
-                <b-row>
-                  <b-col md="6">
-                    <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.TravelFrom" :state="ValidateMe('TravelFrom')" ref="TravelFrom"></b-form-input>
-                    <b-form-invalid-feedback>
-                      Enter at least 3 letters
-                    </b-form-invalid-feedback>
-                  </b-col>
-                  <b-col md="6">
-                    <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.TravelTo" :state="ValidateMe('TravelTo')" ref="TravelTo"></b-form-input>
-                    <b-form-invalid-feedback>
-                      Enter at least 3 letters
-                    </b-form-invalid-feedback>
-                  </b-col>
-                </b-row>
-              </b-form>
-            </tab-content>
-            <tab-content id="Tab_1" title="Traveler Details" icon="ti-user" :before-change="validateSecondTab">
-              <b-row>
-                <b-col cols="12" class="px-0">
-                  <b-form>
-                    <b-table
-                      id="TravelersTable"
-                      ref="TravelersTable"
-                      responsive
-                      v-model="travelerData"
-                      :tbody-tr-class="rowClass"
-                      :striped="striped"
-                      :bordered="bordered"
-                      :small="small"
-                      :hover="hover"
-                      :items="travelmodel.Travelers"
-                      :fields="fields"
-                      style="table-layout: fixed;"
-                    >
-                      <template v-slot:cell(firstName)="data">
-                        <b-form-input class="form-control-sm" v-model="travelerData[data.index].firstName" v-bind:id="getRef('trvlfirstName', data.index)" title="First Name" :state="validateLength('trvlfirstName_' + data.index, 1)"></b-form-input>
-                        <b-form-invalid-feedback>
-                          Enter at least 2 letters
-                        </b-form-invalid-feedback>
-                      </template>
-                      <template v-slot:cell(lastName)="data">
-                        <b-form-input class="form-control-sm" v-model="travelerData[data.index].lastName" v-bind:id="getRef('trvllastName', data.index)" title="Last Name" :state="validateLength('trvllastName_' + data.index, 1)"></b-form-input>
-                        <b-form-invalid-feedback>
-                          Enter at least 2 letters
-                        </b-form-invalid-feedback>
-                      </template>
-                      <template v-slot:cell(email)="data">
-                        <b-form-input class="form-control-sm" v-model="travelerData[data.index].email" v-bind:id="getRef('trvlemail', data.index)" title="Email" :state="validateEmail('trvlemail_' + data.index)"></b-form-input>
-                        <b-form-invalid-feedback>
-                          Enter a proper email address
-                        </b-form-invalid-feedback>
-                      </template>
-                      <template v-slot:cell(phone)="data">
-                        <b-form-input class="form-control-sm" v-model="travelerData[data.index].phone" v-bind:id="getRef('trvlphone', data.index)" title="Phone" :state="validatePhone('trvlphone_' + data.index)"></b-form-input>
-                        <b-form-invalid-feedback>
-                          Enter a number in (###)-###-#### format
-                        </b-form-invalid-feedback>
-                      </template>
-                    </b-table>
-                  </b-form>
+                </b-col>
+                <b-col md="6">
+                  <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.WorkPlan" :state="ValidateMe('WorkPlan')" ref="WorkPlan"></b-form-input>
+                  <b-form-invalid-feedback>
+                    Enter in YY-XXXX format (Proper WorkPlan format)
+                  </b-form-invalid-feedback>
                 </b-col>
               </b-row>
               <b-row>
-                <b-col cols="12">
-                  <b-button size="sm" @click="btnAddClick" variant="success">Add Traveler</b-button>
+                <b-col md="6">Start Date</b-col>
+                <b-col md="6">End Date</b-col>
+              </b-row>
+              <b-row>
+                <b-col md="6">
+                  <b-form-input v-model="travelmodel.StartTime" ref="start" type="date" title="Start" :state="ValidateMe('start')"></b-form-input>
+                  <b-form-invalid-feedback>
+                    Enter a valid date (mm/dd/yyyy)
+                  </b-form-invalid-feedback>
+                </b-col>
+                <b-col md="6">
+                  <b-form-input v-model="travelmodel.EndTime" ref="end" type="date" title="End" :state="ValidateMe('end')"></b-form-input>
+                  <b-form-invalid-feedback>
+                    Enter a valid date (mm/dd/yyyy)
+                  </b-form-invalid-feedback>
                 </b-col>
               </b-row>
-            </tab-content>
-            <tab-content id="Tab_2" title="Additional Info" icon="ti-settings" :before-change="validateThirdTab">
-              <b-form>
-                <b-row>
-                  <b-col md="4">Gov Sponsor</b-col>
-                  <b-col md="4">Estimated Cost</b-col>
-                  <b-col md="4">Travel Index #</b-col>
-                </b-row>
-                <b-row>
-                  <b-col md="4">
-                    <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.Sponsor" ref="Sponsor" :state="ValidateMe('Sponsor')"></b-form-input>
-                    <b-form-invalid-feedback>
-                      Enter at least 5 letters
-                    </b-form-invalid-feedback>
-                  </b-col>
-                  <b-col md="4">
-                    <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.EstimatedCost" ref="EstimatedCost" :state="ValidateMe('EstimatedCost')"></b-form-input>
-                    <b-form-invalid-feedback>
-                      Enter a valid cost in numbers only
-                    </b-form-invalid-feedback>
-                  </b-col>
-                  <b-col md="4">
-                    <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.IndexNumber" ref="IndexNumber" :state="ValidateMe('IndexNumber')"></b-form-input>
-                    <b-form-invalid-feedback>
-                      Enter in YY-XXXX-ZZ format (Proper index format)
-                    </b-form-invalid-feedback>
-                  </b-col>
-                </b-row>
-                <b-row>
-                  <b-col md="4">POC Name</b-col>
-                  <b-col md="4">POC Email</b-col>
-                  <b-col md="4">POC Phone</b-col>
-                </b-row>
-                <b-row>
-                  <b-col md="4">
-                    <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.POCName" ref="POCName" :state="ValidateMe('POCName')"></b-form-input>
-                    <b-form-invalid-feedback>
-                      Enter at least 5 letters
-                    </b-form-invalid-feedback>
-                  </b-col>
-                  <b-col md="4">
-                    <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.POCEmail" ref="POCEmail" :state="ValidateMe('POCEmail')"></b-form-input>
-                    <b-form-invalid-feedback>
-                      Enter a proper email address
-                    </b-form-invalid-feedback>
-                  </b-col>
-                  <b-col md="4">
-                    <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.POCPhone" ref="POCPhone" :state="ValidateMe('POCPhone')"></b-form-input>
-                    <b-form-invalid-feedback>
-                      Enter a number in (###)-###-#### format
-                    </b-form-invalid-feedback>
-                  </b-col>
-                </b-row>
-                <b-row>
-                  <b-col md="12">Purpose</b-col>
-                </b-row>
-                <b-row>
-                  <b-col md="12">
-                    <b-form-textarea class="form-control-sm form-control-travel" v-model="travelmodel.Comments" placeholder="Purpose of this trip..." rows="3" max-rows="6" ref="Comments" :state="ValidateMe('Comments')"></b-form-textarea>
-                    <b-form-invalid-feedback>
-                      Enter at least 5 letters
-                    </b-form-invalid-feedback>
-                  </b-col>
-                </b-row>
-                <b-row>
-                  <b-col md="12"><b-form-checkbox class="form-control-sm" v-model="travelmodel.VisitRequest" name="checkbox-1" value="yes" unchecked-value="no" ref="VisitRequest">Visit Request Required</b-form-checkbox></b-col>
-                </b-row>
-                <b-row v-if="travelmodel.VisitRequest === 'yes'">
-                  <b-col md="12">
-                    <b-form-select class="form-control-sm" v-model="travelmodel.Clearance" :options="levels" ref="Clearance" :state="ValidateMe('Clearance')"></b-form-select>
-                    <b-form-invalid-feedback>
-                      Please select a valid option
-                    </b-form-invalid-feedback>
-                  </b-col>
-                </b-row>
-              </b-form>
-            </tab-content>
-            <tab-content id="Tab_3" title="Validation" icon="ti-check">
-              <h4>Your form is valid. Click "OK" to save or "Cancel" to close.</h4>
-            </tab-content>
-            <template slot="footer" scope="props">
-              <div class="wizard-footer-left">
-                <b-button variant="warning" v-if="props.activeTabIndex > 0 && !props.isLastStep" @click="props.prevTab()">Previous</b-button>
-              </div>
-              <div class="wizard-footer-right">
-                <b-button variant="danger" @click="onModalCancel">
-                  Cancel
-                </b-button>
-                <b-button variant="warning" v-if="!props.isLastStep" @click="props.nextTab()" class="wizard-footer-right ml-1">Next</b-button>
-                <b-button variant="success" v-if="props.isLastStep" @click="onModalSave" class="wizard-footer-right ml-1">OK</b-button>
-              </div>
-            </template>
-          </form-wizard>
-        </keep-alive>
+              <b-row>
+                <b-col md="6">Traveling From</b-col>
+                <b-col md="6">Traveling To</b-col>
+              </b-row>
+              <b-row>
+                <b-col md="6">
+                  <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.TravelFrom" :state="ValidateMe('TravelFrom')" ref="TravelFrom"></b-form-input>
+                  <b-form-invalid-feedback>
+                    Enter at least 3 letters
+                  </b-form-invalid-feedback>
+                </b-col>
+                <b-col md="6">
+                  <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.TravelTo" :state="ValidateMe('TravelTo')" ref="TravelTo"></b-form-input>
+                  <b-form-invalid-feedback>
+                    Enter at least 3 letters
+                  </b-form-invalid-feedback>
+                </b-col>
+              </b-row>
+            </b-form>
+          </tab-content>
+          <tab-content id="Tab_1" title="Traveler Details" icon="ti-user" :before-change="validateSecondTab">
+            <b-row>
+              <b-col cols="12" class="px-0">
+                <b-form>
+                  <b-table
+                    id="TravelersTable"
+                    ref="TravelersTable"
+                    responsive
+                    v-model="travelerData"
+                    :striped="striped"
+                    :bordered="bordered"
+                    :small="small"
+                    :hover="hover"
+                    :items="travelmodel.Travelers"
+                    :fields="fields"
+                    style="table-layout: fixed;"
+                  >
+                    <template v-slot:cell(firstName)="data">
+                      <b-form-input class="form-control-sm" v-model="travelerData[data.index].firstName" v-bind:id="getRef('trvlfirstName', data.index)" title="First Name" :state="validateLength('trvlfirstName_' + data.index, 1)"></b-form-input>
+                      <b-form-invalid-feedback>
+                        Enter at least 2 letters
+                      </b-form-invalid-feedback>
+                    </template>
+                    <template v-slot:cell(lastName)="data">
+                      <b-form-input class="form-control-sm" v-model="travelerData[data.index].lastName" v-bind:id="getRef('trvllastName', data.index)" title="Last Name" :state="validateLength('trvllastName_' + data.index, 1)"></b-form-input>
+                      <b-form-invalid-feedback>
+                        Enter at least 2 letters
+                      </b-form-invalid-feedback>
+                    </template>
+                    <template v-slot:cell(email)="data">
+                      <b-form-input class="form-control-sm" v-model="travelerData[data.index].email" v-bind:id="getRef('trvlemail', data.index)" title="Email" :state="validateEmail('trvlemail_' + data.index)"></b-form-input>
+                      <b-form-invalid-feedback>
+                        Enter a proper email address
+                      </b-form-invalid-feedback>
+                    </template>
+                    <template v-slot:cell(phone)="data">
+                      <b-form-input class="form-control-sm" v-model="travelerData[data.index].phone" v-bind:id="getRef('trvlphone', data.index)" title="Phone" :state="validatePhone('trvlphone_' + data.index)"></b-form-input>
+                      <b-form-invalid-feedback>
+                        Enter a number in (###)-###-#### format
+                      </b-form-invalid-feedback>
+                    </template>
+                  </b-table>
+                </b-form>
+              </b-col>
+            </b-row>
+            <b-row>
+              <b-col cols="12">
+                <b-button size="sm" @click="btnAddClick" variant="success">Add Traveler</b-button>
+              </b-col>
+            </b-row>
+          </tab-content>
+          <tab-content id="Tab_2" title="Additional Info" icon="ti-settings" :before-change="validateThirdTab">
+            <b-form>
+              <b-row>
+                <b-col md="6">Gov Sponsor</b-col>
+                <b-col md="6">Estimated Cost</b-col>
+              </b-row>
+              <b-row>
+                <b-col md="6">
+                  <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.Sponsor" ref="Sponsor" :state="ValidateMe('Sponsor')"></b-form-input>
+                  <b-form-invalid-feedback>
+                    Enter at least 5 letters
+                  </b-form-invalid-feedback>
+                </b-col>
+                <b-col md="6">
+                  <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.EstimatedCost" ref="EstimatedCost" :state="ValidateMe('EstimatedCost')"></b-form-input>
+                  <b-form-invalid-feedback>
+                    Enter a valid cost in numbers only
+                  </b-form-invalid-feedback>
+                </b-col>
+              </b-row>
+              <b-row>
+                <b-col md="4">POC Name</b-col>
+                <b-col md="4">POC Email</b-col>
+                <b-col md="4">POC Phone</b-col>
+              </b-row>
+              <b-row>
+                <b-col md="4">
+                  <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.POCName" ref="POCName" :state="ValidateMe('POCName')"></b-form-input>
+                  <b-form-invalid-feedback>
+                    Enter at least 5 letters
+                  </b-form-invalid-feedback>
+                </b-col>
+                <b-col md="4">
+                  <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.POCEmail" ref="POCEmail" :state="ValidateMe('POCEmail')"></b-form-input>
+                  <b-form-invalid-feedback>
+                    Enter a proper email address
+                  </b-form-invalid-feedback>
+                </b-col>
+                <b-col md="4">
+                  <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.POCPhone" ref="POCPhone" :state="ValidateMe('POCPhone')"></b-form-input>
+                  <b-form-invalid-feedback>
+                    Enter a number in (###)-###-#### format
+                  </b-form-invalid-feedback>
+                </b-col>
+              </b-row>
+              <b-row>
+                <b-col md="12">Purpose</b-col>
+              </b-row>
+              <b-row>
+                <b-col md="12">
+                  <b-form-textarea class="form-control-sm form-control-travel" v-model="travelmodel.Comments" placeholder="Purpose of this trip..." rows="3" max-rows="6" ref="Comments" :state="ValidateMe('Comments')"></b-form-textarea>
+                  <b-form-invalid-feedback>
+                    Enter at least 5 letters
+                  </b-form-invalid-feedback>
+                </b-col>
+              </b-row>
+              <b-row>
+                <b-col md="12"><b-form-checkbox class="form-control-sm" v-model="travelmodel.VisitRequest" name="checkbox-1" value="yes" unchecked-value="no" ref="VisitRequest">Visit Request Required</b-form-checkbox></b-col>
+              </b-row>
+              <b-row v-if="travelmodel.VisitRequest === 'yes'">
+                <b-col md="12">
+                  <b-form-select class="form-control-sm" v-model="travelmodel.Clearance" :options="levels" ref="Clearance" :state="ValidateMe('Clearance')"></b-form-select>
+                  <b-form-invalid-feedback>
+                    Please select a valid option
+                  </b-form-invalid-feedback>
+                </b-col>
+              </b-row>
+            </b-form>
+          </tab-content>
+          <tab-content id="Tab_3" title="Validation" icon="ti-check">
+            <h4>Your form is valid. Click "OK" to save or "Cancel" to close.</h4>
+          </tab-content>
+          <!-- <tab-content v-for="tab in tabs" :key="tab.idx" :title="tab.title" :icon="tab.icon">
+            <component :is="tab.component"></component>
+          </tab-content> -->
+          <template slot="footer" scope="props">
+            <div class="wizard-footer-left">
+              <b-button variant="warning" v-if="props.activeTabIndex > 0 && !props.isLastStep" @click="props.prevTab()">Previous</b-button>
+            </div>
+            <div class="wizard-footer-right">
+              <b-button variant="danger" @click="onModalCancel">
+                Cancel
+              </b-button>
+              <b-button variant="warning" v-if="!props.isLastStep" @click="props.nextTab()" class="wizard-footer-right ml-1">Next</b-button>
+              <b-button variant="success" v-if="props.isLastStep" @click="onModalSave" class="wizard-footer-right ml-1">OK</b-button>
+            </div>
+          </template>
+        </form-wizard>
       </div>
     </b-modal>
-    <b-row>
+    <!-- <b-row>
       <div class="titlebar">
         <span class="title">Travel Calendar</span>
       </div>
-    </b-row>
+    </b-row> -->
     <b-row>
       <ejs-schedule
         id="TravelCalendar"
@@ -249,79 +242,77 @@
     <b-modal id="ViewModal" ref="ViewModal" size="xl" centered hide-footer :header-bg-variant="headerBgVariant">
       <template v-slot:modal-title>{{ selectedtrip.Subject }}</template>
       <b-container fluid>
-        <b-table-simple id="ViewTable" hover small responsive>
-          <b-tbody>
-            <b-tr variant="dark">
-              <b-th>Workplan</b-th>
-              <b-th>Company</b-th>
-              <b-th>Start</b-th>
-              <b-th>End</b-th>
-              <b-th>From</b-th>
-              <b-th>To</b-th>
-            </b-tr>
-            <b-tr>
-              <b-td>{{ selectedtrip.WorkPlan }}</b-td>
-              <b-td>{{ selectedtrip.Company }}</b-td>
-              <b-td>{{ selectedtrip.StartTime }}</b-td>
-              <b-td>{{ selectedtrip.EndTime }}</b-td>
-              <b-td>{{ selectedtrip.TravelFrom }}</b-td>
-              <b-td>{{ selectedtrip.TravelTo }}</b-td>
-            </b-tr>
-            <b-tr variant="dark">
-              <b-th>Sponsor</b-th>
-              <b-th>POC Name</b-th>
-              <b-th>POC Email</b-th>
-              <b-th>POC Phone</b-th>
-              <b-th>Estimated Cost</b-th>
-              <b-th>Index #</b-th>
-            </b-tr>
-            <b-tr>
-              <b-td>{{ selectedtrip.Sponsor }}</b-td>
-              <b-td>{{ selectedtrip.POCName }}</b-td>
-              <b-td>{{ selectedtrip.POCEmail }}</b-td>
-              <b-td>{{ selectedtrip.POCPhone }}</b-td>
-              <b-td>{{ selectedtrip.EstimatedCost }}</b-td>
-              <b-td>{{ selectedtrip.IndexNumber }}</b-td>
-            </b-tr>
-            <b-tr variant="dark">
-              <b-th colspan="4">Purpose</b-th>
-              <b-th>Visit Request</b-th>
-              <b-th>Required Clearance</b-th>
-            </b-tr>
-            <b-tr>
-              <b-td colspan="4">{{ selectedtrip.Comments }}</b-td>
-              <b-td>{{ selectedtrip.VisitRequest }}</b-td>
-              <b-td>{{ selectedtrip.Clearance }}</b-td>
-            </b-tr>
-            <b-tr variant="dark">
-              <b-th colspan="6">Travelers</b-th>
-            </b-tr>
-            <b-tr>
-              <b-td colspan="6">
-                <b-table-simple hover small responsive>
-                  <b-tbody>
-                    <b-tr variant="dark">
-                      <b-th>First Name</b-th>
-                      <b-th>Last Name</b-th>
-                      <b-th>Email</b-th>
-                      <b-th>Phone</b-th>
-                    </b-tr>
-                    <b-tr v-for="traveler in selectedtrip.Travelers" :key="traveler">
-                      <b-td>{{ traveler.firstName }}</b-td>
-                      <b-td>{{ traveler.lastName }}</b-td>
-                      <b-td>{{ traveler.email }}</b-td>
-                      <b-td>{{ traveler.phone }}</b-td>
-                    </b-tr>
-                  </b-tbody>
-                </b-table-simple>
-              </b-td>
-            </b-tr>
-          </b-tbody>
-        </b-table-simple>
+        <table id="ViewTable">
+          <tbody>
+            <tr class="bg-black text-white">
+              <th>Workplan</th>
+              <th>Company</th>
+              <th>Start</th>
+              <th>End</th>
+              <th>From</th>
+              <th>To</th>
+            </tr>
+            <tr>
+              <td>{{ selectedtrip.WorkPlan }}</td>
+              <td>{{ selectedtrip.Company }}</td>
+              <td>{{ formatme(selectedtrip.StartTime, 'normal') }}</td>
+              <td>{{ formatme(selectedtrip.EndTime, 'normal') }}</td>
+              <td>{{ selectedtrip.TravelFrom }}</td>
+              <td>{{ selectedtrip.TravelTo }}</td>
+            </tr>
+            <tr class="bg-black text-white">
+              <th colspan="2">Sponsor</th>
+              <th>POC Name</th>
+              <th>POC Email</th>
+              <th>POC Phone</th>
+              <th>Estimated Cost</th>
+            </tr>
+            <tr>
+              <td colspan="2">{{ selectedtrip.Sponsor }}</td>
+              <td>{{ selectedtrip.POCName }}</td>
+              <td>{{ selectedtrip.POCEmail }}</td>
+              <td>{{ selectedtrip.POCPhone }}</td>
+              <td>${{ selectedtrip.EstimatedCost }}</td>
+            </tr>
+            <tr class="bg-black text-white">
+              <th colspan="4">Purpose</th>
+              <th>Visit Request</th>
+              <th>Required Clearance</th>
+            </tr>
+            <tr>
+              <td colspan="4">{{ selectedtrip.Comments }}</td>
+              <td>{{ selectedtrip.VisitRequest }}</td>
+              <td>{{ selectedtrip.Clearance }}</td>
+            </tr>
+            <tr class="bg-black text-white">
+              <th colspan="6">Travelers</th>
+            </tr>
+            <tr>
+              <td colspan="6">
+                <table style="width: 100%;">
+                  <tbody>
+                    <tr class="bg-black text-white">
+                      <th>First Name</th>
+                      <th>Last Name</th>
+                      <th>Email</th>
+                      <th>Phone</th>
+                    </tr>
+                    <tr v-for="traveler in selectedtrip.Travelers" :key="traveler">
+                      <td>{{ traveler.firstName }}</td>
+                      <td>{{ traveler.lastName }}</td>
+                      <td>{{ traveler.email }}</td>
+                      <td>{{ traveler.phone }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </b-container>
     </b-modal>
     <b-modal id="ApproveModal" ref="ApproveModal" size="xl" centered hide-footer :header-bg-variant="headerBgVariant">
-      <template v-slot:modal-title>{{ selectedtrip.Subject }}</template>
+      <template v-slot:modal-title>Approve Travel Requests</template>
       <b-container fluid>
         <b-form>
           <b-table
@@ -339,7 +330,7 @@
             style="table-layout: fixed;"
           >
             <template v-slot:cell(actions)="data">
-              <b-button size="sm" class="actionbutton" @click="approveme(data.index)" title="Mark Complete">
+              <b-button size="sm" class="actionbutton" @click="approveme(data.index)" title="Approve It">
                 <font-awesome-icon far icon="check-circle" class="icon" :style="{ color: 'green' }"></font-awesome-icon>
               </b-button>
               <b-button size="sm" class="actionbutton" @click="data.toggleDetails">
@@ -348,35 +339,41 @@
                 <font-awesome-icon v-else far class="icon" icon="plus-square" :style="{ color: 'black' }"></font-awesome-icon>
               </b-button>
             </template>
+            <template v-slot:cell(StartTime)="data">
+              <div>{{ formatme(approvalData[data.index].StartTime, 'normal') }}</div>
+            </template>
+            <template v-slot:cell(EndTime)="data">
+              <div>{{ formatme(approvalData[data.index].EndTime, 'normal') }}</div>
+            </template>
             <template v-slot:row-details="data">
               <!-- <b-input-group size="sm" prepend="Description">
                 <b-form-input v-model="approvalData[data.index].Comments"></b-form-input>
               </b-input-group> -->
-              <b-table-simple>
-                <b-tbody>
-                  <b-tr variant="dark">
-                    <b-th colspan="4">Purpose</b-th>
-                  </b-tr>
-                  <b-tr>
-                    <b-th colspan="4">{{ approvalData[data.index].Comments }}</b-th>
-                  </b-tr>
-                  <b-tr variant="dark">
-                    <b-th colspan="4">Travelers</b-th>
-                  </b-tr>
-                  <b-tr variant="dark">
-                    <b-th>First Name</b-th>
-                    <b-th>Last Name</b-th>
-                    <b-th>Email</b-th>
-                    <b-th>Phone</b-th>
-                  </b-tr>
-                  <b-tr v-for="traveler in approvalData[data.index].Travelers" :key="traveler">
-                    <b-td>{{ traveler.firstName }}</b-td>
-                    <b-td>{{ traveler.lastName }}</b-td>
-                    <b-td>{{ traveler.email }}</b-td>
-                    <b-td>{{ traveler.phone }}</b-td>
-                  </b-tr>
-                </b-tbody>
-              </b-table-simple>
+              <table style="width: 100%;">
+                <tbody>
+                  <tr>
+                    <th colspan="4" class="bg-black text-white text-center">Purpose</th>
+                  </tr>
+                  <tr>
+                    <th colspan="4">{{ approvalData[data.index].Comments }}</th>
+                  </tr>
+                  <tr>
+                    <th colspan="4" class="bg-black text-white text-center">Travelers</th>
+                  </tr>
+                  <tr class="bg-black text-white">
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                  </tr>
+                  <tr v-for="traveler in approvalData[data.index].Travelers" :key="traveler">
+                    <td>{{ traveler.firstName }}</td>
+                    <td>{{ traveler.lastName }}</td>
+                    <td>{{ traveler.email }}</td>
+                    <td>{{ traveler.phone }}</td>
+                  </tr>
+                </tbody>
+              </table>
             </template>
           </b-table>
         </b-form>
@@ -421,7 +418,7 @@ export default {
     return {
       stepIndex: 0,
       currentmode: 'default',
-      height: '700px',
+      height: '750px',
       selectedDate: null,
       defaultDate: new Date(),
       currentView: 'Month',
@@ -459,7 +456,7 @@ export default {
       },
       selectedtrip: {},
       fieldsFirstTab: ['WorkPlan', 'Company', 'start', 'end', 'TravelFrom', 'TravelTo'],
-      fieldsThirdTab: ['Sponsor', 'EstimatedCost', 'IndexNumber', 'POCName', 'POCEmail', 'POCPhone', 'Comments', 'Clearance'],
+      fieldsThirdTab: ['Sponsor', 'EstimatedCost', 'POCName', 'POCEmail', 'POCPhone', 'Comments', 'Clearance'],
       travelerData: [
         {
           firstName: 'First Name',
@@ -473,6 +470,12 @@ export default {
         validationSuccessClass: 'has-success',
         validateAfterChanged: true
       },
+      tabs: [
+        { title: 'Travel Information', icon: 'ti-location-pin', component: 'step1', idx: 0 },
+        { title: 'Traveler Details', icon: 'ti-user', component: 'step2', idx: 1 },
+        { title: 'Additional Info', icon: 'ti-settings', component: 'step3', idx: 2 },
+        { title: 'Validation', icon: 'ti-check', component: 'step4', idx: 3 }
+      ],
       formValid: false,
       striped: true,
       bordered: true,
@@ -483,16 +486,15 @@ export default {
       fixed: false,
       footClone: false,
       fields: [
-        { key: 'actions', label: 'Action', thClass: 'text-center px40' },
-        { key: 'firstName', label: 'First Name', thClass: 'text-center px80' },
+        { key: 'actions', label: 'Action', thClass: 'bg-black text-white text-center px40' },
+        { key: 'firstName', label: 'First Name', thClass: 'bg-black text-white text-center px80' },
         {
           key: 'lastName',
           label: 'Last Name',
-          thClass: 'text-center px80',
-          sortable: true
+          thClass: 'bg-black text-white text-center px80'
         },
-        { key: 'email', label: 'Email', thClass: 'text-center px200' },
-        { key: 'phone', label: 'Phone', thClass: 'text-center px100' }
+        { key: 'email', label: 'Email', thClass: 'bg-black text-white text-center px200' },
+        { key: 'phone', label: 'Phone', thClass: 'bg-black text-white text-center px100' }
       ],
       levels: [
         { value: 'Select', text: 'Select' },
@@ -503,18 +505,18 @@ export default {
       approvalData: [],
       approvalItems: [],
       approvalfields: [
-        { key: 'actions', label: 'Action', thClass: 'text-center px40' },
-        { key: 'Subject', label: 'Title', thClass: 'text-center px250' },
+        { key: 'actions', label: 'Action', thClass: 'bg-black text-white text-center px40' },
+        { key: 'Subject', label: 'Title', thClass: 'bg-black text-white text-center px250' },
         {
           key: 'StartTime',
           label: 'Start Date',
-          thClass: 'text-center px80'
+          thClass: 'bg-black text-white text-center px80'
         },
-        { key: 'End Time', label: 'End Date', thClass: 'text-center px80' },
-        { key: 'Sponsor', label: 'Gov Sponsor', thClass: 'text-center px100' },
-        { key: 'Company', label: 'Company', thClass: 'text-center px100' },
-        { key: 'WorkPlan', label: 'Work Plan', thClass: 'text-center px80' },
-        { key: 'EstimatedCost', label: 'Est. Cost', thClass: 'text-center px60' }
+        { key: 'EndTime', label: 'End Date', thClass: 'bg-black text-white text-center px80' },
+        { key: 'Sponsor', label: 'Gov Sponsor', thClass: 'bg-black text-white text-center px100' },
+        { key: 'Company', label: 'Company', thClass: 'bg-black text-white text-center px100' },
+        { key: 'WorkPlan', label: 'Work Plan', thClass: 'bg-black text-white text-center px80' },
+        { key: 'EstimatedCost', label: 'Est. Cost', thClass: 'bg-black text-white text-center px60' }
       ],
       requiresSecurity: false
     }
@@ -551,18 +553,21 @@ export default {
         } else {
           // what are we here for? default view? Or are we here to edit/update travel requests
           switch (this.mode) {
-            case 'approval':
+            case 'approval': {
               let items = this.travel.filter(trip => trip.Status == 'New')
               for (let i = 0; i < items.length; i++) {
                 let item = items[i]
                 item.Travelers = JSON.parse(item.Travelers)
-                item.StartTime = String(moment(item.StartTime).format('MM/DD/YYYY'))
-                item.EndTime = String(moment(item.EndTime).format('MM/DD/YYYY'))
                 this.approvalItems.push(item)
               }
               console.log('ITEMS TO APPROVE:' + items + ', ' + items.length)
               this.$bvModal.show('ApproveModal')
               break
+            }
+            case 'new': {
+              this.$bvModal.show('modal-wizard')
+              break
+            }
           }
         }
       }
@@ -571,7 +576,16 @@ export default {
       console.log('MODAL HIDE')
     },
     onModalCancel: function() {
+      // this.$refs.TravelWizard.reset()
       this.$bvModal.hide('modal-wizard')
+      this.tabs.sort(function(a, b) {
+        if (a.idx > b.idx) {
+          return 1
+        } else if (a.idx < b.idx) {
+          return -1
+        }
+        return 0
+      })
     },
     onModalSave: function() {
       console.log('MODAL SAVE')
@@ -596,8 +610,7 @@ export default {
         Comments: this.travelmodel.Comments,
         Clearance: this.travelmodel.Clearance,
         VisitRequest: this.travelmodel.VisitRequest,
-        EstimatedCost: this.travelmodel.EstimatedCost,
-        IndexNumber: this.travelmodel.IndexNumber
+        EstimatedCost: this.travelmodel.EstimatedCost
       })
       this.$refs.TravelCalendar.addEvent(event)
       // now push this to the data module to save to sharepoint
@@ -608,7 +621,7 @@ export default {
         vm.$bvModal.hide('modal-wizard')
         // validate if email needs to be sent
         if (vm.emailRequired) {
-          Travel.dispatch('sendEmail', id).then(function(response) {
+          Travel.dispatch('sendEmail', id).then(function() {
             console.log('EMAIL SENT TO SECURITY')
           })
         }
@@ -631,9 +644,15 @@ export default {
     },
     onEventRendered: function(args) {
       let c = args.data.class
+      console.log('Setting CLASS for event: ' + c + ', element? ' + args.element)
       if (!args.element || !c) {
         return
       }
+      // remove any existing classes then add the new class
+      args.element.classList.remove('travel-new')
+      args.element.classList.remove('travel-approved')
+      args.element.classList.remove('travel-report')
+      args.element.classList.remove('travel-no-report')
       args.element.classList.add(c)
     },
     onEventClick: function(args) {
@@ -645,10 +664,6 @@ export default {
     },
     onResizeStop: function(args) {
       console.log('RESIZED: ' + args)
-    },
-    rowClass(item, type) {
-      if (!item) return
-      if (item.delete === 'Y') return 'table-delete'
     },
     getRandomInt(max) {
       return Math.floor(Math.random() * Math.floor(max))
@@ -662,7 +677,7 @@ export default {
     }, */
     ValidateMe: function(control) {
       let phoneNumberPattern = /^\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/
-      let emailPattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+      let emailPattern = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/
       let ret = false
       switch (control) {
         case 'Subject':
@@ -722,9 +737,9 @@ export default {
           break
 
         case 'Clearance':
-          let req = this.travelmodel.VisitRequest
-          let val = this.travelmodel.Clearance
-          let good = false
+          var req = this.travelmodel.VisitRequest
+          var val = this.travelmodel.Clearance
+          var good = false
           if (req === 'yes' && val !== 'Select') {
             good = true
           }
@@ -754,7 +769,7 @@ export default {
       return c
     },
     validateEmail: function(email) {
-      let emailPattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+      let emailPattern = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/
       let a = String(email)
       a = a.split('_')
       let b = parseInt(a[1])
@@ -858,22 +873,58 @@ export default {
         email: '',
         phone: ''
       })
+    },
+    approveme: function(idx) {
+      let payload = {}
+      payload.id = this.approvalData[idx].Id
+      payload.uri = this.approvalData[idx].uri
+      payload.etag = this.approvalData[idx].etag
+      let item = this.approvalItems.filter(trip => trip.Id == payload.id)
+      let keep = this.approvalItems.filter(trip => trip.Id != payload.id)
+      this.approvalItems = keep
+      item[0].Status = 'Approved'
+      item[0].class = 'travel-approved'
+      this.$refs.TravelCalendar.saveEvent(item)
+      // tell sharepoint to update the status to Approved
+      this.$store.dispatch('database/travel/approveTravel', payload).then(function() {
+        // perhaps do something here?
+      })
     }
   },
   watch: {
+    // eslint-disable-next-line no-unused-vars
     $route(to, from) {
       this.mode = to.params.mode
       console.log('Mode changes from TravelCalendar.vue: ' + this.currentmode + ', ' + this.mode)
-      if (this.mode === 'view') {
-        let id = Number(this.$route.query.id)
-        let trip = this.travel.filter(trip => trip.id == id)
-        trip = trip[0]
-        trip.Travelers = JSON.parse(trip.Travelers)
-        trip.StartTime = String(this.formatme(trip.StartTime, 'normal'))
-        trip.EndTime = String(this.formatme(trip.EndTime, 'normal'))
-        console.log('START: ' + trip.StartTime + ', END: ' + trip.EndTime)
-        this.selectedtrip = trip
-        this.$bvModal.show('ViewModal')
+      switch (this.mode) {
+        case 'view':
+          this.selectedtrip = {} // clear any existing item
+          var id = Number(this.$route.query.id)
+          var trip = this.travel.filter(trip => trip.id == id)
+          trip = trip[0]
+          trip.Travelers = JSON.parse(trip.Travelers)
+          this.selectedtrip = trip
+          this.$bvModal.show('ViewModal')
+          break
+
+        case 'approval':
+          this.approvalItems = [] // clear any existing items
+          var items = this.travel.filter(trip => trip.Status == 'New')
+          for (let i = 0; i < items.length; i++) {
+            let item = items[i]
+            item.Travelers = JSON.parse(item.Travelers)
+            this.approvalItems.push(item)
+          }
+          this.$bvModal.show('ApproveModal')
+          break
+
+        case 'new':
+          this.$bvModal.show('modal-wizard')
+          break
+
+        case 'default':
+          window.location.reload()
+          break
       }
     }
   }
@@ -902,6 +953,8 @@ export default {
 }
 
 #ApprovalsTable td {
+  height: 20px;
+  background-color: #ffffff !important;
   text-indent: 3px;
 }
 
@@ -922,6 +975,8 @@ export default {
 }
 
 #TravelersTable td {
+  height: 20px;
+  background-color: #ffffff !important;
   text-indent: 3px;
 }
 
@@ -941,6 +996,8 @@ export default {
 }
 
 #ViewTable td {
+  height: 20px;
+  background-color: #ffffff !important;
   text-indent: 3px;
 }
 

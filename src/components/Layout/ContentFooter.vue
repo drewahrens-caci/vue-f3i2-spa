@@ -10,7 +10,7 @@
       </nav>
       <div class="copyright">
         &copy; Coded with
-        <font-awesome-icon fas icon="heart" class="heart"></font-awesome-icon> by <a href="#" target="_blank">Daniel Walker</a>. Designed by <a href="#" target="_blank" rel="noopener">CACI</a>.
+        <font-awesome-icon fas icon="heart" class="heart"></font-awesome-icon> by Daniel Walker. Designed by CACI.
       </div>
     </div>
   </footer>

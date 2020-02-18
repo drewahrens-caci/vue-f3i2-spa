@@ -21,7 +21,6 @@
   @include transition (300ms, linear);
 }
 
-
 // THE SIDEBAR
 
 .sidebar{
@@ -35,8 +34,8 @@
   z-index: 1;
   color: #fff;
   font-weight: 200;
-  background-size: cover;
-  background-position: center center;
+  /* background-size: cover;
+  background-position: center center; */
 
   .logo-img{
     width: 34px;
@@ -81,11 +80,11 @@
       text-transform: uppercase;
       padding: $padding-small-vertical $padding-zero;
       display: inline-block;
-      font-size: $font-size-large;
+      font-size: $font-size-lg;
       font-weight: $font-weight-normal;
       line-height: 30px;
       white-space: nowrap;
-      color: $white-color;
+      color: $white;
       overflow: hidden;
     }
 
@@ -213,7 +212,7 @@
         top: -5px;
       }
       a{
-        color: $white-color;
+        color: $white;
         padding: 8px 14px;
         display: block;
         white-space: nowrap;
@@ -275,7 +274,7 @@
 
     .nav-item{
       .nav-link{
-        color: $white-color;
+        color: $white;
         margin: 5px 5px 0px 5px;
         opacity: .86;
         border-radius: 4px;
@@ -316,7 +315,7 @@
       }
 
       &.active .nav-link{
-        color: $white-color;
+        color: $white;
         opacity: 1;
         background: rgba(255,255,255,0.23);
 
@@ -362,7 +361,7 @@
       float: left;
       font-size: 20px;
       margin: 10px 10px;
-      color: $white-color;
+      color: $white;
       line-height: 20px;
       font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     }
@@ -371,8 +370,8 @@
       text-transform: uppercase;
       padding: 5px 0px 5px 15px;
       display: block;
-      font-size: $font-size-large;
-      color: $white-color;
+      font-size: $font-size-lg;
+      color: $white;
       font-weight: $font-weight-normal;
       line-height: 30px;
       white-space: nowrap;
@@ -403,7 +402,7 @@
       right: 15px;
       width: calc(100% - 30px);
       height: 1px;
-      background-color: rgba($white-color, 0.3);
+      background-color: rgba($white, 0.3);
     }
 
   }
@@ -412,8 +411,8 @@
       text-transform: uppercase;
       padding: 7px 0px;
       display: block;
-      font-size: $font-size-large;
-      color: $white-color;
+      font-size: $font-size-lg;
+      color: $white;
       font-weight: $font-weight-normal;
       line-height: 30px;
       text-align: center;
@@ -429,7 +428,7 @@
 
   // colors for the sidebar with an image
 
-  &[data-color="black"]:after{
+  /* &[data-color="black"]:after{
     @include icon-gradient($black-color-filter-top, $black-color-filter-bottom);
   }
   &[data-color="blue"]:after{
@@ -449,21 +448,23 @@
   }
   &[data-color="purple"]:after{
     @include icon-gradient($color-purple, rgba($purple-color-bottom,.7));
-  }
+  } */
 }
 
 //  MAIN PANEL
 
 
 .main-panel{
-  background: #ffffff;
+  /* background: #ffffff; */
   position: relative;
   float: right;
   width: $sidebar-width;
 
   .content{
     /* padding: 30px 15px; */
-    min-height: calc(100vh - 90px);
+    height: calc(100vh - 90px);
+    overflow-y: scroll;
+    background: transparent;
   }
 
   .footer{
@@ -522,7 +523,7 @@
 }
 
 
-@media (min-width: $screen-md) {
+@media (min-width: 992px) {
   .sidebar-mini{
     .visible-on-sidebar-regular{
       display: none !important;
@@ -588,14 +589,14 @@
         }
       }
 
-      .nav{
+      /* .nav{
         .nav-item .nav-link{
           .sidebar-mini{
             padding-left: 30px !important;
           }
         }
       }
-
+ */
       &:hover{
         /* width: 260px; */
         width: 300px;

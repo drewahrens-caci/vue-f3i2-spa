@@ -8,10 +8,6 @@
 </template>
 
 <script>
-// import Calendar from '@/components/Calendar/Calendar.vue'
-import Calendar from '@/components/Calendar/TravelCalendar.vue'
-import { mapState } from 'vuex'
-
 export default {
   name: 'home',
   props: {
@@ -21,7 +17,8 @@ export default {
     }
   },
   components: {
-    Calendar
+    // Calendar
+    calendar: () => import(/* webpackChunkName: "travelcalendar" */ '../Calendar/TravelCalendar.vue')
   },
   mounted: function() {
     this.$nextTick(function() {

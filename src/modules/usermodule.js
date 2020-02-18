@@ -14,6 +14,18 @@ const getters = {
   },
   CurrentUserId: state => {
     return state.userid
+  },
+  CurrentUserGroups: state => {
+    return state.usergroups
+  },
+  isOwner: state => {
+    return state.isOwner
+  },
+  isWPManager: state => {
+    return state.isWPManager
+  },
+  isApprover: state => {
+    return state.isApprover
   }
 }
 
@@ -22,6 +34,7 @@ const actions = {
     UserProfileService.getUserId()
       .then(response => {
         User.commit((state) => {
+          console.log('USER ID: ' + response.data.d.Id)
           state.userid = response.data.d.Id
         })
       })
@@ -32,7 +45,7 @@ const actions = {
   getUserProfile() {
     UserProfileService.getUserProfile()
       .then(response => {
-        // console.log('Profile Data: ' + response)
+        console.log('Profile Data: ' + response)
         let profile = {}
         let userid = User.getters('CurrentUserId')
         let properties = response.data.d.UserProfileProperties.results
@@ -59,6 +72,9 @@ const actions = {
             case 'Manager':
               profile.Manager = property.Value
               break
+
+            case 'AboutMe':
+              profile.About = property.Value
           }
         }
         // console.log('Inserting User Data.')
@@ -66,6 +82,33 @@ const actions = {
       })
       .catch(error => {
         console.log('There was an error getting profile data: ', error.response)
+      })
+  },
+  getUserGroups({ state }) {
+    UserProfileService.getUserGroups(state.userid)
+      .then(response => {
+        console.log('GROUPS: ' + response)
+        User.commit((state) => {
+          state.usergroups = response.data.d.results
+          for (let i = 0; i < state.usergroups.length; i++) {
+            switch (state.usergroups[i].Title) {
+              case 'Approvers':
+                state.isApprover = true
+                break
+    
+              case 'F3I-2 Owners':
+                state.isOwner = true
+                break
+    
+              case 'Workplan Managers':
+                state.isWPManager = true
+                break
+            }
+          }
+        })
+      })
+      .catch(error => {
+        console.log('There was an error getting user groups: ', error.response)
       })
   }
 }

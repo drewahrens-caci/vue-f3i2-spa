@@ -9,18 +9,19 @@
 }
 .navbar{
   border: $none;
-  font-size: $font-size-navbar;
+  font-size: $font-size;
   border-radius: 0;
   min-height: 50px;
   max-height: 50px;
-  background-color: $white-navbar;
-  border-bottom: 1px solid #000000;
+  /* background-color: $white; */
+  /* border-bottom: 1px solid #000000; */
+  background-color: rgba($black, 0.3);
 
   .navbar-brand {
     font-weight: 400;
     margin: 5px 0px;
     font-size: 18px;
-    color: $black !important;
+    color: $white !important;
 
     &:hover{
       color: #5e5e5e;
@@ -76,7 +77,8 @@
       margin: 0 3px;
         
       .nav-link{
-        color: $default-color;
+        /* color: $default-color; */
+        color: $white;
         padding: $navbar-padding-a;
         margin: $navbar-margin-a;
         position: relative;
@@ -100,7 +102,7 @@
         }
 
         &:hover{
-          color: $info-color;
+          color: $info;
         }
 
         .stats{
@@ -141,7 +143,7 @@
       padding: 0 5px;
       height: 18px;
       font-size: 12px;
-      color: $white-color;
+      color: $white;
       font-weight: bold;
       line-height: 18px;
       top: 10px;
@@ -180,7 +182,7 @@
 
 .navbar-transparent, [class*="navbar-ct"]{
   .navbar-brand{
-    color: $white-color !important;
+    color: $white !important;
     margin-left: 10px;
     @include opacity(.9);
 
@@ -188,15 +190,15 @@
     &:hover{
       background-color: transparent;
       @include opacity(1);
-      color: $white-color;
+      color: $white;
     }
   }
 
   .navbar-nav{
     .nav-item{
       .nav-link:not(.btn){
-        color: $white-color;
-        border-color: $white-color;
+        color: $white;
+        border-color: $white;
         @include opacity(0.8);
       }
     }
@@ -208,7 +210,7 @@
       .nav-link:focus:not(.btn) {
         background-color: transparent;
         border-radius: 3px;
-        color: $white-color;
+        color: $white;
         @include opacity(.8);
 
         &:focus,
@@ -227,19 +229,19 @@
       .nav-link:hover,
       .nav-link:focus{
         background-color: transparent;
-        color: $white-color;
+        color: $white;
         @include opacity(1);
       }
     }
   }
 
   .btn-default{
-    color: $white-color;
-    border-color: $white-color;
+    color: $white;
+    border-color: $white;
   }
   .btn-default.btn-fill{
-    color: $dark-gray;
-    background-color: $white-color;
+    color: $black;
+    background-color: $white;
     @include opacity(.9);
   }
   .btn-default.btn-fill:hover,
@@ -247,26 +249,26 @@
   .btn-default.btn-fill:active,
   .btn-default.btn-fill.active,
   .show .dropdown-toggle.btn-fill.btn-default{
-    border-color: $white-color;
+    border-color: $white;
     @include opacity(1);
   }
 
 }
 .navbar-transparent{
   .dropdown-menu .divider{
-    background-color: rgba($white-color,.2);
+    background-color: rgba($white,.2);
   }
 }
 
 
 .navbar-default {
-  background-color: $white-navbar;
+  background-color: $white;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 
   .navbar-nav{
     .nav-item{
       .nav-link:not(.btn){
-        color: $dark-gray;
+        color: $black;
       }
     }
 
@@ -277,7 +279,7 @@
     .nav-item .nav-link:not(.btn):focus{
       background-color: transparent;
       border-radius: 3px;
-      color: $info-color;
+      color: $info;
       @include opacity(1);
     }
 
@@ -286,7 +288,7 @@
       .nav-link:hover,
       .nav-link:focus{
         background-color: transparent;
-        color: $info-color;
+        color: $info;
       }
     }
 
@@ -298,13 +300,13 @@
   }
 
   &:not(.navbar-transparent) .btn-default:hover{
-    color: $info-color;
-    border-color: $info-color;
+    color: $info;
+    border-color: $info;
   }
   &:not(.navbar-transparent) .btn-neutral,
   &:not(.navbar-transparent) .btn-neutral:hover,
   &:not(.navbar-transparent) .btn-neutral:active{
-    color: $dark-gray;
+    color: $black;
   }
 }
 
@@ -339,33 +341,33 @@
   .form-control{
     @include light-form();
     height: 22px;
-    font-size: $font-size-navbar;
+    font-size: $font-size;
     line-height: $line-height-general;
-    color: $light-gray;
+    color: $gray-200;
   }
   .navbar-transparent & .form-control,
   [class*="navbar-ct"] & .form-control{
-    color: $white-color;
+    color: $white;
     border: $none;
-    border-bottom: 1px solid rgba($white-color,.6);
+    border-bottom: 1px solid rgba($white,.6);
   }
 
 }
 
 .navbar-ct-blue{
-  @include navbar-color($blue-navbar);
+  @include navbar-color($blue);
 }
 .navbar-ct-azure{
-  @include navbar-color($azure-navbar);
+  @include navbar-color($azure);
 }
 .navbar-ct-green{
-  @include navbar-color($green-navbar);
+  @include navbar-color($green);
 }
 .navbar-ct-orange{
-  @include navbar-color($orange-navbar);
+  @include navbar-color($orange);
 }
 .navbar-ct-red{
-  @include navbar-color($red-navbar);
+  @include navbar-color($red);
 }
 
 .navbar-transparent{
@@ -375,7 +377,7 @@
   z-index: 999;
   .navbar-toggler{
     .burger-lines{
-      background: $white-color;
+      background: $white;
     }
   }
 }
@@ -386,7 +388,7 @@
   border: $none;
 
   .icon-bar {
-    background-color: $white-color;
+    background-color: $white;
   }
   .navbar-collapse,
   .navbar-form {
@@ -419,21 +421,21 @@
     text-align: center;
     vertical-align: middle;
     float: left;
-    color: $white-color;
+    color: $white;
   }
 
   .form-control{
     &::-webkit-input-placeholder { /* Chrome/Opera/Safari */
-      color: $white-color;
+      color: $white;
     }
     &::-moz-placeholder { /* Firefox 19+ */
-      color: $white-color;
+      color: $white;
     }
     &:-ms-input-placeholder { /* IE 10+ */
-      color: $white-color;
+      color: $white;
     }
     &:-moz-placeholder { /* Firefox 18- */
-      color: $white-color;
+      color: $white;
     }
   }
 }

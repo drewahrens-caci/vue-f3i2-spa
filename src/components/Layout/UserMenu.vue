@@ -15,9 +15,6 @@
               <font-awesome-icon v-else far class="icon" icon="plus-square" :style="{ color: 'black' }"></font-awesome-icon>
             </b-button>
           </template>
-          <!-- <template v-slot:cell(Status)="data">
-            <b-form-select class="form-control-xs bg-light" v-model="shownData[data.index].Status" :options="status"></b-form-select>
-          </template> -->
           <template v-slot:row-details="data">
             <b-input-group size="sm" prepend="Description">
               <b-form-input v-model="shownData[data.index].Body"></b-form-input>
@@ -26,6 +23,15 @@
         </b-table>
       </b-form>
     </b-modal>
+    <b-modal id="Profile" ref="Profile" centered :header-bg-variant="headerBgVariant" @ok="updateProfile">
+      <template v-slot:modal-title>Please Update Your Profile</template>
+      <div>
+        <p>Please update your profile so that the contact and about me information is correct.</p>
+        <p></p>
+        <p>This information will inform others on how best to contact you and learn more about you.</p>
+        <p>On the following page, click the 'edit' your profile link and fill it out including the About me section</p>
+      </div>
+    </b-modal>
     <div class="photo">
       <img id="UserImage" :src="userpic" alt="Personal Photo" />
     </div>
@@ -33,7 +39,7 @@
       <a data-toggle="collapse" :aria-expanded="!isClosed" @click.stop="toggleMenu" href="#">
         <span class="UserName">
           {{ userdisplayname }}
-          <span id="userbadgeA" class="badge badge-xs badge-warning">{{ mytodos.length }}</span>
+          <span v-if="mytodos.length > 0" id="userbadgeA" class="badge badge-xs badge-danger">{{ mytodos.length }}</span>
           <b class="caret"></b>
         </span>
       </a>
@@ -48,11 +54,11 @@
                   <span class="sidebar-normal">My Profile</span>
                 </a>
               </li>
-              <li>
+              <li v-if="mytodos.length > 0">
                 <a class="profile-dropdown" href="#" @click="OpenTodos">
                   <span class="sidebar-mini"><font-awesome-icon fas icon="tasks" class="icon"></font-awesome-icon></span>
                   <span class="sidebar-normal">
-                    My Tasks <span id="userbadgeB" class="badge badge-xs badge-warning">{{ mytodos.length }}</span>
+                    My Tasks <span id="userbadgeB" class="badge badge-xs badge-danger">{{ mytodos.length }}</span>
                   </span>
                 </a>
               </li>
@@ -67,10 +73,13 @@
 <script>
 let vm = null
 import { isNullOrUndefined } from 'util'
-import push from 'push.js'
+// import push from 'push.js'
 import User from '@/models/User'
-import Todo from '@/models/Todo'
+import Backlog from '@/models/Backlog'
 import CollapseTransition from 'element-ui/lib/transitions/collapse-transition'
+
+// eslint-disable-next-line no-undef
+let baseurl = _spPageContextInfo.webServerRelativeUrl
 
 export default {
   components: {
@@ -84,13 +93,16 @@ export default {
       return User.getters('CurrentUserId')
     },
     mytodosloaded() {
-      return Todo.getters('MyTodosLoaded')
+      return Backlog.getters('MyItemsLoaded')
     },
     mytodos() {
-      return Todo.getters('mytodos')
+      return Backlog.getters('myitems')
     },
     todos() {
-      return Todo.getters('allTodos')
+      return Backlog.getters('allItems')
+    },
+    usergroups() {
+      return User.getters('CurrentUserGroups')
     }
   },
   props: {
@@ -103,7 +115,7 @@ export default {
     return {
       todocount: 0,
       userdisplayname: '',
-      userpic: 'https://infoplus.caci.com/sites/f3i2/SiteAssets/html/static/img/user.png',
+      userpic: baseurl + '/SiteAssets/html/static/img/user.png',
       userurl: '#',
       isClosed: true,
       variants: ['primary', 'secondary', 'success', 'warning', 'danger', 'info', 'light', 'dark', 'black'],
@@ -136,9 +148,10 @@ export default {
   mounted: function() {
     vm = this
     this.$nextTick(function() {
-      Todo.dispatch('getDigest')
+      // Todo.dispatch('getDigest')
+      Backlog.dispatch('getDigest')
       vm.getUserId()
-      console.log('All todos length: ' + vm.todos.length)
+      // console.log('All todos length: ' + vm.todos.length)
     })
   },
   methods: {
@@ -149,35 +162,31 @@ export default {
       this.$bvModal.show('Todos')
     },
     getUserProfile: function() {
-      if (this.mytodosloaded) {
-        clearInterval(this.$options.interval)
-        User.dispatch('getUserProfile').then(function() {
-          if (vm.mytodos.length > 0) {
-            vm.todocount = vm.mytodos.length
-            // TODO: Create cookie to store that the user has been notified from here that they have tasks due. Cookie should expire at the end of the day.
-            // TODO: Create interval checking to check for new assigned tasks every few minutes.
-            /* push.create('You have some tasks!', {
-              body: "Let's get some tasks done!",
-              icon: 'https://infoplus.caci.com/sites/f3i2/SiteAssets/html/static/img/task-done-outline.png',
-              link: '/#',
-              timeout: 10000,
-              onClick: function() {
-                window.focus()
-                this.close()
-              }
-            }) */
-            vm.$options.interval = setInterval(vm.updateUserPic, 1000)
-          }
-        })
-      }
+      clearInterval(this.$options.interval)
+      User.dispatch('getUserProfile').then(function() {
+        vm.$options.interval = setInterval(vm.updateUserPic, 1000)
+      })
     },
     updateUserPic: function() {
-      if (!isNullOrUndefined(this.profiledata.PictureUrl)) {
-        clearInterval(this.$options.interval)
-        this.userpic = this.profiledata.PictureUrl
-        this.userdisplayname = this.profiledata.DisplayName
-        this.userurl = this.profiledata.PersonalUrl
+      console.log('SETTING PROFILE DATA...')
+      clearInterval(this.$options.interval)
+      this.userpic = this.profiledata.PictureUrl
+      this.userdisplayname = this.profiledata.DisplayName
+      this.userurl = this.profiledata.PersonalUrl
+      // if the About is empty they have not filled out the profile properly
+      // console.log('ABOUT ME: ' + this.profiledata.About)
+      if (isNullOrUndefined(this.profiledata.About) || this.profiledata.About == '') {
+        this.$bvModal.show('Profile')
       }
+      if (vm.mytodos.length > 0) {
+        vm.todocount = vm.mytodos.length
+      }
+      User.dispatch('getUserGroups').then(function() {
+        // vm.$options.interval = setInterval(vm.updateUserGroups, 1000)
+      })
+    },
+    updateProfile: function() {
+      window.open(this.userurl, '_blank')
     },
     getUserId: function() {
       User.dispatch('getUserId').then(function() {
@@ -189,32 +198,34 @@ export default {
         let userid = this.UserId
         // console.log('USERID: ' + userid)
         clearInterval(this.$options.interval)
-        this.$store.dispatch('database/todos/getTodosByUser', userid).then(function() {
-          // console.log('Dispatched action getTodosByUser')
+        this.$store.dispatch('database/backlog/getItemsByUser', userid).then(function() {
           vm.$options.interval = setInterval(vm.getUserProfile, 1000)
         })
       }
     },
     refreshMyTodos: function() {
       let userid = this.UserId
-      this.$store.dispatch('database/todos/getTodosByUser', userid)
+      this.$store.dispatch('database/backlog/getItemsByUser', userid)
     },
     completeme: function(idx) {
       let payload = {}
       payload.id = this.shownData[idx].id
       payload.uri = this.shownData[idx].uri
       payload.etag = this.shownData[idx].etag
-      // console.log('Updating Todo: uri - ' + uri + ', etag - ' + etag)
-      this.$store.dispatch('database/todos/completeTodo', payload).then(function(response) {
+      this.$store.dispatch('database/backlog/completeItem', payload).then(function() {
         let userid = vm.UserId
-        vm.$store.dispatch('database/todos/getTodosByUser', userid).then(function() {
-          vm.$options.interval = setInterval(vm.refreshMyTodos, 10000)
+        vm.$store.dispatch('database/backlog/getItemsByUser', userid).then(function() {
+          // set to refresh backlog tasks on time loop
+          // vm.$options.interval = setInterval(vm.refreshMyTodos, 10000)
         })
       })
     }
   },
   beforeDestroy() {
     clearInterval(this.$options.interval)
+  },
+  updated: function() {
+    console.log('USERMENU UPDATED')
   }
 }
 </script>
@@ -265,6 +276,21 @@ export default {
 }
 
 #Todos .close {
+  padding: 1rem 1rem;
+  margin: -1rem -1rem -1rem auto;
+  color: #ffffff !important;
+  opacity: 1;
+}
+
+#Profile .modal-title {
+  margin: 0 auto;
+  line-height: 1.5;
+  width: 100%;
+  text-align: center;
+  color: #ffffff !important;
+}
+
+#Profile .close {
   padding: 1rem 1rem;
   margin: -1rem -1rem -1rem auto;
   color: #ffffff !important;
