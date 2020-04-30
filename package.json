@@ -23,7 +23,7 @@
     "bootstrap": "^4.4.1",
     "bootstrap-vue": "^2.4.0",
     "element-ui": "^2.13.0",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "moment": "^2.24.0",
     "push.js": "^1.0.12",
     "vue": "^2.6.11",
