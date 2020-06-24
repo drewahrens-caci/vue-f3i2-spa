@@ -2,8 +2,10 @@ module.exports = {
   devServer: {
     host: 'localhost'
   },
+
   assetsDir: 'static',
   publicPath: '/sites/f3i2/SiteAssets/html/',
+
   configureWebpack: {
     optimization: {
       splitChunks: {
@@ -14,6 +16,7 @@ module.exports = {
       }
     }
   },
+
   chainWebpack: config => {
     // console.log(config.plugins)
     config.plugins.delete('prefetch')
@@ -21,6 +24,7 @@ module.exports = {
   },
 
   filenameHashing: false,
-  productionSourceMap: false
+  productionSourceMap: false,
+  runtimeCompiler: true
 }
 

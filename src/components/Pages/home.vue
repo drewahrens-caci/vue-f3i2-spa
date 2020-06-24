@@ -9,12 +9,8 @@
 </template>
 
 <script>
-// import Contacts from '@/components/Contacts/Contacts.vue'
 export default {
-  name: 'home',
-  components: {
-    /* Contacts */
-  }
+  name: 'home'
 }
 </script>
 

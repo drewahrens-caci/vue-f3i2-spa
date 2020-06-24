@@ -1,226 +1,344 @@
+/* eslint-disable no-undef */ /* eslint-disable no-undef */
 <template>
-  <b-container fluid class="p-0" id="Calendar">
-    <b-modal id="modal-wizard" size="xl" centered hide-header hide-footer @hide="onModalHide">
-      <div class="d-block text-center">
-        <form-wizard id="TravelWizard" ref="TravelWizard" title="New Travel Request" subtitle="" color="#fd7e14" error-color="#ff0000" shape="tab" @on-complete="onComplete" :start-index="stepIndex">
-          <tab-content id="Tab_0" title="Travel Information" icon="ti-user" :before-change="validateFirstTab">
-            <b-form>
-              <b-row>
-                <b-col md="12">Subject</b-col>
-              </b-row>
-              <b-row>
-                <b-col md="12"><b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.Subject" :state="ValidateMe('Subject')" ref="Subject"></b-form-input></b-col>
-                <b-form-invalid-feedback>
-                  Enter a subject for this travel request
-                </b-form-invalid-feedback>
-              </b-row>
-              <b-row>
-                <b-col md="6">Company</b-col>
-                <b-col md="6">WorkPlan</b-col>
-              </b-row>
-              <b-row>
-                <b-col md="6">
-                  <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.Company" :state="ValidateMe('Company')" ref="Company"></b-form-input>
-                  <b-form-invalid-feedback>
-                    Enter at least 3 letters
-                  </b-form-invalid-feedback>
-                </b-col>
-                <b-col md="6">
-                  <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.WorkPlan" :state="ValidateMe('WorkPlan')" ref="WorkPlan"></b-form-input>
-                  <b-form-invalid-feedback>
-                    Enter in YY-XXXX format (Proper WorkPlan format)
-                  </b-form-invalid-feedback>
-                </b-col>
-              </b-row>
-              <b-row>
-                <b-col md="6">Start Date</b-col>
-                <b-col md="6">End Date</b-col>
-              </b-row>
-              <b-row>
-                <b-col md="6">
-                  <b-form-input v-model="travelmodel.StartTime" ref="start" type="date" title="Start" :state="ValidateMe('start')"></b-form-input>
-                  <b-form-invalid-feedback>
-                    Enter a valid date (mm/dd/yyyy)
-                  </b-form-invalid-feedback>
-                </b-col>
-                <b-col md="6">
-                  <b-form-input v-model="travelmodel.EndTime" ref="end" type="date" title="End" :state="ValidateMe('end')"></b-form-input>
-                  <b-form-invalid-feedback>
-                    Enter a valid date (mm/dd/yyyy)
-                  </b-form-invalid-feedback>
-                </b-col>
-              </b-row>
-              <b-row>
-                <b-col md="6">Traveling From</b-col>
-                <b-col md="6">Traveling To</b-col>
-              </b-row>
-              <b-row>
-                <b-col md="6">
-                  <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.TravelFrom" :state="ValidateMe('TravelFrom')" ref="TravelFrom"></b-form-input>
-                  <b-form-invalid-feedback>
-                    Enter at least 3 letters
-                  </b-form-invalid-feedback>
-                </b-col>
-                <b-col md="6">
-                  <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.TravelTo" :state="ValidateMe('TravelTo')" ref="TravelTo"></b-form-input>
-                  <b-form-invalid-feedback>
-                    Enter at least 3 letters
-                  </b-form-invalid-feedback>
-                </b-col>
-              </b-row>
-            </b-form>
-          </tab-content>
-          <tab-content id="Tab_1" title="Traveler Details" icon="ti-user" :before-change="validateSecondTab">
-            <b-row>
-              <b-col cols="12" class="px-0">
-                <b-form>
-                  <b-table
-                    id="TravelersTable"
-                    ref="TravelersTable"
-                    responsive
-                    v-model="travelerData"
-                    :striped="striped"
-                    :bordered="bordered"
-                    :small="small"
-                    :hover="hover"
-                    :items="travelmodel.Travelers"
-                    :fields="fields"
-                    style="table-layout: fixed;"
-                  >
-                    <template v-slot:cell(firstName)="data">
-                      <b-form-input class="form-control-sm" v-model="travelerData[data.index].firstName" v-bind:id="getRef('trvlfirstName', data.index)" title="First Name" :state="validateLength('trvlfirstName_' + data.index, 1)"></b-form-input>
+  <b-container fluid class="p-0 contentHeight" id="Calendar">
+    <b-modal id="modal-wizard" size="xl" centered hide-footer hide-header @hide="onModalHide">
+      <b-container fluid class="p-0">
+        <div class="row" v-if="tabInvalid">
+          <b-alert variant="danger">{{ InvalidMessage }}</b-alert>
+        </div>
+        <div class="row m-0">
+          <div class="col-12 p-0">
+            <b-card no-body>
+              <b-tabs ref="dashboardtabs" class="tabArea" card v-model="tabIndex" @activate-tab="onTabSelected">
+                <b-tab class="mtab" active>
+                  <template slot="title"
+                    ><font-awesome-icon fas icon="cog" class="icon"></font-awesome-icon>
+                    Travel Information
+                  </template>
+                  <b-form>
+                    <div class="row">
+                      <div class="col-12">Subject</div>
+                    </div>
+                    <div class="row">
+                      <div class="col-12"><b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.Subject" :state="ValidateMe('Subject')" ref="Subject"></b-form-input></div>
                       <b-form-invalid-feedback>
-                        Enter at least 2 letters
+                        Enter a subject for this travel request
                       </b-form-invalid-feedback>
-                    </template>
-                    <template v-slot:cell(lastName)="data">
-                      <b-form-input class="form-control-sm" v-model="travelerData[data.index].lastName" v-bind:id="getRef('trvllastName', data.index)" title="Last Name" :state="validateLength('trvllastName_' + data.index, 1)"></b-form-input>
-                      <b-form-invalid-feedback>
-                        Enter at least 2 letters
-                      </b-form-invalid-feedback>
-                    </template>
-                    <template v-slot:cell(email)="data">
-                      <b-form-input class="form-control-sm" v-model="travelerData[data.index].email" v-bind:id="getRef('trvlemail', data.index)" title="Email" :state="validateEmail('trvlemail_' + data.index)"></b-form-input>
-                      <b-form-invalid-feedback>
-                        Enter a proper email address
-                      </b-form-invalid-feedback>
-                    </template>
-                    <template v-slot:cell(phone)="data">
-                      <b-form-input class="form-control-sm" v-model="travelerData[data.index].phone" v-bind:id="getRef('trvlphone', data.index)" title="Phone" :state="validatePhone('trvlphone_' + data.index)"></b-form-input>
-                      <b-form-invalid-feedback>
-                        Enter a number in (###)-###-#### format
-                      </b-form-invalid-feedback>
-                    </template>
-                  </b-table>
-                </b-form>
-              </b-col>
-            </b-row>
-            <b-row>
-              <b-col cols="12">
-                <b-button size="sm" @click="btnAddClick" variant="success">Add Traveler</b-button>
-              </b-col>
-            </b-row>
-          </tab-content>
-          <tab-content id="Tab_2" title="Additional Info" icon="ti-settings" :before-change="validateThirdTab">
-            <b-form>
-              <b-row>
-                <b-col md="6">Gov Sponsor</b-col>
-                <b-col md="6">Estimated Cost</b-col>
-              </b-row>
-              <b-row>
-                <b-col md="6">
-                  <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.Sponsor" ref="Sponsor" :state="ValidateMe('Sponsor')"></b-form-input>
-                  <b-form-invalid-feedback>
-                    Enter at least 5 letters
-                  </b-form-invalid-feedback>
-                </b-col>
-                <b-col md="6">
-                  <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.EstimatedCost" ref="EstimatedCost" :state="ValidateMe('EstimatedCost')"></b-form-input>
-                  <b-form-invalid-feedback>
-                    Enter a valid cost in numbers only
-                  </b-form-invalid-feedback>
-                </b-col>
-              </b-row>
-              <b-row>
-                <b-col md="4">POC Name</b-col>
-                <b-col md="4">POC Email</b-col>
-                <b-col md="4">POC Phone</b-col>
-              </b-row>
-              <b-row>
-                <b-col md="4">
-                  <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.POCName" ref="POCName" :state="ValidateMe('POCName')"></b-form-input>
-                  <b-form-invalid-feedback>
-                    Enter at least 5 letters
-                  </b-form-invalid-feedback>
-                </b-col>
-                <b-col md="4">
-                  <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.POCEmail" ref="POCEmail" :state="ValidateMe('POCEmail')"></b-form-input>
-                  <b-form-invalid-feedback>
-                    Enter a proper email address
-                  </b-form-invalid-feedback>
-                </b-col>
-                <b-col md="4">
-                  <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.POCPhone" ref="POCPhone" :state="ValidateMe('POCPhone')"></b-form-input>
-                  <b-form-invalid-feedback>
-                    Enter a number in (###)-###-#### format
-                  </b-form-invalid-feedback>
-                </b-col>
-              </b-row>
-              <b-row>
-                <b-col md="12">Purpose</b-col>
-              </b-row>
-              <b-row>
-                <b-col md="12">
-                  <b-form-textarea class="form-control-sm form-control-travel" v-model="travelmodel.Comments" placeholder="Purpose of this trip..." rows="3" max-rows="6" ref="Comments" :state="ValidateMe('Comments')"></b-form-textarea>
-                  <b-form-invalid-feedback>
-                    Enter at least 5 letters
-                  </b-form-invalid-feedback>
-                </b-col>
-              </b-row>
-              <b-row>
-                <b-col md="12"><b-form-checkbox class="form-control-sm" v-model="travelmodel.VisitRequest" name="checkbox-1" value="yes" unchecked-value="no" ref="VisitRequest">Visit Request Required</b-form-checkbox></b-col>
-              </b-row>
-              <b-row v-if="travelmodel.VisitRequest === 'yes'">
-                <b-col md="12">
-                  <b-form-select class="form-control-sm" v-model="travelmodel.Clearance" :options="levels" ref="Clearance" :state="ValidateMe('Clearance')"></b-form-select>
-                  <b-form-invalid-feedback>
-                    Please select a valid option
-                  </b-form-invalid-feedback>
-                </b-col>
-              </b-row>
-            </b-form>
-          </tab-content>
-          <tab-content id="Tab_3" title="Validation" icon="ti-check">
-            <h4>Your form is valid. Click "OK" to save or "Cancel" to close.</h4>
-          </tab-content>
-          <!-- <tab-content v-for="tab in tabs" :key="tab.idx" :title="tab.title" :icon="tab.icon">
-            <component :is="tab.component"></component>
-          </tab-content> -->
-          <template slot="footer" scope="props">
-            <div class="wizard-footer-left">
-              <b-button variant="warning" v-if="props.activeTabIndex > 0 && !props.isLastStep" @click="props.prevTab()">Previous</b-button>
-            </div>
-            <div class="wizard-footer-right">
-              <b-button variant="danger" @click="onModalCancel">
-                Cancel
-              </b-button>
-              <b-button variant="warning" v-if="!props.isLastStep" @click="props.nextTab()" class="wizard-footer-right ml-1">Next</b-button>
-              <b-button variant="success" v-if="props.isLastStep" @click="onModalSave" class="wizard-footer-right ml-1">OK</b-button>
-            </div>
-          </template>
-        </form-wizard>
-      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-6">Company</div>
+                      <div class="col-6">WorkPlan</div>
+                    </div>
+                    <div class="row">
+                      <div class="col-6">
+                        <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.Company" :state="ValidateMe('Company')" ref="Company"></b-form-input>
+                        <b-form-invalid-feedback>
+                          Enter at least 3 letters
+                        </b-form-invalid-feedback>
+                      </div>
+                      <div class="col-6">
+                        <b-form-select class="form-control-sm form-control-travel" v-model="travelmodel.WorkPlanNumber" :options="workplans" :state="ValidateMe('WorkPlan')" ref="WorkPlan" @change="onWorkplanSelected"></b-form-select>
+                        <b-form-invalid-feedback>
+                          Enter in YY-XXXX format (Proper WorkPlan format)
+                        </b-form-invalid-feedback>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-6">Start Date</div>
+                      <div class="col-6">End Date</div>
+                    </div>
+                    <div class="row">
+                      <div class="col-6">
+                        <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.StartTime" ref="start" type="date" title="Start" :state="ValidateMe('start')"></b-form-input>
+                        <b-form-invalid-feedback>
+                          Enter a valid date (mm/dd/yyyy)
+                        </b-form-invalid-feedback>
+                      </div>
+                      <div class="col-6">
+                        <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.EndTime" ref="end" type="date" title="End" :state="ValidateMe('end')"></b-form-input>
+                        <b-form-invalid-feedback>
+                          Enter a valid date (mm/dd/yyyy)
+                        </b-form-invalid-feedback>
+                      </div>
+                    </div>
+                    <div class="row" v-if="editing">
+                      <div class="col-4">Traveling From</div>
+                      <div class="col-4">Traveling To</div>
+                      <div class="col-4">Trip Report</div>
+                    </div>
+                    <div class="row" v-else>
+                      <div class="col-6">Traveling From</div>
+                      <div class="col-6">Traveling To</div>
+                    </div>
+                    <div class="row" v-if="editing">
+                      <div class="col-4">
+                        <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.TravelFrom" :state="ValidateMe('TravelFrom')" ref="TravelFrom"></b-form-input>
+                        <b-form-invalid-feedback>
+                          Enter at least 3 letters
+                        </b-form-invalid-feedback>
+                      </div>
+                      <div class="col-4">
+                        <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.TravelTo" :state="ValidateMe('TravelTo')" ref="TravelTo"></b-form-input>
+                        <b-form-invalid-feedback>
+                          Enter at least 3 letters
+                        </b-form-invalid-feedback>
+                      </div>
+                      <div class="col-4">
+                        <a :href="travelmodel.TripReportLink">{{ travelmodel.TripReport }}</a>
+                      </div>
+                    </div>
+                    <div class="row" v-else>
+                      <div class="col-6">
+                        <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.TravelFrom" :state="ValidateMe('TravelFrom')" ref="TravelFrom"></b-form-input>
+                        <b-form-invalid-feedback>
+                          Enter at least 3 letters
+                        </b-form-invalid-feedback>
+                      </div>
+                      <div class="col-6">
+                        <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.TravelTo" :state="ValidateMe('TravelTo')" ref="TravelTo"></b-form-input>
+                        <b-form-invalid-feedback>
+                          Enter at least 3 letters
+                        </b-form-invalid-feedback>
+                      </div>
+                    </div>
+                    <div class="row" v-if="editing">
+                      <table class="mt-1">
+                        <tbody>
+                          <tr class="text-center bg-warning text-white">
+                            <th>Upload Trip Report [This replaces any existing trip report]</th>
+                          </tr>
+                          <tr>
+                            <td><ejs-uploader id="fileupload" name="UploadFiles" :selected="onFileSelect" :multiple="false"></ejs-uploader></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </b-form>
+                </b-tab>
+                <b-tab class="mtab">
+                  <template slot="title"
+                    ><font-awesome-icon fas icon="user" class="icon"></font-awesome-icon>
+                    Traveler Details
+                  </template>
+                  <b-form>
+                    <b-table id="TravelersTable" ref="TravelersTable" responsive v-model="travelerData" :striped="striped" :bordered="bordered" :small="small" :hover="hover" :items="travelmodel.Travelers" :fields="fields" style="table-layout: fixed;">
+                      <template v-slot:cell(actions)="data">
+                        <b-button size="sm" class="actionbutton" @click="deleteme(data.index)" title="Delete Traveler">
+                          <font-awesome-icon far icon="trash" class="icon" :style="{ color: 'red' }"></font-awesome-icon>
+                        </b-button>
+                      </template>
+                      <template v-slot:cell(firstName)="data">
+                        <b-form-input class="form-control-sm form-control-travel" v-model="travelerData[data.index].firstName" v-bind:id="getRef('trvlfirstName', data.index)" title="First Name"></b-form-input>
+                      </template>
+                      <template v-slot:cell(lastName)="data">
+                        <b-form-input class="form-control-sm form-control-travel" v-model="travelerData[data.index].lastName" v-bind:id="getRef('trvllastName', data.index)" title="Last Name"></b-form-input>
+                      </template>
+                      <template v-slot:cell(email)="data">
+                        <b-form-input class="form-control-sm form-control-travel" v-model="travelerData[data.index].email" v-bind:id="getRef('trvlemail', data.index)" title="Email"></b-form-input>
+                      </template>
+                      <template v-slot:cell(phone)="data">
+                        <b-form-input class="form-control-sm form-control-travel" v-model="travelerData[data.index].phone" v-bind:id="getRef('trvlphone', data.index)" title="Phone"></b-form-input>
+                      </template>
+                    </b-table>
+                  </b-form>
+                  <div class="row">
+                    <div cols="12">
+                      <b-button size="sm" @click="btnAddClick" variant="success">Add Traveler</b-button>
+                    </div>
+                  </div>
+                </b-tab>
+                <b-tab class="mtab">
+                  <template slot="title"
+                    ><font-awesome-icon fas icon="info-circle" class="icon"></font-awesome-icon>
+                    Additional Info
+                  </template>
+                  <b-form>
+                    <div class="row">
+                      <div class="col">Gov Sponsor</div>
+                      <div class="col">Estimated Cost</div>
+                      <div class="col">Visit Request</div>
+                    </div>
+                    <div class="row">
+                      <div class="col">
+                        <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.Sponsor" ref="Sponsor" :state="ValidateMe('Sponsor')"></b-form-input>
+                        <b-form-invalid-feedback>
+                          Enter a valid Sponsor.
+                        </b-form-invalid-feedback>
+                      </div>
+                      <div class="col">
+                        <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.EstimatedCost" ref="EstimatedCost" :state="ValidateMe('EstimatedCost')"></b-form-input>
+                        <b-form-invalid-feedback>
+                          Numbers only
+                        </b-form-invalid-feedback>
+                      </div>
+                      <div class="col">
+                        <b-form-checkbox v-model="travelmodel.VisitRequest" value="Yes" unchecked-value="No" ref="VisitRequest" switch>Required</b-form-checkbox>
+                        <b-form-select v-if="travelmodel.VisitRequest === 'Yes'" class="form-control-sm form-control-travel float-left" v-model="travelmodel.Clearance" :options="levels" ref="Clearance" :state="ValidateMe('Clearance')"></b-form-select>
+                        <b-form-invalid-feedback v-if="travelmodel.VisitRequest === 'Yes'">
+                          Please select a valid option
+                        </b-form-invalid-feedback>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col">POC Name</div>
+                      <div class="col">POC Email</div>
+                      <div class="col">POC Phone</div>
+                    </div>
+                    <div class="row">
+                      <div class="col">
+                        <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.POCName" ref="POCName" :state="ValidateMe('POCName')"></b-form-input>
+                        <b-form-invalid-feedback>
+                          Enter a Name
+                        </b-form-invalid-feedback>
+                      </div>
+                      <div class="col">
+                        <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.POCEmail" ref="POCEmail" :state="ValidateMe('POCEmail')"></b-form-input>
+                        <b-form-invalid-feedback>
+                          Invalid email address
+                        </b-form-invalid-feedback>
+                      </div>
+                      <div class="col">
+                        <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.POCPhone" ref="POCPhone" :state="ValidateMe('POCPhone')"></b-form-input>
+                        <b-form-invalid-feedback>
+                          (###)-###-#### Format
+                        </b-form-invalid-feedback>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-12">Purpose</div>
+                    </div>
+                    <div class="row">
+                      <div class="col-12">
+                        <b-form-textarea
+                          class="form-control-sm form-control-travel"
+                          v-model="travelmodel.Comments"
+                          placeholder="Please enter 1-2 sentences to describe what is to be accomplished by taking this trip and why it is beneficial to the government.  Spell out all acronyms."
+                          rows="3"
+                          max-rows="6"
+                          ref="Comments"
+                          :state="ValidateMe('Comments')"
+                        ></b-form-textarea>
+                        <b-form-invalid-feedback>
+                          Not properly filled out.
+                        </b-form-invalid-feedback>
+                      </div>
+                    </div>
+                  </b-form>
+                </b-tab>
+                <b-tab class="mtab">
+                  <template slot="title"
+                    ><font-awesome-icon fas icon="traffic-light" class="icon"></font-awesome-icon>
+                    Summary
+                  </template>
+                  <table id="SummaryTable" class="summarytable">
+                    <tbody>
+                      <tr class="bg-warning text-white">
+                        <td colspan="4">Subject</td>
+                        <td>Travel Index</td>
+                      </tr>
+                      <tr>
+                        <td colspan="4">{{ travelmodel.Subject }}</td>
+                        <td>{{ travelmodel.IndexNumber }}</td>
+                      </tr>
+                      <tr class="bg-warning text-white">
+                        <td colspan="2">Company</td>
+                        <td colspan="3">WorkPlan</td>
+                      </tr>
+                      <tr>
+                        <td colspan="2">{{ travelmodel.Company }}</td>
+                        <td colspan="3">{{ travelmodel.WorkPlanText }}</td>
+                      </tr>
+                      <tr class="bg-warning text-white">
+                        <td>Start Date</td>
+                        <td>End Date</td>
+                        <td>Traveling From</td>
+                        <td>Traveling To</td>
+                        <td>Estimated Cost</td>
+                      </tr>
+                      <tr>
+                        <td>{{ travelmodel.StartTime }}</td>
+                        <td>{{ travelmodel.EndTime }}</td>
+                        <td>{{ travelmodel.TravelFrom }}</td>
+                        <td>{{ travelmodel.TravelTo }}</td>
+                        <td>${{ travelmodel.EstimatedCost }}</td>
+                      </tr>
+                      <tr class="bg-warning text-white">
+                        <td>Gov Sponsor</td>
+                        <td>POC Name</td>
+                        <td colspan="2">POC Email</td>
+                        <td>POC Phone</td>
+                      </tr>
+                      <tr>
+                        <td>{{ travelmodel.Sponsor }}</td>
+                        <td>{{ travelmodel.POCName }}</td>
+                        <td colspan="2">{{ travelmodel.POCEmail }}</td>
+                        <td>{{ travelmodel.POCPhone }}</td>
+                      </tr>
+                      <tr class="bg-warning text-white">
+                        <td v-if="editing" colspan="2">Purpose</td>
+                        <td v-else colspan="3">Purpose</td>
+                        <td>Visit Request</td>
+                        <td>Required Clearance</td>
+                        <td v-if="editing">TripReport</td>
+                      </tr>
+                      <tr>
+                        <td v-if="editing" colspan="2">
+                          <div>{{ travelmodel.Comments }}</div>
+                        </td>
+                        <td v-else colspan="3"><form-textarea disabled v-model="travelmodel.Comments" rows="3" max-rows="6"></form-textarea></td>
+                        <td>{{ travelmodel.VisitRequest }}</td>
+                        <td>{{ travelmodel.Clearance }}</td>
+                        <td v-if="editing">{{ travelmodel.TripReport }}</td>
+                      </tr>
+                      <tr>
+                        <td colspan="5">
+                          <table class="summarytable">
+                            <thead>
+                              <tr class="bg-warning text-white">
+                                <td colspan="4">Travelers</td>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr class="bg-warning text-white">
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                              </tr>
+                              <tr v-for="traveler in travelmodel.Travelers" :key="traveler">
+                                <td>{{ traveler.firstName }}</td>
+                                <td>{{ traveler.lastName }}</td>
+                                <td>{{ traveler.email }}</td>
+                                <td>{{ traveler.phone }}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </b-tab>
+              </b-tabs>
+            </b-card>
+          </div>
+        </div>
+        <div class="row mt-1">
+          <div class="col-12 p-0 text-center">
+            <b-button-group class="mt-2">
+              <b-button variant="danger" ref="btnCancel" class="mr-2" @click="onModalCancel">Cancel</b-button>
+              <b-button v-if="tabIndex > 0" ref="btnPrev" @click="tabIndex--">Previous</b-button>
+              <b-button v-if="tabIndex < 3" ref="btnNext" @click="tabIndex++">Next</b-button>
+              <b-button v-if="tabIndex == 3 && formValid" variant="success" ref="btnOk" class="ml-2" @click="onModalSave">Submit</b-button>
+            </b-button-group>
+          </div>
+        </div>
+      </b-container>
     </b-modal>
-    <!-- <b-row>
-      <div class="titlebar">
-        <span class="title">Travel Calendar</span>
-      </div>
-    </b-row> -->
-    <b-row>
+    <div class="row">
       <ejs-schedule
         id="TravelCalendar"
         ref="TravelCalendar"
-        :height="height"
+        cssClass="contentHeight"
         :eventSettings="eventSettings"
         :selectedDate="defaultDate"
         :views="views"
@@ -229,8 +347,12 @@
         :dragStop="onDragStop"
         :resizeStop="onResizeStop"
         :eventClick="onEventClick"
+        :moreEventsClick="onMoreEventsClick"
+        :popupOpen="onPopupOpen"
         :cellClick="onCellClick"
         :select="onSelect"
+        :actionBegin="onActionBegin"
+        :actionComplete="onActionComplete"
       >
         <e-views>
           <e-view option="Day"></e-view>
@@ -238,8 +360,43 @@
           <e-view option="Month"></e-view>
         </e-views>
       </ejs-schedule>
-    </b-row>
-    <b-modal id="ViewModal" ref="ViewModal" size="xl" centered hide-footer :header-bg-variant="headerBgVariant">
+    </div>
+    <b-modal id="PersonnelModal" ref="PersonnelModal" size="xl" centered hide-footer :header-bg-variant="headerBgVariant">
+      <template v-slot:modal-title>Add Traveler [Double Click To Add The User]</template>
+      <b-container fluid class="p-0">
+        <div class="row m-0">
+          <div class="col-12 p-0" style="min-height: 500px;">
+            <ejs-grid
+              id="TravelPersonnelGrid"
+              ref="TravelPersonnelGrid"
+              :dataSource="pdata"
+              :allowPaging="true"
+              :allowSorting="true"
+              :allowFiltering="true"
+              :allowResizing="true"
+              :pageSettings="pageSettings"
+              :editSettings="editSettings"
+              :filterSettings="filterSettings"
+              :sortSettings="sortSettings"
+              :actionBegin="actionBegin"
+              rowHeight="20"
+              width="100%"
+            >
+              <e-columns>
+                <e-column field="LastName" headerText="Last" textAlign="Left" width="120"></e-column>
+                <e-column field="FirstName" headerText="First" width="100"></e-column>
+                <e-column field="Position" headerText="Position" textAlign="Left" width="180"></e-column>
+                <e-column field="Email" headerText="Email" textAlign="Left" width="300"></e-column>
+                <e-column field="Phone" headerText="Phone" textAlign="Left" width="100"></e-column>
+                <e-column field="Company" headerText="Company" textAlign="Left" width="250"></e-column>
+                <e-column field="Id" headerText="Id" :visible="false" textAlign="Left" width="40" :isPrimaryKey="true"></e-column>
+              </e-columns>
+            </ejs-grid>
+          </div>
+        </div>
+      </b-container>
+    </b-modal>
+    <b-modal id="ViewModal" ref="ViewModal" size="xl" centered hide-footer :header-bg-variant="headerBgVariant" @hide="onModalHide">
       <template v-slot:modal-title>{{ selectedtrip.Subject }}</template>
       <b-container fluid>
         <table id="ViewTable">
@@ -311,24 +468,11 @@
         </table>
       </b-container>
     </b-modal>
-    <b-modal id="ApproveModal" ref="ApproveModal" size="xl" centered hide-footer :header-bg-variant="headerBgVariant">
+    <b-modal id="ApproveModal" ref="ApproveModal" size="xl" centered hide-footer :header-bg-variant="headerBgVariant" @hide="onModalHide">
       <template v-slot:modal-title>Approve Travel Requests</template>
       <b-container fluid>
         <b-form>
-          <b-table
-            id="ApprovalsTable"
-            :ref="ApprovalsTable"
-            v-model="approvalData"
-            responsive
-            :striped="striped"
-            :bordered="bordered"
-            :small="small"
-            :hover="hover"
-            :items="approvalItems"
-            :fields="approvalfields"
-            :primary-key="ID"
-            style="table-layout: fixed;"
-          >
+          <b-table id="ApprovalsTable" :ref="ApprovalsTable" v-model="approvalData" responsive :striped="striped" :bordered="bordered" :small="small" :hover="hover" :items="approvalItems" :fields="approvalfields" :primary-key="ID" style="table-layout: fixed;">
             <template v-slot:cell(actions)="data">
               <b-button size="sm" class="actionbutton" @click="approveme(data.index)" title="Approve It">
                 <font-awesome-icon far icon="check-circle" class="icon" :style="{ color: 'green' }"></font-awesome-icon>
@@ -340,10 +484,14 @@
               </b-button>
             </template>
             <template v-slot:cell(StartTime)="data">
-              <div>{{ formatme(approvalData[data.index].StartTime, 'normal') }}</div>
+              <div>
+                {{ formatme(approvalData[data.index].StartTime, 'normal') }}
+              </div>
             </template>
             <template v-slot:cell(EndTime)="data">
-              <div>{{ formatme(approvalData[data.index].EndTime, 'normal') }}</div>
+              <div>
+                {{ formatme(approvalData[data.index].EndTime, 'normal') }}
+              </div>
             </template>
             <template v-slot:row-details="data">
               <!-- <b-input-group size="sm" prepend="Description">
@@ -352,13 +500,17 @@
               <table style="width: 100%;">
                 <tbody>
                   <tr>
-                    <th colspan="4" class="bg-black text-white text-center">Purpose</th>
+                    <th colspan="4" class="bg-black text-white text-center">
+                      Purpose
+                    </th>
                   </tr>
                   <tr>
                     <th colspan="4">{{ approvalData[data.index].Comments }}</th>
                   </tr>
                   <tr>
-                    <th colspan="4" class="bg-black text-white text-center">Travelers</th>
+                    <th colspan="4" class="bg-black text-white text-center">
+                      Travelers
+                    </th>
                   </tr>
                   <tr class="bg-black text-white">
                     <th>First Name</th>
@@ -383,16 +535,30 @@
 </template>
 
 <script>
+/* eslint-disable no-unused-vars */
 import Vue from 'vue'
 import moment from 'moment'
-import { FormWizard, TabContent } from 'vue-form-wizard'
-import { SchedulePlugin, Day, Week, Month, Resize, DragAndDrop } from '@syncfusion/ej2-vue-schedule'
+import axios from 'axios'
+import { SchedulePlugin, Day, Week, Month } from '@syncfusion/ej2-vue-schedule'
+import { GridPlugin, Page, Sort, Filter, Edit, Resize, Reorder, ColumnMenu, ContextMenu, Toolbar, VirtualScroll } from '@syncfusion/ej2-vue-grids'
+import { UploaderPlugin } from '@syncfusion/ej2-vue-inputs'
+import User from '@/models/User'
 import Travel from '@/models/Travel'
+import Personnel from '@/models/Personnel'
+import Workplan from '@/models/WorkPlan'
 import { isNullOrUndefined } from 'util'
 
 Vue.use(SchedulePlugin)
+Vue.use(GridPlugin)
+Vue.use(UploaderPlugin)
 
 var vm = null // setup a global instance pointer to the vue component. This is set in mounted
+
+let data = []
+
+// eslint-disable-next-line no-undef
+let server = _spPageContextInfo.webAbsoluteUrl
+let library = 'TripReports'
 
 export default {
   name: 'Calendar',
@@ -400,82 +566,104 @@ export default {
     mode: String
   },
   computed: {
+    travelloaded() {
+      return Travel.getters('loaded')
+    },
     travel() {
       return Travel.getters('allTravel')
     },
     emailRequired() {
       return Travel.getters('emailRequired')
+    },
+    personnel() {
+      return Personnel.getters('allPersonnel')
+    },
+    workplans() {
+      return Workplan.getters('DropDown')
+    },
+    currentuser() {
+      return User.getters('CurrentUser')
     }
   },
-  components: {
-    FormWizard,
-    TabContent
-  },
   provide: {
-    schedule: [Day, Week, Month, Resize, DragAndDrop]
+    // schedule: [Day, Week, Month, Resize, DragAndDrop],
+    schedule: [Day, Week, Month],
+    grid: [Page, Sort, Filter, Edit, Reorder, Resize, ColumnMenu, ContextMenu]
   },
   data: function() {
     return {
-      stepIndex: 0,
+      moreevents: false,
+      reportdigest: null,
+      reportlink: null,
+      workplanuri: null,
+      workplanetag: null,
+      newindex: null,
+      editing: false,
+      fileSelected: null,
+      fileBuffer: null,
+      pdata: [],
+      tabIndex: 0,
+      tabInvalid: false,
+      InvalidMessage: 'Not all fields are filled out correctly.',
+      pageSettings: { pageSize: 30 },
+      editSettings: {
+        allowEditing: true,
+        allowAdding: false,
+        allowDeleting: false,
+        mode: 'Dialog'
+      },
+      sortSettings: {
+        columns: [{ field: 'LastName', direction: 'Ascending' }]
+      },
+      filterSettings: { type: 'Menu' },
       currentmode: 'default',
-      height: '750px',
+      height: '100%',
       selectedDate: null,
       defaultDate: new Date(),
       currentView: 'Month',
       views: ['Day', 'Week', 'Month'],
       eventSettings: {
-        dataSource: []
+        dataSource: data
       },
-      headerBgVariant: 'black',
+      headerBgVariant: 'warning',
       travelmodel: {
         id: 0,
-        WorkPlan: 'TestPlan',
-        Company: 'CACI',
-        Subject: 'Project Support Travel',
+        Status: '',
+        WorkPlan: '',
+        WorkPlanText: '',
+        WorkPlanNumber: '',
+        OriginalWorkPlanNumber: '',
+        WorkPlanData: '',
+        Company: '',
+        Subject: '',
         StartTime: '',
         EndTime: '',
-        TravelFrom: 'TravelFrom',
-        TravelTo: 'TravelTo',
-        Travelers: [
-          {
-            firstName: 'firstName',
-            lastName: 'lastName',
-            email: 'email@email.com',
-            phone: '0000000000'
-          }
-        ],
-        Sponsor: 'Test Sponsor',
-        POCName: 'Test POC',
-        POCEmail: 'email@email.com',
-        POCPhone: '0000000000',
-        Comments: 'This is test',
-        Clearance: 'Select',
+        TravelFrom: '',
+        TravelTo: '',
+        Travelers: [],
+        Sponsor: '',
+        POCName: '',
+        POCEmail: '',
+        POCPhone: '',
+        Comments: '',
+        Clearance: 'None',
         VisitRequest: '',
-        EstimatedCost: '2000',
-        IndexNumber: '0008675309'
+        EstimatedCost: '',
+        IndexNumber: '',
+        TripReport: '',
+        TripReportLink: '',
+        etag: '',
+        uri: ''
       },
       selectedtrip: {},
       fieldsFirstTab: ['WorkPlan', 'Company', 'start', 'end', 'TravelFrom', 'TravelTo'],
       fieldsThirdTab: ['Sponsor', 'EstimatedCost', 'POCName', 'POCEmail', 'POCPhone', 'Comments', 'Clearance'],
-      travelerData: [
-        {
-          firstName: 'First Name',
-          lastName: 'Last Name',
-          email: 'Email',
-          phone: '000-000-0000'
-        }
-      ],
+      travelerData: [],
       formOptions: {
         validationErrorClass: 'has-error',
         validationSuccessClass: 'has-success',
         validateAfterChanged: true
       },
-      tabs: [
-        { title: 'Travel Information', icon: 'ti-location-pin', component: 'step1', idx: 0 },
-        { title: 'Traveler Details', icon: 'ti-user', component: 'step2', idx: 1 },
-        { title: 'Additional Info', icon: 'ti-settings', component: 'step3', idx: 2 },
-        { title: 'Validation', icon: 'ti-check', component: 'step4', idx: 3 }
-      ],
       formValid: false,
       striped: true,
       bordered: true,
@@ -486,18 +674,34 @@ export default {
       fixed: false,
       footClone: false,
       fields: [
-        { key: 'actions', label: 'Action', thClass: 'bg-black text-white text-center px40' },
-        { key: 'firstName', label: 'First Name', thClass: 'bg-black text-white text-center px80' },
+        {
+          key: 'actions',
+          label: 'Action',
+          thClass: 'bg-warning text-white text-center px40'
+        },
+        {
+          key: 'firstName',
+          label: 'First Name',
+          thClass: 'bg-warning text-white text-center px80'
+        },
         {
           key: 'lastName',
           label: 'Last Name',
-          thClass: 'bg-black text-white text-center px80'
+          thClass: 'bg-warning text-white text-center px80'
         },
-        { key: 'email', label: 'Email', thClass: 'bg-black text-white text-center px200' },
-        { key: 'phone', label: 'Phone', thClass: 'bg-black text-white text-center px100' }
+        {
+          key: 'email',
+          label: 'Email',
+          thClass: 'bg-warning text-white text-center px200'
+        },
+        {
+          key: 'phone',
+          label: 'Phone',
+          thClass: 'bg-warning text-white text-center px100'
+        }
       ],
       levels: [
-        { value: 'Select', text: 'Select' },
+        { value: 'None', text: 'None' },
         { value: 'S', text: 'S' },
         { value: 'TS', text: 'TS' },
         { value: 'TSSCI', text: 'TS/SCI' }
@@ -505,91 +709,168 @@ export default {
       approvalData: [],
       approvalItems: [],
       approvalfields: [
-        { key: 'actions', label: 'Action', thClass: 'bg-black text-white text-center px40' },
-        { key: 'Subject', label: 'Title', thClass: 'bg-black text-white text-center px250' },
+        {
+          key: 'actions',
+          label: 'Action',
+          thClass: 'bg-warning text-white text-center px40'
+        },
+        {
+          key: 'Subject',
+          label: 'Title',
+          thClass: 'bg-warning text-white text-center px250'
+        },
         {
           key: 'StartTime',
           label: 'Start Date',
-          thClass: 'bg-black text-white text-center px80'
+          thClass: 'bg-warning text-white text-center px80'
         },
-        { key: 'EndTime', label: 'End Date', thClass: 'bg-black text-white text-center px80' },
-        { key: 'Sponsor', label: 'Gov Sponsor', thClass: 'bg-black text-white text-center px100' },
-        { key: 'Company', label: 'Company', thClass: 'bg-black text-white text-center px100' },
-        { key: 'WorkPlan', label: 'Work Plan', thClass: 'bg-black text-white text-center px80' },
-        { key: 'EstimatedCost', label: 'Est. Cost', thClass: 'bg-black text-white text-center px60' }
+        {
+          key: 'EndTime',
+          label: 'End Date',
+          thClass: 'bg-warning text-white text-center px80'
+        },
+        {
+          key: 'Sponsor',
+          label: 'Gov Sponsor',
+          thClass: 'bg-warning text-white text-center px100'
+        },
+        {
+          key: 'Company',
+          label: 'Company',
+          thClass: 'bg-warning text-white text-center px100'
+        },
+        {
+          key: 'WorkPlanText',
+          label: 'Work Plan',
+          thClass: 'bg-warning text-white text-center px80'
+        },
+        {
+          key: 'EstimatedCost',
+          label: 'Est. Cost',
+          thClass: 'bg-warning text-white text-center px60'
+        }
       ],
       requiresSecurity: false
     }
   },
   mounted: function() {
     vm = this
-    // this.selectedtrip = this.travelmodel // create a filled 'fake' selected trip until a real trip is added
-    console.log('Mounted Mode: ' + this.mode)
     Travel.dispatch('getDigest')
     Travel.dispatch('getTRIPS').then(function() {
       vm.$options.interval = setInterval(vm.waitForEvents, 1000)
     })
   },
   methods: {
+    getFormDigest() {
+      return axios.request({
+        // eslint-disable-next-line no-undef
+        url: _spPageContextInfo.webServerRelativeUrl + '/_api/contextinfo', // _spPageContextInfo is a SharePoint variable that will exist on the SharePoint page so it is not defined.
+        method: 'post',
+        headers: { Accept: 'application/json; odata=verbose' }
+      })
+    },
     getID: function(text, id) {
       return text + '_' + id
     },
     waitForEvents: function() {
       if (this.travel && this.travel.length > 0) {
         clearInterval(this.$options.interval)
+        let oldevents = this.$refs.TravelCalendar.getEvents()
+        this.$refs.TravelCalendar.deleteEvent(oldevents)
         this.$refs.TravelCalendar.addEvent(this.travel)
-        // here is where we react to mode changes on loading after the initial mounting and receiving of events
-        console.log('currentmode: ' + this.currentmode + ', mode: ' + this.mode)
+        this.pdata = this.personnel
         if (!isNullOrUndefined(this.$route.query.id)) {
+          document.getElementById('PageTitle').innerHTML = ' -  View'
           let id = Number(this.$route.query.id)
           let trip = this.travel.filter(trip => trip.id == id)
           trip = trip[0]
           trip.Travelers = JSON.parse(trip.Travelers)
           trip.StartTime = String(this.formatme(trip.StartTime, 'normal'))
           trip.EndTime = String(this.formatme(trip.EndTime, 'normal'))
-          console.log('START: ' + trip.StartTime + ', END: ' + trip.EndTime)
           this.selectedtrip = trip
           this.$bvModal.show('ViewModal')
         } else {
           // what are we here for? default view? Or are we here to edit/update travel requests
+          let items = this.travel.filter(trip => trip.Status == 'New')
+          document.getElementById('ApprovalCount').innerHTML = items.length
           switch (this.mode) {
             case 'approval': {
+              document.getElementById('PageTitle').innerHTML = ' -  Approval'
               let items = this.travel.filter(trip => trip.Status == 'New')
               for (let i = 0; i < items.length; i++) {
                 let item = items[i]
                 item.Travelers = JSON.parse(item.Travelers)
                 this.approvalItems.push(item)
               }
-              console.log('ITEMS TO APPROVE:' + items + ', ' + items.length)
               this.$bvModal.show('ApproveModal')
               break
             }
             case 'new': {
+              document.getElementById('PageTitle').innerHTML = ' -  New Travel Request'
               this.$bvModal.show('modal-wizard')
+              break
+            }
+            case 'default': {
+              document.getElementById('PageTitle').innerHTML = ' -  Calendar'
               break
             }
           }
         }
+      } else {
+        // No travel yet so just allow entries
+        this.pdata = this.personnel
       }
     },
-    onModalHide: function() {
-      console.log('MODAL HIDE')
+    resetTravelModel: function() {
+      // reset travelmodel
+      this.travelmodel = {
+        id: 0,
+        Status: '',
+        WorkPlan: '',
+        WorkPlanText: '',
+        WorkPlanNumber: '',
+        OriginalWorkPlanNumber: '',
+        WorkPlanData: '',
+        Company: '',
+        Subject: '',
+        StartTime: '',
+        EndTime: '',
+        TravelFrom: '',
+        TravelTo: '',
+        Travelers: [],
+        Sponsor: '',
+        POCName: '',
+        POCEmail: '',
+        POCPhone: '',
+        Comments: '',
+        Clearance: 'None',
+        VisitRequest: '',
+        EstimatedCost: '',
+        IndexNumber: '',
+        TripReport: '',
+        TripReportLink: '',
+        etag: '',
+        uri: ''
+      }
     },
-    onModalCancel: function() {
-      // this.$refs.TravelWizard.reset()
+    onModalHide: function(evt) {
+      this.editing = false
+      vm.resetTravelModel()
+      if (this.mode == 'default') {
+        Travel.dispatch('getTRIPS').then(function() {
+          vm.$options.interval = setInterval(vm.waitForEvents, 1000)
+        })
+      } else {
+        vm.$router.push({ name: 'Travel Calendar', params: { mode: 'default' } })
+      }
+    },
+    onModalCancel: function(evt) {
       this.$bvModal.hide('modal-wizard')
-      this.tabs.sort(function(a, b) {
-        if (a.idx > b.idx) {
-          return 1
-        } else if (a.idx < b.idx) {
-          return -1
-        }
-        return 0
-      })
     },
     onModalSave: function() {
-      console.log('MODAL SAVE')
-      // need to now use the information in the travelmodel and travelerData elements to add the event to the calendar and also to SharePoint list
+      // Now use the information in the travelmodel and travelerData elements to add the event to the calendar and also to the SharePoint list
+      // Need to change methods if editing
+      // Also need to update the LastIndex of the work plan once the item is saved
       let event = []
       let start = moment(this.travelmodel.StartTime).format('YYYY-MM-DD[T]HH:MM:[00Z]')
       let end = moment(this.travelmodel.EndTime).format('YYYY-MM-DD[T]HH:MM:[00Z]')
@@ -597,12 +878,16 @@ export default {
         Subject: this.travelmodel.Subject,
         StartTime: start,
         EndTime: end,
-        class: 'travel-new',
+        Status: this.travelmodel.Status,
         WorkPlan: this.travelmodel.WorkPlan,
+        WorkPlanNumber: this.travelmodel.WorkPlanNumber,
+        OriginalWorkPlanNumber: this.travelmodel.OriginalWorkPlanNumber,
+        WorkPlanText: this.travelmodel.WorkPlanText,
+        IndexNumber: this.travelmodel.IndexNumber,
         Company: this.travelmodel.Company,
         TravelFrom: this.travelmodel.TravelFrom,
         TravelTo: this.travelmodel.TravelTo,
-        Travelers: this.travelerData,
+        Travelers: this.travelmodel.Travelers, // this.travelerData,
         Sponsor: this.travelmodel.Sponsor,
         POCName: this.travelmodel.POCName,
         POCEmail: this.travelmodel.POCEmail,
@@ -610,29 +895,108 @@ export default {
         Comments: this.travelmodel.Comments,
         Clearance: this.travelmodel.Clearance,
         VisitRequest: this.travelmodel.VisitRequest,
-        EstimatedCost: this.travelmodel.EstimatedCost
+        EstimatedCost: this.travelmodel.EstimatedCost,
+        TripReport: isNullOrUndefined(this.reportdigest) ? 'EXISTS' : this.travelmodel.TripReport,
+        etag: this.travelmodel.etag,
+        uri: this.travelmodel.uri
       })
-      this.$refs.TravelCalendar.addEvent(event)
-      // now push this to the data module to save to sharepoint
-      Travel.dispatch('addTrip', event).then(function(response) {
-        // console.log('Event added to SharePoint ' + response)
-        // the id of the added item is now in the response object!
-        let id = response.data.d.Id
-        vm.$bvModal.hide('modal-wizard')
-        // validate if email needs to be sent
-        if (vm.emailRequired) {
-          Travel.dispatch('sendEmail', id).then(function() {
-            console.log('EMAIL SENT TO SECURITY')
+      this.selectedtrip = event
+      if (this.editing) {
+        // Has a trip report been selected? If so, we need to take care of uploading that or skip if none selected.
+        // TODO: Was there an existing trip report already? Do we need to replace it?
+        if (!isNullOrUndefined(this.fileSelected) && !isNullOrUndefined(this.reportdigest)) {
+          // if a file is selected, the assumption is that this is a new trip report
+          // need a report digest if we don't already have one
+          vm.uploadTripReport(vm.fileSelected, vm.buffer, vm.reportdigest).then(function(response) {
+            console.log('FILE UPLOADED RESPONSE: ' + response)
+            // need to get the trip report file and update it's travel index number and title
+            // need to then submit the updates to the travel request
+            let itemlink = response.data.d.ListItemAllFields.__deferred.uri
+            // set the item link so that we can get it later
+            vm.reportlink = itemlink
+            let item = vm.getReportItem(itemlink)
+            item.then(function(response) {
+              // now we have the file item object and can then proceed to update it
+              console.log('GET FILE RESPONSE: ' + response)
+              console.log('INDEX: ' + vm.travelmodel.IndexNumber)
+              let updateitem = vm.updateReportItem(response.data.d.__metadata).then(function() {
+                // there is no response object on an update
+                // save travel request
+                event[0].TripReport = server + '/TripReports/' + vm.fileSelected
+                event[0].ReportFile = vm.fileSelected
+                event[0].Status = 'ReportFiled'
+                Travel.dispatch('editTrip', event).then(function() {
+                  /* vm.$bvModal.hide('modal-wizard') */
+                  // console.log(event[0].WorkPlanNumber + ', ' + event[0].OriginalWorkPlanNumber)
+                  if (event[0].WorkPlanNumber !== event[0].OriginalWorkPlanNumber) {
+                    // The workplan was changed! So, update the travel index on the workplan. NOTE: This will cause a loss of some travel indexes
+                    // This loss of index would abandon the old travel index numnber to the new one, but there is no way to back out of the old index.
+                    let payload = {}
+                    payload.uri = vm.workplanuri
+                    payload.etag = vm.workplanetag
+                    payload.index = vm.newindex
+                    Workplan.dispatch('updateIndex', payload).then(function(response) {
+                      // console.log('UPDATED LAST INDEX:' + response)
+                      vm.$bvModal.hide('modal-wizard')
+                    })
+                  } else {
+                    vm.$bvModal.hide('modal-wizard')
+                  }
+                })
+              })
+            })
+          })
+        } else {
+          // No trip report so just update the travel request
+          Travel.dispatch('editTrip', event).then(function() {
+            vm.$bvModal.hide('modal-wizard')
+            if (event[0].WorkPlanNumber !== event[0].OriginalWorkPlanNumber) {
+              // The workplan was changed! So, update the travel index on the workplan. NOTE: This will cause a loss of some travel indexes
+              // This loss of index would abandon the old travel index numnber to the new one, but there is no way to back out of the old index.
+              let payload = {}
+              payload.uri = vm.workplanuri
+              payload.etag = vm.workplanetag
+              payload.index = vm.newindex
+              Workplan.dispatch('updateIndex', payload).then(function(response) {
+                // console.log('UPDATED LAST INDEX:' + response)
+              })
+            }
           })
         }
-      })
+      } else {
+        this.$refs.TravelCalendar.addEvent(event)
+        // now push this to the data model to save to sharepoint
+        Travel.dispatch('addTrip', event).then(function(response) {
+          // the id of the added item is now in the response object!
+          let id = response.data.d.Id
+          vm.resetTravelModel()
+          vm.$bvModal.hide('modal-wizard')
+          // validate if email needs to be sent
+          if (vm.emailRequired) {
+            Travel.dispatch('sendEmail', id).then(function() {
+              console.log('EMAIL SENT TO SECURITY')
+            })
+          }
+          // update workplan index
+          let payload = {}
+          payload.uri = vm.workplanuri
+          payload.etag = vm.workplanetag
+          Workplan.dispatch('updateIndex', payload).then(function(response) {
+            // console.log(response)
+          })
+        })
+      }
     },
     onCellClick: function(args) {
-      console.log('CELL CLICKED: ' + args)
       args.cancel = true
-      this.travelmodel.StartTime = moment(args.StartTime).format('YYYY-MM-DD')
-      this.travelmodel.EndTime = moment(args.EndTime).format('YYYY-MM-DD')
-      this.$bvModal.show('modal-wizard')
+      if (this.moreevents) {
+        // do nothing here
+        this.moreevents = false
+      } else {
+        this.travelmodel.StartTime = moment(args.StartTime).format('YYYY-MM-DD')
+        this.travelmodel.EndTime = moment(args.EndTime).format('YYYY-MM-DD')
+        this.$bvModal.show('modal-wizard')
+      }
     },
     onSelect: function(args) {
       args.cancel = true
@@ -644,7 +1008,6 @@ export default {
     },
     onEventRendered: function(args) {
       let c = args.data.class
-      console.log('Setting CLASS for event: ' + c + ', element? ' + args.element)
       if (!args.element || !c) {
         return
       }
@@ -655,26 +1018,124 @@ export default {
       args.element.classList.remove('travel-no-report')
       args.element.classList.add(c)
     },
-    onEventClick: function(args) {
-      console.log('EVENT CLICKED: ' + args)
+    onEventClick(args) {
       args.cancel = true
+      if (this.moreevents) {
+        this.moreevents = false
+      } else {
+        this.editing = true
+        this.fileSelected = !isNullOrUndefined(args.event.TripReport) ? args.event.TripReport : ''
+        let giraffe = JSON.parse(args.event.Travelers)
+        this.travelmodel.id = args.event.id
+        this.travelmodel.Status = args.event.Status
+        this.travelmodel.WorkPlan = args.event.WorkPlan
+        this.travelmodel.WorkPlanNumber = args.event.WorkPlanNumber
+        this.travelmodel.OriginalWorkPlanNumber = args.event.OriginalWorkPlanNumber
+        this.travelmodel.WorkPlanText = args.event.WorkPlanText
+        this.travelmodel.Company = args.event.Company
+        this.travelmodel.Subject = args.event.Subject
+        this.travelmodel.StartTime = moment(args.event.StartTime)
+          .add(8, 'hours')
+          .format('YYYY-MM-DD')
+        this.travelmodel.EndTime = moment(args.event.EndTime)
+          .add(8, 'hours')
+          .format('YYYY-MM-DD')
+        this.travelmodel.TravelFrom = args.event.TravelFrom
+        this.travelmodel.TravelTo = args.event.TravelTo
+        this.travelmodel.Sponsor = args.event.Sponsor
+        this.travelmodel.POCName = args.event.POCName
+        this.travelmodel.POCEmail = args.event.POCEmail
+        this.travelmodel.POCPhone = args.event.POCPhone
+        this.travelmodel.Comments = args.event.Comments
+        this.travelmodel.Clearance = args.event.Clearance
+        this.travelmodel.VisitRequest = args.event.VisitRequest
+        this.travelmodel.EstimatedCost = args.event.EstimatedCost
+        this.travelmodel.IndexNumber = args.event.IndexNumber
+        this.travelmodel.TripReport = args.event.TripReport
+        this.travelmodel.TripReportLink = args.event.TripReportLink
+        this.travelmodel.Travelers = giraffe.length > 0 ? giraffe : []
+        this.travelmodel.etag = args.event.etag
+        this.travelmodel.uri = args.event.uri
+        this.$bvModal.show('modal-wizard')
+      }
+    },
+    onMoreEventsClick: function(args) {
+      this.moreevents = true
+    },
+    /* onPopupOpen: function(args) {
+      console.log('POPUP OPENED: ' + args)
     },
     onDragStop: function(args) {
+      args.cancel = true
       console.log('DRAG STOPPED: ' + args)
     },
     onResizeStop: function(args) {
+      args.cancel = true
       console.log('RESIZED: ' + args)
+    }, */
+    onTabSelected: function(newidx, oldidx, event) {
+      // Now we can validate the tabs based on what tab is clicked
+      this.tabInvalid = false
+      if (newidx > 0) {
+        switch (newidx) {
+          case 1:
+            if (newidx > oldidx) {
+              let valid = this.validateFirstTab()
+              if (!valid) {
+                event.preventDefault()
+                this.tabInvalid = true
+              }
+            }
+            break
+
+          case 2:
+            if (newidx > oldidx) {
+              let valid = this.validateFirstTab()
+              if (!valid) {
+                event.preventDefault()
+                this.tabInvalid = true
+              }
+            }
+            break
+
+          case 3:
+            var fv = true
+            if (newidx > oldidx && oldidx == 0) {
+              let valid = this.validateFirstTab()
+              if (!valid) {
+                event.preventDefault()
+                this.tabInvalid = true
+                fv = false
+              }
+            }
+            if (newidx > oldidx && oldidx == 2) {
+              let valid = this.validateThirdTab()
+              if (!valid) {
+                event.preventDefault()
+                this.tabInvalid = true
+                fv = false
+              }
+            }
+            this.formValid = fv
+            break
+        }
+      }
     },
-    getRandomInt(max) {
-      return Math.floor(Math.random() * Math.floor(max))
+    onWorkplanSelected: function() {
+      let s = String(this.travelmodel.WorkPlanNumber)
+      let t = this.workplans.filter(workplan => workplan.value == s)
+      let wp = t[0].data
+      wp = wp.split(', ')
+      this.workplanuri = wp[4]
+      this.workplanetag = wp[5]
+      this.newindex = parseInt(wp[3]) + 1
+      this.travelmodel.WorkPlan = t[0].data
+      this.travelmodel.WorkPlanText = wp[1]
+      this.travelmodel.IndexNumber = wp[0] + '-' + (parseInt(wp[3]) + 1)
     },
     getRef(text, idx) {
-      // console.log('getRef: ' + text + '_' + idx)
       return text + '_' + idx
     },
-    /* onComplete: function() {
-      alert('Yay. Done!')
-    }, */
     ValidateMe: function(control) {
       let phoneNumberPattern = /^\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/
       let emailPattern = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/
@@ -689,7 +1150,12 @@ export default {
           break
 
         case 'WorkPlan':
-          ret = this.travelmodel.WorkPlan.length > 6 ? true : false
+          var val = this.travelmodel.WorkPlanNumber
+          var good = false
+          if (val.length > 0) {
+            good = true
+          }
+          ret = good
           break
 
         case 'IndexNumber':
@@ -738,9 +1204,9 @@ export default {
 
         case 'Clearance':
           var req = this.travelmodel.VisitRequest
-          var val = this.travelmodel.Clearance
-          var good = false
-          if (req === 'yes' && val !== 'Select') {
+          val = this.travelmodel.Clearance
+          good = false
+          if (req === 'Yes' && val !== 'None') {
             good = true
           }
           ret = good
@@ -748,89 +1214,31 @@ export default {
       }
       return ret
     },
-    validateLength: function(value, lngth) {
-      let a = String(value)
-      a = a.split('_')
-      let b = parseInt(a[1])
-      let c = false
-      switch (a[0]) {
-        case 'trvlfirstName':
-          if (this.travelerData[b].firstName.length > lngth) {
-            c = true
-          }
-          break
-
-        case 'trvllastName':
-          if (this.travelerData[b].lastName.length > lngth) {
-            c = true
-          }
-          break
-      }
-      return c
-    },
-    validateEmail: function(email) {
-      let emailPattern = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/
-      let a = String(email)
-      a = a.split('_')
-      let b = parseInt(a[1])
-      return emailPattern.test(this.travelerData[b].email)
-    },
-    validatePhone: function(phone) {
-      let phoneNumberPattern = /^\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/
-      let a = String(phone)
-      a = a.split('_')
-      let b = parseInt(a[1])
-      return phoneNumberPattern.test(this.travelerData[b].phone)
-    },
     validateFirstTab: function() {
       // check all the fields in the first tab to see that they are properly validated
-      this.$refs.TravelWizard.subtitle = ''
       let valid = true
       for (let i = 0; i < this.fieldsFirstTab.length; i++) {
-        /* console.log(this.fieldsFirstTab[i] + ', ' + this.$refs[this.fieldsFirstTab[i]].state) */
         if (this.$refs[this.fieldsFirstTab[i]].state === false) {
           valid = false
-          this.$refs.TravelWizard.subtitle = 'Please properly fill out all the fields.'
         }
       }
-      return valid
-    },
-    validateSecondTab: function() {
-      // check all the fields in the second tab to see that they are properly validated. This will require looping through the travelmodel.travelers and checking each one
-      this.$refs.TravelWizard.subtitle = ''
-      let valid = true
-      let a = document.getElementById('TravelersTable')
-      // let b = a.getElementsByTagName('input')
-      a.querySelectorAll('input').forEach(function(el) {
-        if (!el.classList.contains('is-valid')) {
-          valid = false
-          vm.$refs.TravelWizard.subtitle = 'Please properly fill out all the fields.'
-        }
-      })
       return valid
     },
     validateThirdTab: function() {
       // check all the fields in the first tab to see that they are properly validated
-      this.$refs.TravelWizard.subtitle = ''
       let valid = true
       for (let i = 0; i < this.fieldsThirdTab.length; i++) {
-        /* console.log(this.fieldsThirdTab[i] + ', ' + this.$refs[this.fieldsThirdTab[i]].state) */
         if (this.fieldsThirdTab[i] !== 'Clearance') {
           if (this.$refs[this.fieldsThirdTab[i]].state === false) {
             valid = false
-            this.$refs.TravelWizard.subtitle = 'Please properly fill out all the fields.'
           }
         } else {
           let req = this.travelmodel.VisitRequest
           let val = this.travelmodel.Clearance
           if (req === 'yes' && val === 'Select') {
             valid = false
-            this.$refs.TravelWizard.subtitle = 'Please properly fill out all the fields.'
           }
         }
-      }
-      if (valid) {
-        this.formValid = true
       }
       return valid
     },
@@ -857,22 +1265,41 @@ export default {
         return f
       }
     },
-    addTravel(d) {
-      this.currentmode = 'default' // Reset for change checking
-      this.selectedDate = this.formatme(d, 'native')
-      this.travelmodel.start = this.selectedDate
-      this.$bvModal.show('modal-prompt')
-    },
     VisitRequest(checked) {
       this.travelmodel.VisitRequest = checked ? true : false
     },
     btnAddClick: function() {
-      this.travelmodel.Travelers.push({
-        firstName: '',
-        lastName: '',
-        email: '',
-        phone: ''
-      })
+      this.$bvModal.show('PersonnelModal')
+    },
+    onActionBegin(args) {
+      console.log('ACTION BEGIN: ' + args.requestType + ', args' + args)
+      switch (args.requestType) {
+        case 'toolbarItemRendering':
+          // something here
+          break
+      }
+    },
+    onActionComplete(args) {
+      console.log('ACTION COMPLETE: ' + args.requestType + ', args' + args)
+      switch (args.requestType) {
+        case 'toolbarItemRendered':
+          // something here
+          break
+      }
+    },
+    actionBegin(args) {
+      switch (args.requestType) {
+        case 'beginEdit':
+          args.cancel = true
+          vm.travelmodel.Travelers.push({
+            firstName: args.rowData.FirstName,
+            lastName: args.rowData.LastName,
+            email: args.rowData.Email,
+            phone: args.rowData.Phone
+          })
+          this.$bvModal.hide('PersonnelModal')
+          break
+      }
     },
     approveme: function(idx) {
       let payload = {}
@@ -889,15 +1316,100 @@ export default {
       this.$store.dispatch('database/travel/approveTravel', payload).then(function() {
         // perhaps do something here?
       })
+    },
+    deleteme: function(idx) {
+      this.travelmodel.Travelers.splice(idx, 1)
+    },
+    async onFileSelect(args) {
+      let response = await this.getFormDigest()
+      vm.reportdigest = response.data.d.GetContextWebInformation.FormDigestValue
+      let input = document.getElementById('EditTripReport')
+      vm.fileSelected = args.filesData[0].name
+      let buffer = vm.getFileBuffer(args.filesData[0].rawFile)
+      buffer.then(function(buff) {
+        vm.buffer = buff
+      })
+    },
+    async uploadTripReport(name, buffer, digest) {
+      let endpoint = String.format("{0}/_api/lists/getbytitle('{1}')/RootFolder/Files/Add(url='{2}',overwrite=true)", server, library, name)
+      let data = buffer
+      let headers = {
+        Accept: 'application/json;odata=verbose',
+        'X-RequestDigest': digest
+      }
+      try {
+        const response = await axios({
+          url: endpoint,
+          method: 'POST',
+          data: data,
+          processData: false,
+          async: false,
+          headers: headers
+        })
+        return response
+      } catch (error) {
+        console.log('TravelService Error Adding Trip Report: ' + error)
+      }
+    },
+    getFileBuffer(file) {
+      let p = new Promise(function(resolve, reject) {
+        var reader = new FileReader()
+        reader.onloadend = function(e) {
+          resolve(e.target.result)
+        }
+        reader.onerror = function(e) {
+          reject(e.target.error)
+        }
+        reader.readAsArrayBuffer(file)
+      })
+      return p
+    },
+    getReportItem(uri) {
+      return axios({
+        method: 'GET',
+        url: uri,
+        headers: {
+          Accept: 'application/json;odata=verbose'
+        }
+      })
+    },
+    updateReportItem(metadata) {
+      let nwe = this.fileSelected.split('.')
+      let endpoint = metadata.uri
+      let headers = {
+        'Content-Type': 'application/json;odata=verbose',
+        Accept: 'application/json;odata=verbose',
+        'X-RequestDigest': this.reportdigest,
+        'X-HTTP-Method': 'MERGE',
+        'If-Match': metadata.etag
+      }
+      let config = {
+        headers: headers
+      }
+      let itemprops = {
+        __metadata: { type: metadata.type },
+        FileLeafRef: nwe[0],
+        Title: nwe[0],
+        IndexNumber: this.travelmodel.IndexNumber
+      }
+      return axios
+        .post(endpoint, itemprops, config)
+        .then(function(response) {
+          return response
+        })
+        .catch(function(error) {
+          console.log('Travel Error Updating Trip Report Data: ' + error)
+        })
     }
   },
   watch: {
     // eslint-disable-next-line no-unused-vars
     $route(to, from) {
+      console.log('ROUTE CHANGE FROM TRAVELCALENDAR: ' + to + ', ' + from)
       this.mode = to.params.mode
-      console.log('Mode changes from TravelCalendar.vue: ' + this.currentmode + ', ' + this.mode)
       switch (this.mode) {
         case 'view':
+          document.getElementById('PageTitle').innerHTML = ' -  View'
           this.selectedtrip = {} // clear any existing item
           var id = Number(this.$route.query.id)
           var trip = this.travel.filter(trip => trip.id == id)
@@ -908,6 +1420,7 @@ export default {
           break
 
         case 'approval':
+          document.getElementById('PageTitle').innerHTML = ' -  Approval'
           this.approvalItems = [] // clear any existing items
           var items = this.travel.filter(trip => trip.Status == 'New')
           for (let i = 0; i < items.length; i++) {
@@ -919,12 +1432,21 @@ export default {
           break
 
         case 'new':
+          document.getElementById('PageTitle').innerHTML = ' -  New Travel Request'
           this.$bvModal.show('modal-wizard')
           break
 
         case 'default':
-          window.location.reload()
+          console.log('RELOADING TRIPS!')
+          Travel.dispatch('getDigest')
+          Travel.dispatch('getTRIPS').then(function() {
+            vm.$options.interval = setInterval(vm.waitForEvents, 1000)
+          })
           break
+
+        case 'refresh':
+          // do we actually get here?
+          vm.$router.push({ name: 'Refresh', params: { action: 'travel' } })
       }
     }
   }
@@ -934,6 +1456,31 @@ export default {
 <style lang="scss">
 .e-time {
   display: none !important;
+}
+
+.table td,
+.table th {
+  padding: 0.1rem !important;
+  vertical-align: top;
+  border-top: 1px solid #dee2e6;
+}
+
+.summarytable {
+  font-size: 0.8rem !important;
+  width: 100%;
+}
+
+.e-bigger.e-small .e-upload .e-file-select-wrap,
+.e-upload .e-file-select-wrap {
+  padding: 5px !important;
+}
+
+.e-bigger.e-small .e-upload .e-file-select-wrap .e-file-select,
+.e-bigger.e-small .e-upload .e-file-select-wrap .e-file-select .e-uploader,
+.e-upload .e-file-select-wrap .e-file-select,
+.e-upload .e-file-select-wrap .e-file-select .e-uploader {
+  display: unset !important;
+  width: 0;
 }
 
 #ApprovalsTable table {
@@ -1009,7 +1556,6 @@ export default {
   background-color: black !important;
 }
 #Calendar {
-  margin-top: 10px;
   font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
   font-size: 12px;
 }
@@ -1054,5 +1600,11 @@ export default {
 
 .calendar {
   margin: 5px auto;
+}
+
+.form-control-travel {
+  padding: 2px !important;
+  font-size: 0.75rem !important;
+  height: 20px !important;
 }
 </style>

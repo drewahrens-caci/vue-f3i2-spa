@@ -6,12 +6,6 @@ export const namespaced = true
 
 export const state = {
   profile: {},
-  causes: [],
-  causecats: [],
-  orgs: [],
-  standards: [],
-  ddstandards: [],
-  mdepts: ['M'],
   loaded: false
 }
 
@@ -28,7 +22,7 @@ export const actions = {
   getUserProfile({ commit }) {
     SupportService.getUserProfile()
       .then(response => {
-        console.log('Profile Data: ' + response)
+        // console.log('Profile Data: ' + response)
         let profile = {}
         let properties = response.data.d.UserProfileProperties.results
         profile.PictureUrl = response.data.d.PictureUrl

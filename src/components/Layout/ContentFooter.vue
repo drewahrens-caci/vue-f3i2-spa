@@ -8,10 +8,10 @@
           </li>
         </ul>
       </nav>
-      <div class="copyright">
-        &copy; Coded with
+      <!-- <div class="copyright">
+        &copy; Coded by Daniel Walker. Designed by CACI.
         <font-awesome-icon fas icon="heart" class="heart"></font-awesome-icon> by Daniel Walker. Designed by CACI.
-      </div>
+      </div> -->
     </div>
   </footer>
 </template>

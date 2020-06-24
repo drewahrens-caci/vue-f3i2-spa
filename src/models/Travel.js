@@ -24,6 +24,9 @@ export default class Travel extends Model {
       EndTime: this.attr(''),
       class: this.attr(''),
       WorkPlan: this.attr(''),
+      WorkPlanText: this.attr(''),
+      WorkPlanNumber: this.attr(''),
+      OriginalWorkPlanNumber: this.attr(''),
       Company: this.attr(''),
       TravelFrom: this.attr(''),
       TravelTo: this.attr(''),
@@ -34,9 +37,11 @@ export default class Travel extends Model {
       POCPhone: this.attr(''),
       Comments: this.attr(''),
       Clearance: this.attr(''),
-      VisitRequest: this.boolean(false),
+      VisitRequest: this.attr(''),
       EstimatedCost: this.attr(''),
       IndexNumber: this.attr(''),
+      TripReport: this.attr(''),
+      TripReportLink: this.attr(''),
       etag: this.attr(null), // Used for updating
       uri: this.attr(null) // Used for updating
     }

@@ -1,33 +1,49 @@
 /* eslint-disable */
 import UserProfileService from '@/services/UserProfileService.js'
 import User from '@/models/User'
+import Personnel from '@/models/Personnel'
 let id = null
 
 const getters = {
-  CurrentUser () {
-    return User.all()
+  CurrentUser() {
+    return User.all();
   },
-  CurrentUserWithTodos () {
+  CurrentUserWithTodos() {
     return User.query()
-      .with('todos')
-      .first()
+      .with("todos")
+      .first();
   },
   CurrentUserId: state => {
-    return state.userid
+    return state.userid;
   },
   CurrentUserGroups: state => {
-    return state.usergroups
+    return state.usergroups;
+  },
+  AppVersion: state => {
+    return state.appversion
   },
   isOwner: state => {
-    return state.isOwner
+    return state.isOwner;
   },
   isWPManager: state => {
-    return state.isWPManager
+    return state.isWPManager;
   },
   isApprover: state => {
-    return state.isApprover
+    return state.isApprover;
+  },
+  isTravelApprover: state => {
+    return state.isTravelApprover;
+  },
+  isPCA: state => {
+    return state.isPCA;
+  },
+  isMember: state => {
+    return state.isMember;
+  },
+  isMSRInputter: state => {
+    return state.isMSRInputter;
   }
-}
+};
 
 const actions = {
   getUserId() {
@@ -41,6 +57,11 @@ const actions = {
       .catch(error => {
         console.log('There was an error getting User Id: ', error.response)
       })
+  },
+  async getPickerUserId(usr) {
+    let response = await UserProfileService.getPickerUserId(usr)
+    console.log('USER RESPONSE DATA: ' + response)
+    return response
   },
   getUserProfile() {
     UserProfileService.getUserProfile()
@@ -75,10 +96,30 @@ const actions = {
 
             case 'AboutMe':
               profile.About = property.Value
+              break
+
+            case 'LastName':
+              profile.LastName = property.Value
+              break
+
+            case 'FirstName':
+              profile.FirstName = property.Value
+              break
           }
         }
         // console.log('Inserting User Data.')
-        User.insert({ data: profile })        
+        // to get the Company and Workplan Data we need to get this from the Personnel list based on the current user
+        if (profile.Email && profile.Email.length > 2) {
+          Personnel.dispatch('getPersonnelByEmail', profile.Email).then(function (response) {
+            console.log('EXTRADATA: ' + response)
+            // add wpdata and company
+            profile.Company = response[0].Company
+            profile.WPData = JSON.parse(response[0].WPData)
+            User.insert({ data: profile })
+          })
+        } else {
+          User.insert({ data: profile })
+        }
       })
       .catch(error => {
         console.log('There was an error getting profile data: ', error.response)
@@ -92,17 +133,33 @@ const actions = {
           state.usergroups = response.data.d.results
           for (let i = 0; i < state.usergroups.length; i++) {
             switch (state.usergroups[i].Title) {
-              case 'Approvers':
-                state.isApprover = true
-                break
-    
-              case 'F3I-2 Owners':
-                state.isOwner = true
-                break
-    
-              case 'Workplan Managers':
-                state.isWPManager = true
-                break
+              case "Approvers":
+                state.isApprover = true;
+                break;
+
+              case "Travel Approvers":
+                state.isTravelApprover = true;
+                break;
+
+              case "F3I-2 Owners":
+                state.isOwner = true;
+                break;
+              
+              case "F3I-2 PCAs":
+                state.isPCA = true;
+                break;
+              
+              case "MSR Inputters":
+                state.isMSRInputter = true;
+                break;
+              
+              case "F3I-2 Members":
+                state.isMember = true;
+                break;
+
+              case "Workplan Managers":
+                state.isWPManager = true;
+                break;
             }
           }
         })

@@ -1,5 +1,4 @@
 import { Model } from '@vuex-orm/core'
-//import User from './User'
 
 export default class Workplan extends Model {
   static entity = 'workplan'
@@ -8,6 +7,7 @@ export default class Workplan extends Model {
     return {
       digest: null,
       loaded: false,
+      managers: [],
       dropdown: []
     }
   }
@@ -19,7 +19,15 @@ export default class Workplan extends Model {
       Title: this.attr(''),
       Number: this.attr(''),
       Revision: this.attr(''), // May not be needed
-      Manager: this.attr('')
+      POPStart: this.attr(''),
+      POPEnd: this.attr(''),
+      Manager: this.attr(''),
+      ManagerId: this.attr(''),
+      ManagerEmail: this.attr(''),
+      DateApproved: this.attr(''),
+      LastIndex: this.attr(''),
+      etag: this.attr(null), // Used for updating
+      uri: this.attr(null) // Used for updating
     }
   }
 }

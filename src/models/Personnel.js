@@ -8,7 +8,9 @@ export default class Personnel extends Model {
     return {
       digest: null,
       loaded: false,
-      dropdown: []
+      dropdown: [],
+      personnelwps: [],
+      contacts: []
     }
   }
 
@@ -16,27 +18,27 @@ export default class Personnel extends Model {
     return {
       id: this.attr(null), // internal id
       Id: this.attr(null), // SharePoint id
-      Active: this.boolean(),
+      WPData: this.attr(''),
+      Contact: this.attr(''),
+      Active: this.attr(''),
       LastName: this.attr(''), // This is the Title column in SharePoint
       FirstName: this.attr(''),
       Middle: this.attr(''),
       Cadency: this.attr(''),
       Position: this.attr(''),
-      WorkPlan: this.attr(''),
-      Contact: this.boolean(false),
       Location: this.attr(''),
       Email: this.attr(''),
+      Phone: this.attr(''),
+      SubET: this.attr(''),
       Company: this.attr(''),
+      CACStatus: this.attr(''),
       CACRequestDate: this.attr(''),
-      CACRequestSubmitted: this.attr(''),
       CACExpirationDate: this.attr(''),
-      EffectiveDate: this.attr(''),
-      NominationForm: this.attr(''),
-      TransferForm: this.attr(''),
-      FormsSubmitted: this.attr(''),
-      RequiredAccounts: this.attr(''),
-      Notes: this.attr(''),
-      SubmittedToAFRL: this.attr(''),
+      SCIFormStatus: this.attr(''),
+      SCIFormType: this.attr(''),
+      SCIFormSubmitted: this.attr(''),
+      PRDueDate: this.attr(''),
+      CEDate: this.attr(''),
       etag: this.attr(null), // Used for updating
       uri: this.attr(null) // Used for updating
     }

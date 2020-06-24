@@ -1,11 +1,10 @@
 <template>
   <div class="user">
-    <b-modal id="Todos" ref="Todos" scrollable size="xl" centered hide-footer :header-bg-variant="headerBgVariant">
+    <!-- <b-modal id="Todos" ref="Todos" scrollable size="xl" centered hide-footer :header-bg-variant="headerBgVariant">
       <template v-slot:modal-title>My Tasks</template>
       <b-form>
         <b-table id="TodosTable" :ref="TodosTable" v-model="shownData" responsive :striped="striped" :bordered="bordered" :small="small" :hover="hover" :items="mytodos" :fields="fields" :primary-key="ID" style="table-layout: fixed;">
           <template v-slot:cell(actions)="data">
-            <!-- <b-button size="sm" variant="outline" v-bind:id="getID('DELETE_', shownData[data.index].guid)" class="actionbutton" :class="getClass(shownData[data.index].guid, shownData[data.index].delete)" @click="deleteme(shownData[data.index].guid, shownData[data.index].delete)"> -->
             <b-button size="sm" class="actionbutton" @click="completeme(data.index)" title="Mark Complete">
               <font-awesome-icon far icon="check-circle" class="icon" :style="{ color: 'green' }"></font-awesome-icon>
             </b-button>
@@ -22,8 +21,8 @@
           </template>
         </b-table>
       </b-form>
-    </b-modal>
-    <b-modal id="Profile" ref="Profile" centered :header-bg-variant="headerBgVariant" @ok="updateProfile">
+    </b-modal> -->
+    <!-- <b-modal id="Profile" ref="Profile" centered :header-bg-variant="headerBgVariant" @ok="updateProfile">
       <template v-slot:modal-title>Please Update Your Profile</template>
       <div>
         <p>Please update your profile so that the contact and about me information is correct.</p>
@@ -31,7 +30,7 @@
         <p>This information will inform others on how best to contact you and learn more about you.</p>
         <p>On the following page, click the 'edit' your profile link and fill it out including the About me section</p>
       </div>
-    </b-modal>
+    </b-modal> -->
     <div class="photo">
       <img id="UserImage" :src="userpic" alt="Personal Photo" />
     </div>
@@ -39,32 +38,32 @@
       <a data-toggle="collapse" :aria-expanded="!isClosed" @click.stop="toggleMenu" href="#">
         <span class="UserName">
           {{ userdisplayname }}
-          <span v-if="mytodos.length > 0" id="userbadgeA" class="badge badge-xs badge-danger">{{ mytodos.length }}</span>
+          <!-- <span v-if="mytodos.length > 0" id="userbadgeA" class="badge badge-xs badge-danger">{{ mytodos.length }}</span> -->
           <b class="caret"></b>
         </span>
       </a>
       <div class="clearfix"></div>
       <div>
-        <el-collapse-transition>
-          <ul class="nav" v-show="!isClosed">
-            <slot>
-              <li>
-                <a class="profile-dropdown" :href="userurl">
-                  <span class="sidebar-mini"><font-awesome-icon fas icon="cog" class="icon"></font-awesome-icon></span>
-                  <span class="sidebar-normal">My Profile</span>
-                </a>
-              </li>
-              <li v-if="mytodos.length > 0">
-                <a class="profile-dropdown" href="#" @click="OpenTodos">
-                  <span class="sidebar-mini"><font-awesome-icon fas icon="tasks" class="icon"></font-awesome-icon></span>
-                  <span class="sidebar-normal">
-                    My Tasks <span id="userbadgeB" class="badge badge-xs badge-danger">{{ mytodos.length }}</span>
-                  </span>
-                </a>
-              </li>
-            </slot>
-          </ul>
-        </el-collapse-transition>
+        <!--  <el-collapse-transition> -->
+        <ul class="nav" v-show="!isClosed">
+          <slot>
+            <li>
+              <a class="profile-dropdown" :href="userurl">
+                <span class="sidebar-mini"><font-awesome-icon fas icon="cog" class="icon"></font-awesome-icon></span>
+                <span class="sidebar-normal">My Profile</span>
+              </a>
+            </li>
+            <!-- <li v-if="mytodos.length > 0">
+              <a class="profile-dropdown" href="#" @click="OpenTodos">
+                <span class="sidebar-mini"><font-awesome-icon fas icon="tasks" class="icon"></font-awesome-icon></span>
+                <span class="sidebar-normal">
+                  My Tasks <span id="userbadgeB" class="badge badge-xs badge-danger">{{ mytodos.length }}</span>
+                </span>
+              </a>
+            </li> -->
+          </slot>
+        </ul>
+        <!-- </el-collapse-transition> -->
       </div>
     </div>
   </div>
@@ -72,19 +71,22 @@
 
 <script>
 let vm = null
-import { isNullOrUndefined } from 'util'
+// import { isNullOrUndefined } from 'util'
 // import push from 'push.js'
 import User from '@/models/User'
-import Backlog from '@/models/Backlog'
-import CollapseTransition from 'element-ui/lib/transitions/collapse-transition'
+// import Backlog from '@/models/Backlog'
+import Personnel from '@/models/Personnel'
+import Workplan from '@/models/WorkPlan'
+import Travel from '@/models/Travel'
+// import CollapseTransition from 'element-ui/lib/transitions/collapse-transition'
 
 // eslint-disable-next-line no-undef
 let baseurl = _spPageContextInfo.webServerRelativeUrl
 
 export default {
-  components: {
+  /* components: {
     [CollapseTransition.name]: CollapseTransition
-  },
+  }, */
   computed: {
     profiledata() {
       return User.query().first()
@@ -92,7 +94,10 @@ export default {
     UserId() {
       return User.getters('CurrentUserId')
     },
-    mytodosloaded() {
+    isTravelApprover() {
+      return User.getters('isTravelApprover')
+    },
+    /* mytodosloaded() {
       return Backlog.getters('MyItemsLoaded')
     },
     mytodos() {
@@ -100,9 +105,15 @@ export default {
     },
     todos() {
       return Backlog.getters('allItems')
-    },
+    }, */
     usergroups() {
       return User.getters('CurrentUserGroups')
+    },
+    TravelLoaded() {
+      return Travel.getters('loaded')
+    },
+    newTravel() {
+      return Travel.getters('newTravel')
     }
   },
   props: {
@@ -149,18 +160,22 @@ export default {
     vm = this
     this.$nextTick(function() {
       // Todo.dispatch('getDigest')
-      Backlog.dispatch('getDigest')
+      // Backlog.dispatch('getDigest')
       vm.getUserId()
       // console.log('All todos length: ' + vm.todos.length)
+      Workplan.dispatch('getDigest')
+      Workplan.dispatch('getWorkplans')
+      Personnel.dispatch('getDigest')
+      Personnel.dispatch('getPersonnel')
     })
   },
   methods: {
     toggleMenu() {
       this.isClosed = !this.isClosed
     },
-    OpenTodos: function() {
+    /* OpenTodos: function() {
       this.$bvModal.show('Todos')
-    },
+    }, */
     getUserProfile: function() {
       clearInterval(this.$options.interval)
       User.dispatch('getUserProfile').then(function() {
@@ -175,35 +190,54 @@ export default {
       this.userurl = this.profiledata.PersonalUrl
       // if the About is empty they have not filled out the profile properly
       // console.log('ABOUT ME: ' + this.profiledata.About)
-      if (isNullOrUndefined(this.profiledata.About) || this.profiledata.About == '') {
+      /* if (isNullOrUndefined(this.profiledata.About) || this.profiledata.About == '') {
         this.$bvModal.show('Profile')
-      }
-      if (vm.mytodos.length > 0) {
+      } */
+      /* if (vm.mytodos.length > 0) {
         vm.todocount = vm.mytodos.length
-      }
+      } */
       User.dispatch('getUserGroups').then(function() {
-        // vm.$options.interval = setInterval(vm.updateUserGroups, 1000)
+        vm.$options.interval = setInterval(vm.waitForGroups, 1000)
       })
+    },
+    waitForGroups: function() {
+      if (this.usergroups && this.usergroups.length > 0) {
+        clearInterval(this.$options.interval)
+        console.log(vm.isTravelApprover)
+        if (vm.isTravelApprover == true) {
+          console.log('GETTING TRIPS?...')
+          Travel.dispatch('getDigest')
+          Travel.dispatch('getTRIPS').then(function() {
+            vm.$options.interval = setInterval(vm.waitForTrips, 1000)
+          })
+        }
+      }
     },
     updateProfile: function() {
       window.open(this.userurl, '_blank')
     },
     getUserId: function() {
       User.dispatch('getUserId').then(function() {
-        vm.$options.interval = setInterval(vm.getTodosByCurrentUser, 1000)
+        // vm.$options.interval = setInterval(vm.getTodosByCurrentUser, 1000)
+        vm.$options.interval = setInterval(vm.getUserProfile, 1000)
       })
     },
-    getTodosByCurrentUser: function() {
+    /* getTodosByCurrentUser: function() {
       if (!isNullOrUndefined(this.UserId) && this.UserId > 0) {
         let userid = this.UserId
-        // console.log('USERID: ' + userid)
         clearInterval(this.$options.interval)
         this.$store.dispatch('database/backlog/getItemsByUser', userid).then(function() {
           vm.$options.interval = setInterval(vm.getUserProfile, 1000)
         })
       }
-    },
-    refreshMyTodos: function() {
+    }, */
+    waitForTrips: function() {
+      if (this.TravelLoaded) {
+        clearInterval(this.$options.interval)
+        if (this.newTravel.length > 0) document.getElementById('ApprovalCount').innerHTML = this.newTravel.length
+      }
+    }
+    /* refreshMyTodos: function() {
       let userid = this.UserId
       this.$store.dispatch('database/backlog/getItemsByUser', userid)
     },
@@ -219,13 +253,13 @@ export default {
           // vm.$options.interval = setInterval(vm.refreshMyTodos, 10000)
         })
       })
-    }
+    } */
   },
   beforeDestroy() {
     clearInterval(this.$options.interval)
   },
   updated: function() {
-    console.log('USERMENU UPDATED')
+    // console.log('USERMENU UPDATED')
   }
 }
 </script>

@@ -20,7 +20,7 @@ Vue.config.productionTip = false
 
 Vue.config.devtools = true
 
-function loadscript(url, callback) {
+/* function loadscript(url, callback) {
   let script = document.createElement('script')
   script.type = 'text/javascript'
   script.onload = function() {
@@ -30,13 +30,12 @@ function loadscript(url, callback) {
   let base = _spPageContextInfo.webServerRelativeUrl
   script.src = base + url
   document.documentElement.insertBefore(script, document.documentElement.firstChild)
-}
+} */
 
-loadscript("/sites/f3i2/_layouts/15/autofill.js", function() {
-  loadscript("/sites/f3i2/_layouts/15/clienttemplates.js", function() {
-    loadscript("/sites/f3i2/_layouts/15/clientforms.js", function() {
-      loadscript("/sites/f3i2/_layouts/15/clientpeoplepicker.js", function() {
-
+/* loadscript('/sites/f3i2/_layouts/15/autofill.js', function() {
+  loadscript('/sites/f3i2/_layouts/15/clienttemplates.js', function() {
+    loadscript('/sites/f3i2/_layouts/15/clientforms.js', function() {
+      loadscript('/sites/f3i2/_layouts/15/clientpeoplepicker.js', function() {
         Vue.config.devtools = true
 
         new Vue({
@@ -44,14 +43,13 @@ loadscript("/sites/f3i2/_layouts/15/autofill.js", function() {
           store,
           render: h => h(App)
         }).$mount('#app')
-
       })
     })
   })
-})
+}) */
 
-/* new Vue({
+new Vue({
   router,
   store,
   render: h => h(App)
-}).$mount('#app') */
+}).$mount('#app')

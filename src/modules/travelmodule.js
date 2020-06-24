@@ -2,14 +2,20 @@
 import Travel from '@/models/Travel'
 import TravelService from '@/services/TravelService.js'
 import { isNullOrUndefined } from 'util'
-import moment from 'moment'
+import moment from 'moment-timezone'
 
 const getters = {
   allTravel() {
     return Travel.all()
   },
+  newTravel() {
+    return Travel.query().where('Status', 'New').get()
+  },
   emailRequired: state => {
     return state.sendEmail
+  },
+  loaded: state => {
+    return state.loaded
   }
 }
 
@@ -28,7 +34,7 @@ const actions = {
   getTRIPS({ state, commit }) {
     TravelService.getAllTrips()
       .then(response => {
-        Travel.insert({ data: formatTravel(response) })
+        Travel.create({ data: formatTravel(response) })
         Travel.commit(state => {
           state.loaded = true
         })
@@ -37,7 +43,7 @@ const actions = {
         console.log('There was an error: ', error.response)
       })
   },
-  async addTrip({ state, commit }, payload) {
+  async addTrip({ state }, payload) {
     console.log('PAYLOAD: ' + payload)
     Travel.commit(state => {
       state.currentEvent = payload[0]
@@ -51,8 +57,15 @@ const actions = {
     let response = await TravelService.addTrip(payload, state.digest)
     return response
   },
+  async editTrip({ state }, payload) {
+    console.log('PAYLOAD: ' + payload)
+    Travel.commit(state => {
+      state.currentEvent = payload[0]
+    })
+    let response = await TravelService.editTrip(payload, state.digest)
+    return response
+  },
   async getTripById({ state }, id) {
-    console.log('ID PASSED TO ACTION: ' + id)
     let trip = await Travel.query().where('Id', id).get()
     return trip
   }, 
@@ -75,11 +88,14 @@ const actions = {
       .catch(error => {
         console.log('There was an error sending email: ', error.response)
       })
+  },
+  async uploadTripReport({ state }, payload, buffer) {
+    let report = await TravelService.uploadTripReport(payload, buffer, state.digest);
+    return report
   }
 }
 
 function formatTravel(j) {
-  console.log(j.length + ', ' + j[0]['Title'])
   let p = []
   for (let i = 0; i < j.length; i++) {
     let c = ''
@@ -93,19 +109,13 @@ function formatTravel(j) {
     let diff = 0
     if (end !== '') {
       diff = end.diff(today, 'days')
-      console.log('end: ' + end.format('MM/DD/YYYY') + ', diff: ' + diff)
-    } else {
-      if (start !== '') {
-        diff = start.diff(today, 'days')
-        console.log('start: ' + start.format('MM/DD/YYYY') + ', diff: ' + diff)
-      }
     }
     switch (true) {
-      case diff < -4 && report == false:
+      case diff < -6 && report == false:
         c = 'travel-no-report'
         break
 
-      case diff < -4 && report == true:
+      case report == true:
         c = 'travel-report'
         break
 
@@ -117,33 +127,47 @@ function formatTravel(j) {
         c = 'travel-new'
         break
     }
-    start = moment(start).format('MM/DD/YYYY')
-    end = moment(end).add(8, 'hours').format('MM/DD/YYYY')
+    let offset = moment().utcOffset()
+    offset = offset * -1
+    // console.log('UTC OFFSET: ' + offset)
+    start = String(j[i]["StartDate"])
+    end = String(j[i]["EndDate"])
+    // console.log('1 START: ' + start + ', END: ' + end)
+    start = moment(start).utc().add(offset, 'm').format()
+    end = moment(end).utc().add(offset, 'm').format()
+    // console.log('2 START: ' + start + ', END: ' + end)
     p.push({
-      id: j[i]['Id'],
-      Id: j[i]['Id'],
-      Subject: j[i]['Title'] !== null ? String(j[i]['Title']) : '',
-      Status: j[i]['Status'] !== null ? String(j[i]['Status']) : '',
-      StartTime: start, //moment(j[i]['StartDate']).format('YYYY-MM-DD[T]HH:MM:[00Z]'),
-      EndTime: end, // moment(j[i]['EndDate']).format('YYYY-MM-DD[T]HH:MM:[00Z]'),
+      id: j[i]["Id"],
+      Id: j[i]["Id"],
+      Subject: j[i]["Title"] !== null ? String(j[i]["Title"]) : "",
+      Status: j[i]["Status"] !== null ? String(j[i]["Status"]) : "",
+      StartTime: start,
+      EndTime: end,
       class: c,
-      WorkPlan: j[i]['WorkPlan'] !== null ? String(j[i]['WorkPlan']) : '',
-      Company: j[i]['Company'] !== null ? String(j[i]['Company']) : '',
-      TravelFrom: j[i]['TravelFrom'] !== null ? String(j[i]['TravelFrom']) : '',
-      TravelTo: j[i]['TravelTo'] !== null ? String(j[i]['TravelTo']) : '',
-      Travelers: j[i]['Travelers'] !== null ? String(j[i]['Travelers']) : '',
-      Sponsor: j[i]['Sponsor'] !== null ? String(j[i]['Sponsor']) : '',
-      POCName: j[i]['POCName'] !== null ? String(j[i]['POCName']) : '',
-      POCEmail: j[i]['POCEmail'] !== null ? String(j[i]['POCEmail']) : '',
-      POCPhone: j[i]['POCPhone'] !== null ? String(j[i]['POCPhone']) : '',
-      Comments: j[i]['Comments'] !== null ? String(j[i]['Comments']) : '',
-      Clearance: j[i]['Clearance'] !== null ? String(j[i]['Clearance']) : '',
-      VisitRequest: j[i]['VisitRequest'] !== null ? j[i]['VisitRequest'] : '',
-      EstimatedCost: j[i]['EstimatedCost'] !== null ? String(j[i]['EstimatedCost']) : '',
-      IndexNumber: j[i]['IndexNumber'] !== null ? String(j[i]['IndexNumber']) : '',
-      etag: j[i]['__metadata']['etag'],
-      uri: j[i]['__metadata']['uri']
-    })
+      WorkPlan: j[i]["WorkPlan"] !== null ? String(j[i]["WorkPlan"]) : "",
+      WorkPlanText: j[i]["WorkPlanText"] !== null ? String(j[i]["WorkPlanText"]) : "",
+      WorkPlanNumber: j[i]["WorkPlanNumber"] !== null ? String(j[i]["WorkPlanNumber"]) : "",
+      OriginalWorkPlanNumber: j[i]["WorkPlanNumber"] !== null ? String(j[i]["WorkPlanNumber"]) : "", // For testing if the workplan changed
+      Company: j[i]["Company"] !== null ? String(j[i]["Company"]) : "",
+      TravelFrom: j[i]["TravelFrom"] !== null ? String(j[i]["TravelFrom"]) : "",
+      TravelTo: j[i]["TravelTo"] !== null ? String(j[i]["TravelTo"]) : "",
+      Travelers: j[i]["Travelers"] !== null ? String(j[i]["Travelers"]) : "",
+      Sponsor: j[i]["Sponsor"] !== null ? String(j[i]["Sponsor"]) : "",
+      POCName: j[i]["POCName"] !== null ? String(j[i]["POCName"]) : "",
+      POCEmail: j[i]["POCEmail"] !== null ? String(j[i]["POCEmail"]) : "",
+      POCPhone: j[i]["POCPhone"] !== null ? String(j[i]["POCPhone"]) : "",
+      Comments: j[i]["Comments"] !== null ? String(j[i]["Comments"]) : "",
+      Clearance: j[i]["Clearance"] !== null ? String(j[i]["Clearance"]) : "",
+      VisitRequest: j[i]["VisitRequest"] === true ? 'Yes' : 'No',
+      EstimatedCost:
+        j[i]["EstimatedCost"] !== null ? String(j[i]["EstimatedCost"]) : "",
+      IndexNumber:
+        j[i]["IndexNumber"] !== null ? String(j[i]["IndexNumber"]) : "",
+      TripReport: !isNullOrUndefined(j[i]['TripReport']) ? String(j[i]["TripReport"]["Description"]) : "",
+      TripReportLink: !isNullOrUndefined(j[i]['TripReport']) ? String(j[i]["TripReport"]["Url"]) : "",
+      etag: j[i]["__metadata"]["etag"],
+      uri: j[i]["__metadata"]["uri"]
+    });
   }
   return p
 }

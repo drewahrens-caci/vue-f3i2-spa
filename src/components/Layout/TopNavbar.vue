@@ -7,6 +7,7 @@
         </button>
       </div>
       <a class="navbar-brand">{{ this.$route.name }}</a>
+      <span id="PageTitle"></span>
       <button type="button" class="navbar-toggler navbar-toggler-right btn-burger" :class="{ toggled: $sidebar.showSidebar }" aria-expanded="false" @click="toggleSidebar">
         <span class="navbar-toggler-bar burger-lines"></span>
         <span class="navbar-toggler-bar burger-lines"></span>
@@ -16,6 +17,24 @@
         <b-navbar-nav class="ml-auto hidden-xs">
           <b-nav-item-dropdown id="ContactsMenu" right no-caret menu-class="animated bounceInDown">
             <template slot="button-content"> <font-awesome-icon fas icon="users" class="cog"></font-awesome-icon>Contacts </template>
+            <!-- <b-dropdown-item v-for="contact in formattedContacts" :key="contact" :href="contact.email"> -->
+            <b-table-simple id="ContactsTable" v-for="contact in formattedContacts" :key="contact">
+              <b-tbody>
+                <b-tr>
+                  <b-td rowspan="3" class="px40 p-0 pl-1">
+                    <a :href="contact.email" rel="noopener noreferrer"><font-awesome-icon far icon="envelope" class="icon"></font-awesome-icon></a>
+                  </b-td>
+                  <b-td class="p-0">{{ contact.name }}</b-td>
+                </b-tr>
+                <b-tr>
+                  <b-td class="p-0">{{ contact.position }}</b-td>
+                </b-tr>
+                <b-tr v-if="contact.phone !== 'Empty'">
+                  <b-td class="p-0">{{ contact.phone }}</b-td>
+                </b-tr>
+              </b-tbody>
+            </b-table-simple>
+            <!-- </b-dropdown-item> -->
           </b-nav-item-dropdown>
           <b-nav-item-dropdown id="SettingsMenu" right no-caret menu-class="animated bounceInDown">
             <template slot="button-content">
@@ -70,22 +89,56 @@
   </nav>
 </template>
 <script>
+import Personnel from '@/models/Personnel'
+import { isNullOrUndefined } from 'util'
+
+let vm = null
+
 export default {
   computed: {
     routeName() {
       const { name } = this.$route
       return this.capitalizeFirstLetter(name)
+    },
+    contacts() {
+      return Personnel.getters('Contacts')
     }
   },
   data() {
     return {
       activeNotifications: false,
-      searchinput: ''
+      searchinput: '',
+      formattedContacts: []
     }
   },
+  mounted: function() {
+    vm = this
+    vm.$options.interval = setInterval(vm.waitForContacts, 1000)
+  },
   methods: {
+    waitForContacts: function() {
+      if (this.contacts && this.contacts.length > 0) {
+        clearInterval(this.$options.interval)
+        vm.formatContacts(this.contacts)
+      }
+    },
+    formatContacts: function(contacts) {
+      let c = []
+      for (let i = 0; i < contacts.length; i++) {
+        c.push({
+          name: this.camelize(contacts[i].FirstName) + ' ' + this.camelize(contacts[i].LastName),
+          position: contacts[i].Position,
+          email: 'mailto:' + contacts[i].Email,
+          phone: !isNullOrUndefined(contacts[i].Phone) ? contacts[i].Phone : 'Empty'
+        })
+      }
+      this.formattedContacts = c
+    },
     capitalizeFirstLetter(string) {
       return string.charAt(0).toUpperCase() + string.slice(1)
+    },
+    camelize(string) {
+      return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase()
     },
     toggleNotificationDropDown() {
       this.activeNotifications = !this.activeNotifications
@@ -105,4 +158,11 @@ export default {
   }
 }
 </script>
-<style></style>
+<style>
+#PageTitle {
+  font-weight: 400;
+  margin: 5px 0;
+  font-size: 18px;
+  color: #fff !important;
+}
+</style>

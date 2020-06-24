@@ -1,8 +1,6 @@
 <template>
   <component :is="baseComponent" :to="link.path ? link.path : '/'" class="nav-item" tag="li">
-    <!-- :class="link.group ? 'hidden ' + link.group : ''" -->
     <a v-if="isMenu" class="nav-link sidebar-menu-item" :aria-expanded="!collapsed" data-toggle="collapse" @click="collapseMenu">
-      <!-- <i :class="link.icon"></i> -->
       <font-awesome-icon v-if="link.library === 'fas'" fas :icon="link.icon" class="icon"></font-awesome-icon>
       <font-awesome-icon v-else-if="link.library === 'far'" far :icon="link.icon" class="icon"></font-awesome-icon>
       <p>
@@ -10,14 +8,13 @@
         <b class="caret"></b>
       </p>
     </a>
-    <div v-if="$slots.default || this.isMenu">
-      <el-collapse-transition>
-        <ul class="nav" v-show="!collapsed">
-          <slot></slot>
-        </ul>
-      </el-collapse-transition>
+    <div v-if="$slots.default || this.isMenu" class="ml-3">
+      <!-- <el-collapse-transition> -->
+      <ul class="nav" v-show="!collapsed">
+        <slot></slot>
+      </ul>
+      <!-- </el-collapse-transition> -->
     </div>
-
     <slot name="title" v-if="children.length === 0 && !$slots.default && link.path">
       <component :to="link.path" @click.native="linkClick" :is="elementType(link, false)" :class="{ active: link.active }" class="nav-link" :target="link.target" :href="link.path">
         <template v-if="addLink">
@@ -27,25 +24,27 @@
             <font-awesome-icon v-else-if="link.library === 'far'" far :icon="link.icon" class="icon"></font-awesome-icon>
           </span>
           <span class="sidebar-normal">{{ link.name }}</span>
+          <span v-if="link.badgeId != ''" :id="link.badgeId" class="badge badge-xs badge-danger float-right"></span>
         </template>
         <template v-else>
           <!-- <i :class="link.icon"></i> -->
           <font-awesome-icon v-if="link.library === 'fas'" fas :icon="link.icon" class="icon"></font-awesome-icon>
           <font-awesome-icon v-else-if="link.library === 'far'" far :icon="link.icon" class="icon"></font-awesome-icon>
           <p>{{ link.name }}</p>
+          <span v-if="link.badgeId != ''" :id="link.badgeId" class="badge badge-xs badge-danger float-right"></span>
         </template>
       </component>
     </slot>
   </component>
 </template>
 <script>
-import CollapseTransition from 'element-ui/lib/transitions/collapse-transition'
+// import CollapseTransition from 'element-ui/lib/transitions/collapse-transition'
 
 export default {
   name: 'sidebar-item',
-  components: {
+  /* components: {
     [CollapseTransition.name]: CollapseTransition
-  },
+  }, */
   props: {
     menu: {
       type: Boolean,
@@ -57,6 +56,7 @@ export default {
         return {
           name: '',
           path: '',
+          badge: '',
           children: []
         }
       }

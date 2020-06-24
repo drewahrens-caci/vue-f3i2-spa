@@ -1,8 +1,12 @@
 /* eslint-disable */
+import Vue from 'vue'
 import Workplan from '@/models/WorkPlan'
 import WorkplanService from '@/services/WorkplanService.js'
-import { isNullOrUndefined } from 'util'
 import moment from 'moment'
+import VueLodash from 'vue-lodash'
+import lodash from 'lodash'
+
+Vue.use(VueLodash, { lodash: lodash })
 
 const getters = {
   allWorkplans() {
@@ -13,6 +17,9 @@ const getters = {
   },
   Loaded: state => {
     return state.loaded
+  },
+  Managers: state => {
+    return state.managers
   }
 }
 
@@ -30,21 +37,36 @@ const actions = {
   },
   async getWorkplans({ state, commit }) {
     let response = await WorkplanService.getWorkPlans()
-    Workplan.insert({ data: formatWorkplan(response) })
+    Workplan.create({ data: formatWorkplan(response) })
     Workplan.commit(state => {
       state.loaded = true
     })
     state.dropdown = formatDropdown(response)
   },
-  async addWorkplan({ state, commit }, payload) {
-    // console.log('PAYLOAD: ' + payload)
-    let response = await WorkplanService.addWorkplan(payload, state.digest)
+  async getManagers({ state }) {
+    let response = await WorkplanService.getManagers()
+    state.managers = formatManagers(response.data.d.results)
+  },
+  async addWorkplan({ state }, payload) {
+    let response = await WorkplanService.saveWorkplan(payload, state.digest, 'new')
+    return response
+  },
+  async editWorkplan({ state }, payload) {
+    let response = await WorkplanService.saveWorkplan(payload, state.digest, 'edit')
+    return response
+  },
+  async updateIndex({ state }, payload) {
+    let response = await WorkplanService.updateIndex(payload, state.digest)
+    return response
+  },
+  async archive({ state }, payload) {
+    let response = await WorkplanService.archive(payload, state.digest)
     return response
   }
 }
 
 function formatWorkplan(j) {
-  // console.log(j.length + ', ' + j[0]['Title'])
+  // console.log('FORMATTING WORKPLANS: ' + j)
   let p = []
   for (let i = 0; i < j.length; i++) {
     p.push({
@@ -53,7 +75,12 @@ function formatWorkplan(j) {
       Title: j[i]['Title'], // This is the Title column in SharePoint
       Number: j[i]['Number'],
       Revision: j[i]['Revision'],
-      Manager: j[i]['Manager'],
+      POPStart: moment(j[i]['POPStart']).isValid() ? moment(j[i]['POPStart']).format('MM/DD/YYYY') : '',
+      POPEnd: moment(j[i]['POPEnd']).isValid() ? moment(j[i]['POPEnd']).format('MM/DD/YYYY') : '',
+      DateApproved: moment(j[i]['DateApproved']).isValid() ? moment(j[i]['DateApproved']).format('MM/DD/YYYY') : '',
+      Manager: j[i]['Manager']['Title'],
+      ManagerId: j[i]['Manager']['ID'],
+      ManagerEmail: j[i]['Manager']['EMail'],
       etag: j[i]['__metadata']['etag'],
       uri: j[i]['__metadata']['uri']
     })
@@ -64,11 +91,24 @@ function formatWorkplan(j) {
 function formatDropdown(j) {
   let p = []
   for (let i = 0; i < j.length; i++) {
-    let text = j[i]['Number'] + ', ' + j[i]['Title']
-    text += !isNullOrUndefined(j[i]['Revision']) ? ', Rev: ' + j[i]['Revision'] : ''
+    let value = j[i]['Number'] + ', ' + j[i]['Title'] + ', ' + j[i]['Revision'] + ', ' + j[i]['LastIndex'] + ', ' + j[i]['__metadata']['uri'] + ', ' + j[i]['__metadata']['etag']
     p.push({
-      text: text,
-      value: j[i]['Number']
+      text: j[i]['Number'] + ' ' + j[i]['Title'],
+      value: j[i]['Number'],
+      data: value
+    })
+  }
+  p = Vue._.orderBy(p, 'value', 'asc')
+  return p
+}
+
+function formatManagers(j) {
+  // console.log('FORMAT MANAGERS: ' + j)
+  let p = []
+  for (let i = 0; i < j.length; i++) {
+    p.push({
+      text: j[i]['Title'],
+      value: j[i]['Id']
     })
   }
   return p
