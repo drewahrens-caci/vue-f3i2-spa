@@ -98,7 +98,8 @@ export default {
       Status: payload.Status,
       Effort: payload.Effort,
       PercentComplete: payload.PercentComplete,
-      Comment: payload.Comment
+      Comment: payload.Comment,
+      Comments: payload.Comments
       // AssignedTo: payload.AssignedTo
     }
     try {

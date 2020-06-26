@@ -64,6 +64,7 @@ function formatFeature(j) {
       Priority: j[i]['Priority'],
       Effort: j[i]['Effort'],
       Comment: j[i]['Comment'],
+      Comments: j[i]['Comments'],
       Category: j[i]['Category'],
       PercentComplete: j[i]['PercentComplete'],
       Rating: j[i]['Rating'],

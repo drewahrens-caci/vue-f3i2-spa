@@ -150,6 +150,14 @@
               </td>
               <td colspan="2"><ejs-dropdownlist v-model="rowData.AssignedTo" :dataSource="owners" :fields="ddfields"></ejs-dropdownlist></td>
             </tr>
+            <tr>
+              <td colspan="6">Comments</td>
+            </tr>
+            <tr>
+              <td colspan="6">
+                <b-form-textarea class="form-control-sm" v-model="rowData.Comment6" rows="10" ref="Comments"></b-form-textarea>
+              </td>
+            </tr>
           </tbody>
         </table>
       </b-container>

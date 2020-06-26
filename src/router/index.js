@@ -44,26 +44,6 @@ let travelMenu = {
   ]
 }
 
-let developmentMenu = {
-  path: '/development',
-  component: ThemeLayout,
-  redirect: '/development/home',
-  children: [
-    {
-      path: 'home',
-      name: 'Development',
-      component: () => import(/* webpackChunkName: "development" */ '../components/Pages/development.vue'),
-      props: true
-    },
-    {
-      path: 'msrinput',
-      name: 'MSR Input',
-      component: () => import(/* webpackChunkName: "development" */ '../components/Pages/msrinput.vue'),
-      props: true
-    }
-  ]
-}
-
 let calendarMenu = {
   path: '/calendar',
   component: ThemeLayout,
@@ -113,7 +93,7 @@ let featuresMenu = {
     {
       path: 'home',
       name: 'Features',
-      component: () => import(/* webpackChunkName: "features" */ '../components/Pages/features.vue'),
+      component: () => import(/* webpackChunkName: "feature" */ '../components/Pages/features.vue'),
       props: true
     }
   ]
@@ -127,7 +107,7 @@ let bugsMenu = {
     {
       path: 'home',
       name: 'Bugs',
-      component: () => import(/* webpackChunkName: "features" */ '../components/Pages/bugs.vue'),
+      component: () => import(/* webpackChunkName: "feature" */ '../components/Pages/bugs.vue'),
       props: true
     }
   ]
@@ -184,7 +164,6 @@ const routes = [
     path: '/',
     redirect: '/pages/home'
   },
-  developmentMenu,
   calendarMenu,
   travelMenu,
   featureMenu,
