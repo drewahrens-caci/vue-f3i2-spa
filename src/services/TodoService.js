@@ -1,12 +1,15 @@
-/* eslint-disable */
 import axios from 'axios'
 import { isNullOrUndefined } from 'util'
-import Todo from '@/models/Todo'
+
+let SPCI = null
+if (window._spPageContextInfo) {
+  SPCI = window._spPageContextInfo
+}
 
 export default {
   getFormDigest() {
     return axios.request({
-      url: _spPageContextInfo.webServerRelativeUrl + '/_api/contextinfo',
+      url: SPCI.webServerRelativeUrl + '/_api/contextinfo',
       method: 'post',
       headers: { Accept: 'application/json; odata=verbose' }
     })
@@ -15,9 +18,7 @@ export default {
     var allTodos = []
     function getAllTodos(taskurl) {
       if (taskurl === null) {
-        taskurl =
-          _spPageContextInfo.webServerRelativeUrl +
-          "/_api/lists/getbytitle('Tasks')/items?"
+        taskurl = SPCI.webServerRelativeUrl + "/_api/lists/getbytitle('Tasks')/items?"
         taskurl += '$select=*,AssignedTo/Id,AssignedTo/FirstName,AssignedTo/LastName,AssignedTo/EMail&$expand=AssignedTo'
       }
       return axios
@@ -26,19 +27,19 @@ export default {
             accept: 'application/json;odata=verbose'
           }
         })
-        .then(function (response) {
+        .then(function(response) {
           // concat the data to a temporary variable
           allTodos = allTodos.concat(response.data.d.results)
           // recursively load tasks if there is a next result
           if (response.data.d.__next) {
-            turl = response.data.d.__next
+            let turl = response.data.d.__next
             return getAllTodos(turl)
           } else {
-            console.log("Found " + allTodos.length + " todos")
+            console.log('Found ' + allTodos.length + ' todos')
             return allTodos
           }
         })
-        .catch(function (error) {
+        .catch(function(error) {
           console.log('TodoService Error Getting Todos: ' + error)
         })
     }
@@ -49,11 +50,9 @@ export default {
     var allTodos = []
     function getAllTodos(taskurl, id) {
       if (taskurl === null) {
-        taskurl =
-          _spPageContextInfo.webServerRelativeUrl +
-          "/_api/lists/getbytitle('Tasks')/items?"
-        taskurl += "$select=*,AssignedTo/Id&$expand=AssignedTo/Id"
-        taskurl += "&$filter=(AssignedTo/Id eq " + id + ") and (Status ne 'Completed')"
+        taskurl = SPCI.webServerRelativeUrl + "/_api/lists/getbytitle('Tasks')/items?"
+        taskurl += '$select=*,AssignedTo/Id&$expand=AssignedTo/Id'
+        taskurl += '&$filter=(AssignedTo/Id eq ' + id + ") and (Status ne 'Completed')"
       }
       return axios
         .get(taskurl, {
@@ -61,19 +60,19 @@ export default {
             accept: 'application/json;odata=verbose'
           }
         })
-        .then(function (response) {
+        .then(function(response) {
           // concat the data to a temporary variable
           allTodos = allTodos.concat(response.data.d.results)
           // recursively load tasks if there is a next result
           if (response.data.d.__next) {
-            turl = response.data.d.__next
+            let turl = response.data.d.__next
             return getAllTodos(turl)
           } else {
             // console.log("Found " + allTodos.length + " todos")
             return allTodos
           }
         })
-        .catch(function (error) {
+        .catch(function(error) {
           console.log('TodoService Error Getting Todos: ' + error)
         })
     }
@@ -81,7 +80,7 @@ export default {
   },
   completeTodo(id, uri, etag, digest) {
     // console.log('TodoService Completing Todo with ID: ' + id + ', Digest: ' + digest + ', Uri: ' + uri + ', etag: ' + etag)
-    let taskurl = _spPageContextInfo.webServerRelativeUrl + "/_api/lists/getbytitle('Tasks')/items"
+    let taskurl = SPCI.webServerRelativeUrl + "/_api/lists/getbytitle('Tasks')/items"
     if (!isNullOrUndefined(uri)) {
       taskurl = uri
     }

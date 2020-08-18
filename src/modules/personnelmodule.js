@@ -26,6 +26,9 @@ const actions = {
   getDigest() {
     PersonnelService.getFormDigest()
       .then(response => {
+        if (console) {
+          console.log('PersonnelModule DIGEST: ' + response)
+        }
         Personnel.commit((state) => {
           state.digest = response.data.d.GetContextWebInformation.FormDigestValue
         }) 
@@ -35,18 +38,22 @@ const actions = {
       })
   },
   async getPersonnel({ state, commit }) {
-    console.log('GETTING ALL PERSONNEL.')
+    // console.log('GETTING ALL PERSONNEL.')
     let response = await PersonnelService.getPersonnel()
     Personnel.create({ data: formatPersonnel(response) })
+  },
+  async getPersonnelByEmail({ state }, email) {
+    // console.log('GETTING PERSONNEL BY EMAIL.')
+    let response = await PersonnelService.getPersonnelByEmail(email)
+    return response
+  },
+  async getContacts({ state, commit }) {
+    // console.log('GETTING ALL PERSONNEL.')
+    let response = await PersonnelService.getContacts()
     Personnel.commit(state => {
       state.contacts = formatContacts(response)
       state.loaded = true
     })
-  },
-  async getPersonnelByEmail({ state }, email) {
-    console.log('GETTING PERSONNEL BY EMAIL.')
-    let response = await PersonnelService.getPersonnelByEmail(email)
-    return response
   },
   async addPerson({ state }, payload) {
     let response = await PersonnelService.savePersonnel(payload, state.digest, 'new')

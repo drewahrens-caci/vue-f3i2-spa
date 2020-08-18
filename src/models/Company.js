@@ -8,6 +8,7 @@ export default class Company extends Model {
     return {
       digest: null,
       companies: [],
+      dropdown: [],
       loaded: false
     }
   }

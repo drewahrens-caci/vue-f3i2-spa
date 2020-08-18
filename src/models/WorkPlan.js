@@ -8,7 +8,9 @@ export default class Workplan extends Model {
       digest: null,
       loaded: false,
       managers: [],
-      dropdown: []
+      dropdown: [],
+      subs: null,
+      subsloaded: false
     }
   }
 
@@ -25,6 +27,7 @@ export default class Workplan extends Model {
       ManagerId: this.attr(''),
       ManagerEmail: this.attr(''),
       DateApproved: this.attr(''),
+      Subs: this.attr(''),
       LastIndex: this.attr(''),
       etag: this.attr(null), // Used for updating
       uri: this.attr(null) // Used for updating

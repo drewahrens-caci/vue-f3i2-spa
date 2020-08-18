@@ -20,6 +20,7 @@ export default class Feature extends Model {
       Status: this.attr(''),
       Priority: this.attr(''),
       Effort: this.attr(''),
+      Product: this.attr(''),
       Comment: this.attr(''), // weirdly the description column from SharePoint
       Comments: this.attr(''), // the actual comments column
       Category: this.attr(''),

@@ -1,5 +1,6 @@
 import Sidebar from './SideBar2.vue'
 import SidebarItem from './SidebarItem.vue'
+import LegendItem from './LegendItem.vue'
 
 const SidebarStore = {
   showSidebar: false,
@@ -34,6 +35,7 @@ const SidebarPlugin = {
     })
     Vue.component('side-bar', Sidebar)
     Vue.component('sidebar-item', SidebarItem)
+    Vue.component('legend-item', LegendItem)
   }
 }
 

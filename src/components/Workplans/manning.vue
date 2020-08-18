@@ -1,8 +1,17 @@
 <template>
   <b-container fluid class="contentHeight">
-    <b-row ref="GridRow" class="contentHeight">
+    <b-row class="contentHeight">
+      <b-toast id="busy-toast" variant="warning" solid no-auto-hide>
+        <template v-slot:toast-title>
+          <div class="d-flex flex-grow-1 align-items-baseline">
+            <b-img blank blank-color="#ff0000" class="mr-2" width="12" height="12"></b-img>
+            <strong class="mr-auto">{{ busyTitle }}</strong>
+          </div>
+        </template>
+        <b-spinner style="width: 7rem; height: 7rem;" variant="success" label="Waiting Spinner"></b-spinner>
+      </b-toast>
       <b-modal ref="FilterModal" id="FilterModal" size="sm" no-fade modal-class="animated bounceInLeft">
-        <template v-slot:modal-title>Bugs Filter</template>
+        <template v-slot:modal-title>Manning Filter</template>
         <div>
           <ul id="ulFields">
             <li v-for="field in fields" :key="field">
@@ -26,13 +35,7 @@
                     </b-row>
                     <b-row v-if="field.Control == 'DropdownBox'" class="mb-1">
                       <div v-if="field.DataType == 'Choice'" class="full">
-                        <ejs-dropdownlist v-if="field.DropdownSource === 'status'" v-model="field.Selected" :dataSource="status" :fields="ddfields"></ejs-dropdownlist>
-                        <ejs-dropdownlist v-else-if="field.DropdownSource === 'owners'" v-model="field.Selected" :dataSource="owners" :fields="ddfields"></ejs-dropdownlist>
-                      </div>
-                      <div v-else class="full">
-                        <ejs-dropdownlist v-if="field.DropdownSource === 'priority'" v-model="field.FilterValue" :dataSource="priority" :fields="ddfields"></ejs-dropdownlist>
-                        <ejs-dropdownlist v-else-if="field.DropdownSource === 'effort'" v-model="field.FilterValue" :dataSource="effort" :fields="ddfields"></ejs-dropdownlist>
-                        <ejs-dropdownlist v-else-if="field.DropdownSource === 'percent'" v-model="field.FilterValue" :dataSource="percent" :fields="ddfields"></ejs-dropdownlist>
+                        <ejs-dropdownlist v-model="field.Selected" :dataSource="field.Options" :fields="ddfields"></ejs-dropdownlist>
                       </div>
                     </b-row>
                     <b-row v-if="field.Control != 'DropdownBox'" class="mb-1">
@@ -71,120 +74,67 @@
           </div>
           <div class="col-12 tableHeight">
             <ejs-grid
-              id="BugGrid"
-              ref="BugGrid"
+              id="ManningGrid"
+              ref="ManningGrid"
               :enablePersistence="false"
-              :dataSource="filteredbugs"
+              :dataSource="filtereddata"
               :allowPaging="true"
-              :allowResizing="true"
+              :allowReordering="true"
               :pageSettings="pageSettings"
               :editSettings="editSettings"
-              :toolbar="toolbar"
+              :filterSettings="filterSettings"
+              :toolbar="manningtoolbar"
               :allowExcelExport="true"
-              :toolbarClick="toolbarClick"
-              :dataBound="dataBound"
-              :actionBegin="actionBegin"
+              :toolbarClick="manningtoolbarClick"
               :actionComplete="actionComplete"
-              :detailTemplate="detailTemplate"
               rowHeight="20"
               height="100%"
               width="100%"
             >
               <e-columns>
-                <e-column field="Title" headerText="Title" textAlign="Left" width="200"></e-column>
-                <e-column field="DueDate" headerText="Due Date" textAlign="Left" width="100"></e-column>
-                <e-column field="Priority" headerText="Priority" textAlign="Left" width="100"></e-column>
-                <e-column field="Status" headerText="Status" textAlign="Left" width="180"></e-column>
-                <e-column field="Effort" headerText="Effort" textAlign="Left" width="150"></e-column>
-                <e-column field="PercentComplete" headerText="% Complete" textAlign="Left" width="150"></e-column>
-                <e-column field="AssignedTo" headerText="Assigned To" textAlign="Left" width="200"></e-column>
+                <e-column field="WorkplanTitle" headerText="Title" textAlign="Left" width="300"></e-column>
+                <e-column field="WorkplanNumber" headerText="Number" width="100"></e-column>
+                <e-column field="LastName" headerText="Last" textAlign="Left" width="100"></e-column>
+                <e-column field="FirstName" headerText="First" width="100"></e-column>
+                <e-column field="Middle" headerText="Middle" textAlign="Left" width="100"></e-column>
+                <e-column field="Location" headerText="Location" textAlign="Left" width="150"></e-column>
+                <e-column field="Email" headerText="Email" textAlign="Left" width="200"></e-column>
+                <e-column field="Company" headerText="Company" textAlign="Left" width="180"></e-column>
+                <e-column field="PercentSupport" headerText="Percent Support" textAlign="Left" width="150"></e-column>
               </e-columns>
             </ejs-grid>
           </div>
         </b-row>
       </b-col>
     </b-row>
-    <b-modal id="EditModal" ref="EditModal" size="xl" centered @ok="editOk">
-      <template v-slot:modal-title>Edit Details For {{ rowData.Title }}</template>
-      <b-container fluid>
-        <table id="EditTable" class="bugtable">
-          <tbody>
-            <tr>
-              <td colspan="6">Title</td>
-            </tr>
-            <tr>
-              <td colspan="6"><input class="e-input" type="text" v-model="rowData.Title" /></td>
-            </tr>
-            <tr>
-              <td colspan="2">Status</td>
-              <td>Priority</td>
-              <td>Effort</td>
-              <td>Due Date</td>
-              <td>% Complete</td>
-            </tr>
-            <tr>
-              <td colspan="2"><ejs-dropdownlist v-model="rowData.Status" :dataSource="status" :fields="ddfields"></ejs-dropdownlist></td>
-              <td><ejs-dropdownlist v-model="rowData.Priority" :dataSource="priority" :fields="ddfields"></ejs-dropdownlist></td>
-              <td><ejs-dropdownlist v-model="rowData.Effort" :dataSource="effort" :fields="ddfields"></ejs-dropdownlist></td>
-              <td><ejs-datepicker v-model="rowData.DueDate"></ejs-datepicker></td>
-              <td><ejs-dropdownlist v-model="rowData.PercentComplete" :dataSource="percent" :fields="ddfields"></ejs-dropdownlist></td>
-            </tr>
-            <tr>
-              <td colspan="4">Description</td>
-              <td colspan="2">Assigned To</td>
-            </tr>
-            <tr>
-              <td colspan="4">
-                <b-form-textarea class="form-control-sm" v-model="rowData.BugDescription" rows="3" max-rows="6" ref="BugDescription"></b-form-textarea>
-              </td>
-              <td colspan="2"><ejs-dropdownlist v-model="rowData.AssignedTo" :dataSource="owners" :fields="ddfields"></ejs-dropdownlist></td>
-            </tr>
-          </tbody>
-        </table>
-      </b-container>
-    </b-modal>
   </b-container>
 </template>
 
 <script>
-/* eslint-disable no-unused-vars */
 import Vue from 'vue'
-import moment from 'moment'
-import VueLodash from 'vue-lodash'
-import lodash from 'lodash'
-import Bug from '@/models/Bug'
-import User from '@/models/User'
-import { GridPlugin, Page, Sort, Filter, Edit, Reorder, Resize, ColumnChooser, ColumnMenu, ContextMenu, Toolbar, VirtualScroll, ExcelExport, DetailRow } from '@syncfusion/ej2-vue-grids'
-import { DatePickerPlugin } from '@syncfusion/ej2-vue-calendars'
-import { DropDownListPlugin } from '@syncfusion/ej2-vue-dropdowns'
-import { CheckBoxPlugin } from '@syncfusion/ej2-vue-buttons'
 import { isNullOrUndefined } from 'util'
-
-Vue.use(GridPlugin)
-Vue.use(DatePickerPlugin)
-Vue.use(DropDownListPlugin)
-Vue.use(CheckBoxPlugin)
-Vue.use(VueLodash, { lodash: lodash })
+import Company from '@/models/Company'
+import User from '@/models/User'
+import Workplan from '@/models/WorkPlan'
+import Personnel from '@/models/Personnel'
+import { Page, Edit, Toolbar, VirtualScroll, ExcelExport, DetailRow } from '@syncfusion/ej2-vue-grids'
 
 let vm = null
 
 export default {
-  name: 'bugs',
-  props: {
-    mode: {
-      type: String,
-      default: 'default'
-    }
-  },
+  name: 'manning',
   computed: {
-    bugs() {
-      return Bug.getters('allBugs')
-    },
-    owners() {
-      return Bug.getters('Owners')
+    workplans() {
+      return Workplan.getters('allWorkplans')
     },
     loaded() {
-      return Bug.getters('Loaded')
+      return Workplan.getters('Loaded')
+    },
+    managers() {
+      return Workplan.getters('Managers')
+    },
+    personnel() {
+      return Personnel.getters('allPersonnel')
     },
     appversion() {
       return User.getters('AppVersion')
@@ -194,26 +144,27 @@ export default {
     },
     userid() {
       return User.getters('CurrentUserId')
+    },
+    companies() {
+      return Company.getters('DropDown')
     }
   },
   data: function() {
     return {
-      waterMark: 'Select a date',
+      busyTitle: 'Getting Data. Please Wait.',
       sortfield: '',
       sortdir: '',
-      filteredbugs: [],
-      BugId: 0,
-      rating: 0,
       data: [],
-      filters: {},
-      height: '100%',
+      WorkplanData: [],
+      filtereddata: [],
+      manager: null,
       fields: [
         {
           FieldName: 'Version',
           Value: null
         },
         {
-          FieldName: 'Title',
+          FieldName: 'WorkplanTitle',
           Visible: true,
           DisplayName: 'Title',
           Filter: false,
@@ -224,72 +175,107 @@ export default {
           Sort: ''
         },
         {
-          FieldName: 'DueDate',
+          FieldName: 'WorkplanNumber',
           Visible: true,
-          DisplayName: 'Due Date',
+          DisplayName: 'Number',
           Filter: false,
           Control: '',
-          DataType: 'Date',
+          DataType: 'Text',
           Predicate: 'S',
           FilterValue: '',
-          FilterValue2: '',
           Sort: ''
         },
         {
-          FieldName: 'Priority',
+          FieldName: 'LastName',
           Visible: true,
-          DisplayName: 'Priority',
+          DisplayName: 'Last',
           Filter: false,
-          Control: 'DropdownBox',
-          DataType: 'Number',
-          DropdownSource: 'priority',
-          Selected: 'S',
-          Predicate: 'E',
+          Control: '',
+          DataType: 'Text',
+          Predicate: 'S',
           FilterValue: '',
           Sort: ''
         },
         {
-          FieldName: 'Status',
+          FieldName: 'FirstName',
           Visible: true,
-          DisplayName: 'Status',
+          DisplayName: 'First',
+          Filter: false,
+          Control: '',
+          DataType: 'Text',
+          Predicate: 'S',
+          FilterValue: '',
+          Sort: ''
+        },
+        {
+          FieldName: 'Middle',
+          Visible: true,
+          DisplayName: 'Middle',
+          Filter: false,
+          Control: '',
+          DataType: 'Text',
+          Predicate: 'S',
+          FilterValue: '',
+          Sort: ''
+        },
+        {
+          FieldName: 'Location',
+          Visible: true,
+          DisplayName: 'Location',
+          Filter: false,
+          Control: '',
+          DataType: 'Text',
+          Predicate: 'S',
+          FilterValue: '',
+          Sort: ''
+        },
+        {
+          FieldName: 'Email',
+          Visible: true,
+          DisplayName: 'Email',
+          Filter: false,
+          Control: '',
+          DataType: 'Text',
+          Predicate: 'S',
+          FilterValue: '',
+          Sort: ''
+        },
+        {
+          FieldName: 'Company',
+          Visible: true,
+          DisplayName: 'Company',
           Filter: false,
           Control: 'DropdownBox',
           DataType: 'Choice',
-          DropdownSource: 'status',
+          DropdownSource: 'companies',
           Selected: 'S',
           Predicate: 'E',
           FilterValue: '',
-          Sort: ''
+          Sort: '',
+          Options: []
         },
         {
-          FieldName: 'Effort',
+          FieldName: 'PercentSupport',
           Visible: true,
-          DisplayName: 'Effort',
+          DisplayName: 'Percent Support',
           Filter: false,
           Control: 'DropdownBox',
-          DataType: 'Number',
-          DropdownSource: 'effort',
+          DataType: 'Choice',
           Selected: 'S',
           Predicate: 'E',
           FilterValue: '',
-          Sort: ''
-        },
-        {
-          FieldName: 'PercentComplete',
-          Visible: true,
-          DisplayName: '% Complete',
-          Filter: false,
-          Control: 'DropdownBox',
-          DataType: 'Number',
-          DropdownSource: 'percent',
-          Selected: 'S',
-          Predicate: 'E',
-          FilterValue: '',
-          Sort: ''
+          Sort: '',
+          Options: [
+            { text: 'Select...', value: 'S' },
+            { text: '100%', value: 1 },
+            { text: '75%', value: 0.75 },
+            { text: '50%', value: 0.5 },
+            { text: '25%', value: 0.25 },
+            { text: '0%', value: 0 }
+          ]
         }
       ],
-      ddfields: { text: 'text', value: 'value' },
-      ddfields2: { text: 'text', value: 'value', data: 'data' },
+      ddfields: { text: 'text', value: 'value', index: 'index' },
       textpredicate: [
         { text: 'Select...', value: 'S' },
         { text: 'Starts With', value: 'SW' },
@@ -298,178 +284,103 @@ export default {
         { text: 'Equal', value: 'E' },
         { text: 'Not Equal', value: 'NE' }
       ],
-      datepredicate: [
-        { text: 'Select...', value: 'S' },
-        { text: 'Greater Than', value: 'GT' },
-        { text: 'Less Than', value: 'LT' },
-        { text: 'Equal', value: 'E' },
-        { text: 'Between', value: 'B' }
-      ],
       numberpredicate: [
         { text: 'Select...', value: 'S' },
         { text: 'Greater Than', value: 'GT' },
         { text: 'Less Than', value: 'LT' },
         { text: 'Equal', value: 'E' }
       ],
-      yesno: [
-        { text: 'Yes', value: 'Yes' },
-        { text: 'No', value: 'No' }
-      ],
-      priority: [
-        { text: 'Select...', value: 'S' },
-        { text: '1', value: '1' },
-        { text: '2', value: '2' },
-        { text: '3', value: '3' },
-        { text: '4', value: '4' }
-      ],
-      status: [
-        { text: 'Select...', value: 'S' },
-        { text: 'Submitted', value: 'Submitted' },
-        { text: 'Active', value: 'Active' },
-        { text: 'Resolved', value: 'Resolved' },
-        { text: 'Closed', value: 'Closed' }
-      ],
-      effort: [
-        { text: 'Select...', value: 'S' },
-        { text: '0.5', value: '0.5' },
-        { text: '1', value: '1' },
-        { text: '2', value: '2' },
-        { text: '3', value: '3' },
-        { text: '5', value: '5' },
-        { text: '10', value: '10' },
-        { text: '15', value: '15' },
-        { text: '20', value: '20' },
-        { text: '30', value: '30' }
-      ],
-      percent: [
-        { text: 'Select...', value: 'S' },
-        { text: '0', value: '0' },
-        { text: '10', value: '10' },
-        { text: '20', value: '20' },
-        { text: '30', value: '30' },
-        { text: '40', value: '40' },
-        { text: '50', value: '50' },
-        { text: '60', value: '60' },
-        { text: '70', value: '70' },
-        { text: '80', value: '80' },
-        { text: '90', value: '90' },
-        { text: '100', value: '100' }
-      ],
       pageSettings: { pageSize: 30 },
-      editSettings: { allowEditing: true, allowAdding: false, allowDeleting: false, mode: 'Dialog' },
-      sortSettings: { columns: [{ field: 'Rating', direction: 'Descending' }] },
+      editSettings: { allowEditing: true, allowAdding: true, allowDeleting: false, mode: 'Dialog' },
       filterSettings: { type: 'Menu' },
-      toolbar: ['Edit', 'Print', 'Search', 'ExcelExport'],
-      rowData: {},
-      newData: {
-        LastName: '',
-        FirstName: '',
-        Middle: '',
-        Company: '',
-        Email: ''
-      }
+      manningtoolbar: ['Print', 'Search', 'ExcelExport']
     }
   },
   mounted: function() {
     vm = this
-    Bug.dispatch('getDigest')
-    Bug.dispatch('getOwners').then(function() {
-      Bug.dispatch('getBugs').then(function() {
-        vm.$options.interval = setInterval(vm.waitForBugs, 1000)
+    this.$bvToast.show('busy-toast')
+    Workplan.dispatch('getDigest')
+    Company.dispatch('getCompanies').then(function() {
+      Personnel.dispatch('getPersonnel').then(function() {
+        vm.$options.interval = setInterval(vm.waitForPlans, 1000)
       })
     })
   },
   methods: {
-    waitForBugs: function() {
-      // console.log('WAITING FOR PERSONNEL')
-      if (this.bugs && this.bugs.length > 0) {
+    waitForPlans: function() {
+      if (this.workplans && this.workplans.length > 0) {
         clearInterval(this.$options.interval)
-        // console.log('PERSONNEL LENGTH: ' + this.bug.length)
-        this.filteredbugs = this.bugs // set initial filter to all
+        this.data = this.workplans
+        for (let i = 0; i < this.personnel.length; i++) {
+          let test = String(this.personnel[i]['WPData'])
+          // console.log('WPDATA TEST POINT A: ' + test + ', ' + test.length)
+          if (test.length > 5) {
+            let j = JSON.parse(this.personnel[i]['WPData'])
+            if (j && j.length > 0) {
+              for (let z = 0; z < j.length; z++) {
+                if (!isNullOrUndefined(j[z]['WorkplanNumber']) && String(j[z]['WorkplanNumber']).length > 4) {
+                  this.WorkplanData.push({
+                    WorkplanNumber: j[z]['WorkplanNumber'],
+                    WorkplanTitle: j[z]['WorkplanTitle'],
+                    LastName: this.personnel[i]['LastName'],
+                    FirstName: this.personnel[i]['FirstName'],
+                    Middle: this.personnel[i]['Middle'],
+                    Location: this.personnel[i]['Location'],
+                    Email: this.personnel[i]['Email'],
+                    Company: this.personnel[i]['Company'],
+                    PercentSupport: j[z]['PercentSupport'] * 100
+                  })
+                }
+              }
+            }
+          }
+        }
+        this.filtereddata = this.WorkplanData
+        this.fields[8]['Options'] = this.companies
+        document.getElementById('PageTitle').innerHTML = ' -  Manning Report'
+        this.$bvToast.hide('busy-toast')
         // load any saved filters
         this.loadfilters()
-        switch (this.mode) {
-          case 'default':
-            document.getElementById('PageTitle').innerHTML = ' -  Reports'
-            break
-        }
       }
     },
     getRef: function(text, idx) {
       return text + '_' + idx
     },
-    toolbarClick: function(args) {
+    manningtoolbarClick: function(args) {
       switch (args.item.id) {
-        case 'BugGrid_excelexport':
-          this.$refs['BugGrid'].excelExport()
+        case 'ManningGrid_excelexport':
+          this.$refs['ManningGrid'].excelExport()
           break
 
-        case 'BugGrid_print':
-          this.$refs['BugGrid'].print()
-          break
-      }
-    },
-    ToggleFilters() {
-      this.$refs['FilterModal'].toggle('#ShowFilters')
-    },
-    onModalHide: function() {
-      console.log('MODAL HIDE: ' + this.mode)
-      vm.$router.push({ name: 'Refresh', params: { action: 'bug' } })
-    },
-    actionBegin(args) {
-      // console.log('ACTION BEGIN: ' + args.requestType)
-      switch (args.requestType) {
-        case 'beginEdit':
-          // args.rowData contains the data for the row. Place this data in our edit form and we can change it and then update the row and also SharePoint
-          args.cancel = true
-          this.BugId = args.rowData.Id
-          this.editRow(args.rowData)
-          break
-
-        case 'filtering':
-          // console.log('BEGIN FILTERING: ' + args)
+        case 'ManningGrid_print':
+          this.$refs['ManningGrid'].print()
           break
       }
     },
     actionComplete(args) {
       // console.log('ACTION COMPLETE: ' + args.requestType)
       if (args.requestType == 'columnstate') {
-        this.$refs['BugGrid'].autoFitColumns()
+        this.$refs['ManningGrid'].autoFitColumns()
       }
       if (args.requestType == 'refresh') {
         let h1 = 0
-        let h2 = this.$refs.BugGrid.$el.children[7].children[0].clientHeight
+        let h2 = this.$refs.ManningGrid.$el.children[7].children[0].clientHeight // children[7] matches .e-gridconent
+        console.log('CLIENTHEIGHT: ' + h2)
         h1 = Math.floor(h2 / 20)
         this.pageSettings.pageSize = h1
-        this.$refs.BugGrid.pageSettings = { pageSize: h1 }
+        this.$refs.ManningGrid.pageSettings = { pageSize: h1 }
       }
     },
     dataBound: function() {
-      this.$refs.BugGrid.autoFitColumns()
+      this.$refs.ManningGrid.autoFitColumns()
     },
-    editRow: function(data) {
-      this.$bvModal.show('EditModal')
-      this.rowData = data
-    },
-    editOk: function() {
-      Bug.dispatch('editBug', this.rowData).then(function() {
-        vm.hideme('EditModal', 'refresh')
-      })
-    },
-    newOk: function() {
-      Bug.dispatch('addBug', this.newData).then(function() {
-        vm.hideme('NewModal', 'refresh')
-      })
-    },
-    hideme: function(modal, action) {
-      vm.$bvModal.hide(modal)
-      if (action == 'refresh') {
-        vm.$router.push({ name: 'Refresh', params: { action: 'bugs' } })
-      }
+    /* -------------------------------------------------------------------------------------------------- FILTER Functions --------------------------------------------------------------------- */
+    ToggleFilters() {
+      this.$refs['FilterModal'].toggle('#ShowFilters')
     },
     sortup: function(e, t) {
       // ascending
-      var p = this.filteredbugs
+      var p = this.filtereddata
       if (t == 'Date') {
         p = Vue._.orderBy(
           p,
@@ -481,8 +392,8 @@ export default {
       } else {
         p = Vue._.orderBy(p, e, 'asc')
       }
-      this.filteredbugs = p
-      this.$refs.BugGrid.refresh()
+      this.filtereddata = p
+      this.$refs.ManningGrid.refresh()
       for (var i = 0; i < this.fields.length; i++) {
         if (this.fields[i].FieldName == e) {
           console.log('SORT UP: ' + e)
@@ -494,7 +405,7 @@ export default {
     },
     sortdown: function(e, t) {
       // descending
-      var p = this.filteredbugs
+      var p = this.filtereddata
       if (t == 'Date') {
         p = Vue._.orderBy(
           p,
@@ -506,11 +417,11 @@ export default {
       } else {
         p = Vue._.orderBy(p, e, 'desc')
       }
-      this.filteredbugs = p
-      this.$refs.BugGrid.refresh()
+      this.filtereddata = p
+      this.$refs.ManningGrid.refresh()
       for (var i = 0; i < this.fields.length; i++) {
         if (this.fields[i].FieldName == e) {
-          console.log('SORT DOWN: ' + e)
+          // console.log('SORT DOWN: ' + e)
           this.fields[i].Sort = 'Down'
         } else {
           this.fields[i].Sort = ''
@@ -518,23 +429,23 @@ export default {
       }
     },
     showorhide: function(e) {
-      console.log('SHOW OR HIDE: ' + e)
+      // console.log('SHOW OR HIDE: ' + e)
       var checked = e.checked
       // var fieldname = e.event.target.value
       var displayname = e.event.target.labels[0].innerText
       if (checked) {
-        this.$refs.BugGrid.showColumns([displayname])
-        this.$refs.BugGrid.autoFitColumns()
+        this.$refs.ManningGrid.showColumns([displayname])
+        this.$refs.ManningGrid.autoFitColumns()
       } else {
-        this.$refs.BugGrid.hideColumns([displayname])
-        this.$refs.BugGrid.autoFitColumns()
+        this.$refs.ManningGrid.hideColumns([displayname])
+        this.$refs.ManningGrid.autoFitColumns()
       }
     },
-    setfilter: function(e) {
+    setfilter: function() {
       // always reset to all records then do all filters as they are selected.
       // this is a top down filter
       // loop through all the fields and filter the ones that have a predicate and filtervalue set
-      var p = vm.bugs // set initial filter to all
+      var p = this.WorkplanData // set initial filter to all based on the module.
       for (var i = 1; i < vm.fields.length; i++) {
         if (vm.fields[i].Predicate !== 'S') {
           if (vm.fields[i].FilterValue !== '' || vm.fields[i].Selected !== 'S') {
@@ -609,9 +520,6 @@ export default {
                   },
                   vm.sortdir
                 )
-                p.sort(function compare(a, b) {
-                  var da = new Date(a.FilterValue)
-                })
               } else {
                 p = Vue._.orderBy(p, vm.sortfield, vm.sortdir)
               }
@@ -619,11 +527,11 @@ export default {
           }
         }
       }
-      vm.filteredbugs = p
+      vm.filtereddata = p
     },
     clearfilter: function(e) {
       var f = String(e.target.id).split('_')[1]
-      console.log('CLEARING FILTER: ' + f)
+      // console.log('CLEARING FILTER: ' + f)
       for (var i = 1; i < vm.fields.length; i++) {
         if (vm.fields[i].FieldName == f) {
           vm.fields[i].Predicate = 'S'
@@ -644,7 +552,7 @@ export default {
       vm.setfilter()
     },
     clearfilters: function() {
-      window.localStorage.removeItem('bug')
+      window.localStorage.removeItem('manning')
       for (var i = 1; i < vm.fields.length; i++) {
         vm.fields[i].Predicate = 'S'
         vm.fields[i].FilterValue = ''
@@ -661,21 +569,22 @@ export default {
           vm.fields[i].FilterValue = 'S'
         }
       }
-      vm.filteredbugs = vm.bugs
+      vm.filtereddata = vm.features
       vm.setfilter()
     },
     savefilters: function() {
       this.fields[0].Value = this.appversion
-      window.localStorage.setItem('bug', JSON.stringify(vm.fields))
+      window.localStorage.setItem('manning', JSON.stringify(this.fields))
     },
     loadfilters: function() {
-      if (!isNullOrUndefined(window.localStorage.getItem('bug'))) {
+      let f = String(window.localStorage.getItem('manning'))
+      if (f != 'null') {
         // here we will load the fields from local storage and test the version.
         // if the version matches the current app version then load the fields.
         // if not use the new fields from the file and alert the user that they need to rebuild their filters
-        let flds = JSON.parse(window.localStorage.getItem('bug'))
+        let flds = JSON.parse(f)
         let version = flds[0]['Value']
-        console.log('TEST POINT A: ' + version + ', flds: ' + flds)
+        // console.log('TEST POINT A: ' + version + ', flds: ' + flds)
         if (version == this.appversion) {
           // ask the user if they want to apply the saved filters or clear them
           this.$bvModal
@@ -692,15 +601,16 @@ export default {
             })
             .then(value => {
               if (value == true) {
-                this.fields = JSON.parse(window.localStorage.getItem('bug'))
+                this.fields = flds
                 // loop to display the selected columns
                 for (var i = 1; i < this.fields.length; i++) {
+                  // starting at 1 to skip the version 'field'
                   if (this.fields[i].Visible) {
-                    this.$refs.BugGrid.showColumns(this.fields[i].DisplayName)
-                    this.$refs.BugGrid.autoFitColumns()
+                    this.$refs.ManningGrid.showColumns(this.fields[i].DisplayName)
+                    this.$refs.ManningGrid.autoFitColumns()
                   } else {
-                    this.$refs.BugGrid.hideColumns(this.fields[i].DisplayName)
-                    this.$refs.BugGrid.autoFitColumns()
+                    this.$refs.ManningGrid.hideColumns(this.fields[i].DisplayName)
+                    this.$refs.ManningGrid.autoFitColumns()
                   }
                   if (this.fields[i].Sort !== '') {
                     this.sortfield = this.fields[i].FieldName
@@ -729,25 +639,16 @@ export default {
     }
   },
   provide: {
-    grid: [Page, Sort, Filter, Edit, DetailRow, Reorder, Resize, ColumnChooser, ColumnMenu, ContextMenu, Toolbar, VirtualScroll, ExcelExport]
-  },
-  watch: {
-    // eslint-disable-next-line no-unused-vars
-    $route(to, from) {
-      this.mode = to.params.mode
-      switch (this.mode) {
-        case 'default':
-          Bug.dispatch('getBug').then(function() {
-            vm.$options.interval = setInterval(vm.waitForBugs, 1000)
-          })
-          break
-      }
-    }
+    grid: [Page, Edit, DetailRow, Toolbar, VirtualScroll, ExcelExport]
   }
 }
 </script>
 
 <style lang="scss">
+.modal-body {
+  padding: 0.5rem !important;
+}
+
 .sorted {
   color: #04ee04 !important;
 }

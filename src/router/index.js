@@ -2,7 +2,6 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import ThemeLayout from '@/components/Layout/DashboardLayout.vue'
 import home from '@/components/Pages/home.vue'
-import feature from '@/components/Pages/feature.vue'
 
 Vue.use(VueRouter)
 
@@ -11,34 +10,10 @@ let travelMenu = {
   component: ThemeLayout,
   redirect: '/travel/home',
   children: [
-    /* {
+    {
       path: 'home/:mode',
       name: 'Travel',
-      component: () => import('../components/Pages/travel.vue'),
-      props: true
-    }, */
-    {
-      path: 'home/calendar/:mode',
-      name: 'Travel Calendar',
-      component: () => import(/* webpackChunkName: "travel" */ '../components/Pages/travel.vue'),
-      props: true
-    },
-    {
-      path: 'home/refresh/:mode',
-      name: 'Travel',
-      component: () => import(/* webpackChunkName: "travel" */ '../components/Pages/travel.vue'),
-      props: true
-    },
-    {
-      path: 'home/new/:mode',
-      name: 'New Travel',
-      component: () => import(/* webpackChunkName: "travel" */ '../components/Pages/travel.vue'),
-      props: true
-    },
-    {
-      path: 'home/approve/:mode',
-      name: 'Approve Travel',
-      component: () => import(/* webpackChunkName: "travel" */ '../components/Pages/travel.vue'),
+      component: () => import(/* webpackChunkName: "travel" */ '../components/Travel/traveltracker.vue'),
       props: true
     }
   ]
@@ -80,7 +55,7 @@ let featureMenu = {
     {
       path: 'home',
       name: 'Feature',
-      component: feature // () => import(/* webpackChunkName: "feature" */ '../components/Pages/feature.vue')
+      component: () => import(/* webpackChunkName: "features" */ '../components/Features/feature.vue')
     }
   ]
 }
@@ -93,7 +68,7 @@ let featuresMenu = {
     {
       path: 'home',
       name: 'Features',
-      component: () => import(/* webpackChunkName: "feature" */ '../components/Pages/features.vue'),
+      component: () => import(/* webpackChunkName: "features" */ '../components/Features/features.vue'),
       props: true
     }
   ]
@@ -107,7 +82,7 @@ let bugsMenu = {
     {
       path: 'home',
       name: 'Bugs',
-      component: () => import(/* webpackChunkName: "feature" */ '../components/Pages/bugs.vue'),
+      component: () => import(/* webpackChunkName: "features" */ '../components/Features/bugs.vue'),
       props: true
     }
   ]
@@ -121,19 +96,19 @@ let personnelMenu = {
     {
       path: 'home/reports/:mode',
       name: 'Reports',
-      component: () => import(/* webpackChunkName: "personnel" */ '../components/Pages/personnel.vue'),
+      component: () => import(/* webpackChunkName: "personnel" */ '../components/Personnel/personnel.vue'),
       props: true
     },
     {
       path: 'home/refresh/:mode',
       name: 'Personnel',
-      component: () => import(/* webpackChunkName: "personnel" */ '../components/Pages/personnel.vue'),
+      component: () => import(/* webpackChunkName: "personnel" */ '../components/Personnel/personnel.vue'),
       props: true
     },
     {
       path: 'home/new/:mode',
       name: 'Onboarding',
-      component: () => import(/* webpackChunkName: "personnel" */ '../components/Pages/personnel.vue'),
+      component: () => import(/* webpackChunkName: "personnel" */ '../components/Personnel/personnel.vue'),
       props: true
     }
   ]
@@ -147,13 +122,13 @@ let workplanMenu = {
     {
       path: 'home/active',
       name: 'Work Plans',
-      component: () => import(/* webpackChunkName: "workplan" */ '../components/Pages/workplan.vue'),
+      component: () => import(/* webpackChunkName: "workplan" */ '../components/Workplans/workplan.vue'),
       props: true
     },
     {
       path: 'home/manning',
       name: 'Manning Report',
-      component: () => import(/* webpackChunkName: "workplan" */ '../components/Pages/manning.vue'),
+      component: () => import(/* webpackChunkName: "workplan" */ '../components/Workplans/manning.vue'),
       props: true
     }
   ]

@@ -17,6 +17,8 @@ import Feature from '@/models/Feature'
 import featuremodule from '@/modules/featuremodule'
 import Bug from '@/models/Bug'
 import bugmodule from '@/modules/bugmodule'
+import Company from '@/models/Company'
+import companymodule from '@/modules/companymodule'
 
 Vue.use(Vuex)
 const database = new VuexORM.Database()
@@ -29,6 +31,7 @@ database.register(Personnel, personnelmodule)
 database.register(WorkPlan, workplanmodule)
 database.register(Feature, featuremodule)
 database.register(Bug, bugmodule)
+database.register(Company, companymodule)
 
 Vue.config.devtools = true
 

@@ -1,5 +1,6 @@
+<!-- eslint-disable -->
 <template>
-  <b-container fluid class="contentHeight">
+  <b-container fluid class="contentHeight featuresmain">
     <b-row ref="GridRow" class="contentHeight">
       <b-modal ref="FilterModal" id="FilterModal" size="sm" no-fade modal-class="animated bounceInLeft">
         <template v-slot:modal-title>Feature Filter</template>
@@ -94,6 +95,7 @@
               <e-columns>
                 <e-column headerText="Your Rating" textAlign="Left" width="150" :template="RatingsTemplate"></e-column>
                 <e-column field="Title" headerText="Title" textAlign="Left" width="200"></e-column>
+                <e-column field="Product" headerText="Product" width="100"></e-column>
                 <e-column field="Category" headerText="Category" width="100"></e-column>
                 <e-column field="DueDate" headerText="Due Date" textAlign="Left" width="100"></e-column>
                 <e-column field="Priority" headerText="Priority" textAlign="Left" width="100"></e-column>
@@ -109,81 +111,67 @@
         </b-row>
       </b-col>
     </b-row>
-    <b-modal id="EditModal" ref="EditModal" size="xl" centered @ok="editOk">
+    <b-modal id="EditModal" ref="EditModal" size="xl" centered @ok="editOk" @shown="onModalShown">
       <template v-slot:modal-title>Edit Details For {{ rowData.Title }}</template>
-      <b-container fluid>
-        <table id="EditTable" class="featuretable">
-          <tbody>
-            <tr>
-              <td colspan="6">Title</td>
-            </tr>
-            <tr>
-              <td colspan="6"><input class="e-input" type="text" v-model="rowData.Title" /></td>
-            </tr>
-            <tr>
-              <td colspan="2">Status</td>
-              <td colspan="2">Priority</td>
-              <td colspan="2">Category</td>
-            </tr>
-            <tr>
-              <td colspan="2"><ejs-dropdownlist v-model="rowData.Status" :dataSource="status" :fields="ddfields"></ejs-dropdownlist></td>
-              <td colspan="2"><ejs-dropdownlist v-model="rowData.Priority" :dataSource="priority" :fields="ddfields"></ejs-dropdownlist></td>
-              <td colspan="2"><ejs-dropdownlist v-model="rowData.Category" :dataSource="category" :fields="ddfields"></ejs-dropdownlist></td>
-            </tr>
-            <tr>
-              <td colspan="2">Effort</td>
-              <td colspan="2">Due Date</td>
-              <td colspan="2">% Complete</td>
-            </tr>
-            <tr>
-              <td colspan="2"><ejs-dropdownlist v-model="rowData.Effort" :dataSource="effort" :fields="ddfields"></ejs-dropdownlist></td>
-              <td colspan="2"><ejs-datepicker v-model="rowData.DueDate"></ejs-datepicker></td>
-              <td colspan="2"><ejs-dropdownlist v-model="rowData.PercentComplete" :dataSource="percent" :fields="ddfields"></ejs-dropdownlist></td>
-            </tr>
-            <tr>
-              <td colspan="4">Description</td>
-              <td colspan="2">Assigned To</td>
-            </tr>
-            <tr>
-              <td colspan="4">
-                <b-form-textarea class="form-control-sm" v-model="rowData.Comment" rows="3" max-rows="6" ref="Comment"></b-form-textarea>
-              </td>
-              <td colspan="2"><ejs-dropdownlist v-model="rowData.AssignedTo" :dataSource="owners" :fields="ddfields"></ejs-dropdownlist></td>
-            </tr>
-            <tr>
-              <td colspan="6">Comments</td>
-            </tr>
-            <tr>
-              <td colspan="6">
-                <b-form-textarea class="form-control-sm" v-model="rowData.Comment6" rows="10" ref="Comments"></b-form-textarea>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <b-container fluid id="EditTable" class="featuretable">
+        <b-row>
+          <b-col cols="8">Title</b-col>
+          <b-col cols="4">Product</b-col>
+        </b-row>
+        <b-row>
+          <b-col cols="8"><input class="e-input" type="text" v-model="rowData.Title" /></b-col>
+          <b-col cols="4"><ejs-dropdownlist v-model="rowData.Product" :dataSource="product" :fields="ddfields"></ejs-dropdownlist></b-col>
+        </b-row>
+        <b-row>
+          <b-col cols="4">Status</b-col>
+          <b-col cols="4">Priority</b-col>
+          <b-col cols="4">Category</b-col>
+        </b-row>
+        <b-row>
+          <b-col cols="4"><ejs-dropdownlist v-model="rowData.Status" :dataSource="status" :fields="ddfields"></ejs-dropdownlist></b-col>
+          <b-col cols="4"><ejs-dropdownlist v-model="rowData.Priority" :dataSource="priority" :fields="ddfields"></ejs-dropdownlist></b-col>
+          <b-col cols="4"><ejs-dropdownlist v-model="rowData.Category" :dataSource="category" :fields="ddfields"></ejs-dropdownlist></b-col>
+        </b-row>
+        <b-row>
+          <b-col cols="4">Effort</b-col>
+          <b-col cols="4">Due Date</b-col>
+          <b-col cols="4">% Complete</b-col>
+        </b-row>
+        <b-row>
+          <b-col cols="4"><ejs-dropdownlist v-model="rowData.Effort" :dataSource="effort" :fields="ddfields"></ejs-dropdownlist></b-col>
+          <b-col cols="4"><ejs-datepicker v-model="rowData.DueDate"></ejs-datepicker></b-col>
+          <b-col cols="4"><ejs-dropdownlist v-model="rowData.PercentComplete" :dataSource="percent" :fields="ddfields"></ejs-dropdownlist></b-col>
+        </b-row>
+        <b-row>
+          <b-col cols="8">Description</b-col>
+          <b-col cols="4">Assigned To</b-col>
+        </b-row>
+        <b-row>
+          <b-col cols="8">
+            <ejs-richtexteditor ref="Comment" id="rteComment" v-model="rowData.Comment" height="200" :created="onCreate"></ejs-richtexteditor>
+          </b-col>
+          <b-col cols="4"><ejs-dropdownlist v-model="rowData.AssignedTo" :dataSource="owners" :fields="ddfields"></ejs-dropdownlist></b-col>
+        </b-row>
+        <b-row>
+          <b-col cols="12">Comments</b-col>
+        </b-row>
+        <b-row>
+          <b-col cols="12">
+            <ejs-richtexteditor ref="Comments" id="rteComments" v-model="rowData.Comments" height="300" :created="onCreate"></ejs-richtexteditor>
+          </b-col>
+        </b-row>
       </b-container>
     </b-modal>
   </b-container>
 </template>
 
 <script>
-/* eslint-disable no-unused-vars */
 import Vue from 'vue'
-import moment from 'moment'
-import VueLodash from 'vue-lodash'
-import lodash from 'lodash'
+import { EventBus } from '../../main'
 import Feature from '@/models/Feature'
 import User from '@/models/User'
-import { GridPlugin, Page, Sort, Filter, Edit, Reorder, Resize, ColumnChooser, ColumnMenu, ContextMenu, Toolbar, VirtualScroll, ExcelExport, DetailRow } from '@syncfusion/ej2-vue-grids'
-import { DatePickerPlugin } from '@syncfusion/ej2-vue-calendars'
-import { DropDownListPlugin } from '@syncfusion/ej2-vue-dropdowns'
-import { CheckBoxPlugin } from '@syncfusion/ej2-vue-buttons'
-import { isNullOrUndefined } from 'util'
-
-Vue.use(GridPlugin)
-Vue.use(DatePickerPlugin)
-Vue.use(DropDownListPlugin)
-Vue.use(CheckBoxPlugin)
-Vue.use(VueLodash, { lodash: lodash })
+import { Page, Edit, Toolbar, VirtualScroll, ExcelExport, DetailRow } from '@syncfusion/ej2-vue-grids'
+import { Toolbar as RTEToolbar, Link, Image, Count, HtmlEditor, QuickToolbar, Table } from '@syncfusion/ej2-vue-richtexteditor'
 
 let vm = null
 
@@ -224,7 +212,6 @@ export default {
       FeatureId: 0,
       rating: 0,
       data: [],
-      filters: {},
       height: '100%',
       fields: [
         {
@@ -365,6 +352,17 @@ export default {
         { text: '3', value: '3' },
         { text: '4', value: '4' }
       ],
+      product: [
+        { text: 'Select...', value: 'S' },
+        { text: 'Portal', value: 'Portal' },
+        { text: 'Travel', value: 'Travel' },
+        { text: 'Personnel', value: 'Personnel' },
+        { text: 'Workplans', value: 'Workplans' },
+        { text: 'MSRs', value: 'MSRs' },
+        { text: 'Financial', value: 'Financial' },
+        { text: 'Features', value: 'Features' },
+        { text: 'Bugs', value: 'Bugs' }
+      ],
       status: [
         { text: 'Select...', value: 'S' },
         { text: 'Submitted', value: 'Submitted' },
@@ -455,9 +453,10 @@ export default {
             },
             methods: {
               rateme: function(data) {
-                console.log('RATE ID: ' + data.Id + vm.userid)
+                // console.log('RATE ID: ' + data.Id + vm.userid)
+                let drd = String(data.RatingData)
                 let rd = []
-                if (isNullOrUndefined(data.RatingData) || data.RatingData.length < 5) {
+                if (drd.length < 5) {
                   // no rating yet for this request so just add the current user and their rating to the data.
                   rd.push({
                     userid: vm.userid,
@@ -465,7 +464,7 @@ export default {
                   })
                 } else {
                   // determine if the user has voted and if not add their vote and if so update their vote
-                  rd = JSON.parse(String(data.RatingData))
+                  rd = JSON.parse(drd)
                   let voted = false
                   for (let i = 0; i < rd.length; i++) {
                     if (rd[i].userid == vm.userid) {
@@ -535,6 +534,16 @@ export default {
     getRef: function(text, idx) {
       return text + '_' + idx
     },
+    onModalShown() {
+      EventBus.$emit('refresh')
+    },
+    onCreate: function() {
+      EventBus.$on('refresh', this.refreshRte)
+    },
+    refreshRte() {
+      this.$refs.Comment.refreshUI()
+      this.$refs.Comments.refreshUI()
+    },
     toolbarClick: function(args) {
       switch (args.item.id) {
         case 'FeatureGrid_excelexport':
@@ -550,7 +559,7 @@ export default {
       this.$refs['FilterModal'].toggle('#ShowFilters')
     },
     onModalHide: function() {
-      console.log('MODAL HIDE: ' + this.mode)
+      // console.log('MODAL HIDE: ' + this.mode)
       vm.$router.push({ name: 'Refresh', params: { action: 'feature' } })
     },
     actionBegin(args) {
@@ -652,7 +661,7 @@ export default {
       this.$refs.FeatureGrid.refresh()
       for (var i = 0; i < this.fields.length; i++) {
         if (this.fields[i].FieldName == e) {
-          console.log('SORT DOWN: ' + e)
+          // console.log('SORT DOWN: ' + e)
           this.fields[i].Sort = 'Down'
         } else {
           this.fields[i].Sort = ''
@@ -660,7 +669,7 @@ export default {
       }
     },
     showorhide: function(e) {
-      console.log('SHOW OR HIDE: ' + e)
+      // console.log('SHOW OR HIDE: ' + e)
       var checked = e.checked
       // var fieldname = e.event.target.value
       var displayname = e.event.target.labels[0].innerText
@@ -672,7 +681,7 @@ export default {
         this.$refs.FeatureGrid.autoFitColumns()
       }
     },
-    setfilter: function(e) {
+    setfilter: function() {
       // always reset to all records then do all filters as they are selected.
       // this is a top down filter
       // loop through all the fields and filter the ones that have a predicate and filtervalue set
@@ -751,9 +760,6 @@ export default {
                   },
                   vm.sortdir
                 )
-                p.sort(function compare(a, b) {
-                  var da = new Date(a.FilterValue)
-                })
               } else {
                 p = Vue._.orderBy(p, vm.sortfield, vm.sortdir)
               }
@@ -765,7 +771,7 @@ export default {
     },
     clearfilter: function(e) {
       var f = String(e.target.id).split('_')[1]
-      console.log('CLEARING FILTER: ' + f)
+      // console.log('CLEARING FILTER: ' + f)
       for (var i = 1; i < vm.fields.length; i++) {
         if (vm.fields[i].FieldName == f) {
           vm.fields[i].Predicate = 'S'
@@ -811,13 +817,14 @@ export default {
       window.localStorage.setItem('feature', JSON.stringify(this.fields))
     },
     loadfilters: function() {
-      if (!isNullOrUndefined(window.localStorage.getItem('feature'))) {
+      let f = String(window.localStorage.getItem('feature'))
+      if (f != 'null') {
         // here we will load the fields from local storage and test the version.
         // if the version matches the current app version then load the fields.
         // if not use the new fields from the file and alert the user that they need to rebuild their filters
-        let flds = JSON.parse(window.localStorage.getItem('feature'))
+        let flds = JSON.parse(f)
         let version = flds[0]['Value']
-        console.log('TEST POINT A: ' + version + ', flds: ' + flds)
+        // console.log('TEST POINT A: ' + version + ', flds: ' + flds)
         if (version == this.appversion) {
           // ask the user if they want to apply the saved filters or clear them
           this.$bvModal
@@ -834,7 +841,7 @@ export default {
             })
             .then(value => {
               if (value == true) {
-                this.fields = JSON.parse(window.localStorage.getItem('feature'))
+                this.fields = flds
                 // loop to display the selected columns
                 for (var i = 1; i < this.fields.length; i++) {
                   // starting at 1 to skip the version 'field'
@@ -872,7 +879,8 @@ export default {
     }
   },
   provide: {
-    grid: [Page, Sort, Filter, Edit, DetailRow, Reorder, Resize, ColumnChooser, ColumnMenu, ContextMenu, Toolbar, VirtualScroll, ExcelExport]
+    grid: [Page, Edit, DetailRow, Toolbar, VirtualScroll, ExcelExport],
+    richtexteditor: [RTEToolbar, Link, Image, Count, HtmlEditor, QuickToolbar, Table]
   },
   watch: {
     // eslint-disable-next-line no-unused-vars
@@ -941,15 +949,6 @@ h3 {
   font-size: 16px !important;
 }
 
-.detailtable td {
-  font-size: 13px;
-  padding: 4px;
-  width: 800px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 #EditTable {
   font-size: 0.75rem !important;
 }
@@ -979,5 +978,10 @@ input.e-input {
 .e-icon-grightarrow,
 .e-icon-gdownarrow {
   color: black !important;
+}
+
+.e-richtexteditor .e-rte-content .e-content,
+.e-richtexteditor .e-source-content .e-content {
+  padding: 10px !important;
 }
 </style>

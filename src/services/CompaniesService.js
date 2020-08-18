@@ -1,12 +1,16 @@
-/* eslint-disable */
 import axios from 'axios'
 
-let url = _spPageContextInfo.webServerRelativeUrl + "/_api/lists/getbytitle('Companies')/items"
+let SPCI = null
+if (window._spPageContextInfo) {
+  SPCI = window._spPageContextInfo
+}
+
+let url = SPCI.webServerRelativeUrl + "/_api/lists/getbytitle('Companies')/items"
 
 export default {
   getFormDigest() {
     return axios.request({
-      url: _spPageContextInfo.webServerRelativeUrl + '/_api/contextinfo',
+      url: SPCI.webServerRelativeUrl + '/_api/contextinfo',
       method: 'post',
       headers: { Accept: 'application/json; odata=verbose' }
     })
@@ -18,8 +22,7 @@ export default {
         furl = url
       }
 
-      let response = await axios
-      .get(furl, {
+      let response = await axios.get(furl, {
         headers: {
           accept: 'application/json;odata=verbose'
         }
@@ -58,8 +61,7 @@ export default {
       const response = await axios.post(url, itemprops, config)
       // go get the data for the saved item to return back to the user
       return response
-    }
-    catch (error) {
+    } catch (error) {
       console.log('Companieservice Error Updating Company: ' + error)
     }
   },
@@ -81,11 +83,9 @@ export default {
       Title: payload.Title
     }
     try {
-      const response = await axios
-        .post(url, itemprops, config)
+      const response = await axios.post(url, itemprops, config)
       return response
-    }
-    catch (error) {
+    } catch (error) {
       console.log('Companieservice Error Editing Company: ' + error)
     }
   }

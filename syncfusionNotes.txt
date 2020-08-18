@@ -4,5 +4,8 @@ fix imports for all scss files by replacing:
 with
 @import 'node_modules/@syncfusion/ej2-
 
+only include bootstrap*.scss as we are only targeting bootstrap styles
+now must also include _*.scss
+
 this is because the syncfusion scss files are relative imports that do not work when added to a seperate scss file. Here we are forcing their imports all at the root of their location
 NOTE: It is important to be sure to modify the settings.json file for VSCode to ensure that you can search the node_modules folder. You can revert back once you fix the files.

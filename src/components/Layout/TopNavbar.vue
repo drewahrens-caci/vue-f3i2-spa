@@ -1,6 +1,14 @@
 <template>
   <nav class="navbar navbar-expand-lg ">
     <div class="container-fluid">
+      <b-modal id="ActivityLog" ref="ActivityLog" size="xl" centered :header-bg-variant="warning" @close="onModalHide" v-model="Show">
+        <template v-slot:modal-title>Activity Log</template>
+        <b-container fluid class="p-0">
+          <div class="row m-0">
+            <div class="col-12 p-0 activity" v-html="activity"></div>
+          </div>
+        </b-container>
+      </b-modal>
       <div class="navbar-minimize">
         <button class="btn btn-outline btn-fill btn-round btn-icon d-none d-lg-block btn-burger" @click.prevent="minimizeSidebar">
           <font-awesome-icon fas :icon="$sidebar.isMinimized ? 'ellipsis-v' : 'bars'" class="icon"></font-awesome-icon>
@@ -41,6 +49,7 @@
               <font-awesome-icon fas icon="cog" class="cog"></font-awesome-icon>
             </template>
             <b-dropdown-item
+              v-if="isDeveloper"
               href="#"
               onclick="javascript:if (LaunchCreateHandler('PublishingPage')) { SP.SOD.executeFunc('sp.ui.dialog.js', 'SP.UI.ModalDialog.showModalDialog', function() { var dlgOptions = { url:'\u002fsites\u002ff3i2\u002f_layouts\u002f15\u002fCreatePublishingPageDialog.aspx', autoSize: true, autoSizeStartWidth: 550 };  SP.UI.ModalDialog.showModalDialog(dlgOptions); }); };"
             >
@@ -50,6 +59,7 @@
               </div>
             </b-dropdown-item>
             <b-dropdown-item
+              v-if="isDeveloper"
               href="#"
               onclick="javascript:SP.SOD.executeFunc('sp.ui.pub.ribbon.js', 'Pub.Ribbon.PubCommands', function() {Pub.Ribbon.PubCommands.notifyProgress(SP.Publishing.Resources.notificationMessageLoading);if (document.forms['aspnetForm']['MSOLayout_InDesignMode'] != null) document.forms['aspnetForm']['MSOLayout_InDesignMode'].value = 1;if (document.forms['aspnetForm']['MSOAuthoringConsole_FormContext'] != null) document.forms['aspnetForm']['MSOAuthoringConsole_FormContext'].value = 1;if (document.forms['aspnetForm']['MSOSPWebPartManager_DisplayModeName'] != null) document.forms['aspnetForm']['MSOSPWebPartManager_DisplayModeName'].value = 'Design';__doPostBack('ctl05','edit')});"
             >
@@ -58,28 +68,34 @@
                 <span>Edit page</span>
               </div>
             </b-dropdown-item>
-            <b-dropdown-item href="#" onclick="GoToPage('\u002fsites\u002ff3i2\u002f_layouts\u002f15\u002faddanapp.aspx');">
+            <b-dropdown-item v-if="isDeveloper" href="#" onclick="GoToPage('\u002fsites\u002ff3i2\u002f_layouts\u002f15\u002faddanapp.aspx');">
               <div class="row">
                 <font-awesome-icon far icon="plus-square" class="icon"></font-awesome-icon>
                 <span>Add an app</span>
               </div>
             </b-dropdown-item>
-            <b-dropdown-item href="#" onclick="STSNavigate2(event,'/sites/f3i2/_layouts/15/DesignSite.aspx');">
+            <b-dropdown-item v-if="isDeveloper" href="#" onclick="STSNavigate2(event,'/sites/f3i2/_layouts/15/DesignSite.aspx');">
               <div class="row">
                 <font-awesome-icon fas icon="pencil-alt" class="icon"></font-awesome-icon>
                 <span>Design Manager</span>
               </div>
             </b-dropdown-item>
-            <b-dropdown-item href="#" onclick="STSNavigate2(event,'/sites/f3i2/_layouts/15/viewlsts.aspx');">
+            <b-dropdown-item v-if="isDeveloper" href="#" onclick="STSNavigate2(event,'/sites/f3i2/_layouts/15/viewlsts.aspx');">
               <div class="row">
                 <font-awesome-icon fas icon="box-open" class="icon"></font-awesome-icon>
                 <span>Site contents</span>
               </div>
             </b-dropdown-item>
-            <b-dropdown-item href="#" onclick="GoToPage('\u002fsites\u002ff3i2\u002f_layouts\u002f15\u002fsettings.aspx');">
+            <b-dropdown-item v-if="isDeveloper" href="#" onclick="GoToPage('\u002fsites\u002ff3i2\u002f_layouts\u002f15\u002fsettings.aspx');">
               <div class="row">
                 <font-awesome-icon fas icon="cogs" class="icon"></font-awesome-icon>
                 <span>Site settings</span>
+              </div>
+            </b-dropdown-item>
+            <b-dropdown-item href="#" @click="ShowActivityLog">
+              <div class="row">
+                <font-awesome-icon fas icon="clipbaord-list" class="icon"></font-awesome-icon>
+                <span>Show Activity Log</span>
               </div>
             </b-dropdown-item>
           </b-nav-item-dropdown>
@@ -89,6 +105,7 @@
   </nav>
 </template>
 <script>
+import User from '@/models/User'
 import Personnel from '@/models/Personnel'
 import { isNullOrUndefined } from 'util'
 
@@ -100,20 +117,33 @@ export default {
       const { name } = this.$route
       return this.capitalizeFirstLetter(name)
     },
+    isOwner() {
+      return User.getters('isOwner')
+    },
+    isDeveloper() {
+      return User.getters('isDeveloper')
+    },
     contacts() {
       return Personnel.getters('Contacts')
+    },
+    activity() {
+      return this.$store.state.support.activity
     }
   },
   data() {
     return {
       activeNotifications: false,
       searchinput: '',
-      formattedContacts: []
+      formattedContacts: [],
+      Show: false
     }
   },
   mounted: function() {
     vm = this
-    vm.$options.interval = setInterval(vm.waitForContacts, 1000)
+    Personnel.dispatch('getContacts').then(function() {
+      vm.$store.dispatch('support/addActivity', '<div class="bg-info">TopNavbar-MOUNTED: getContacts: ' + vm.contacts.length + '</div>')
+      vm.$options.interval = setInterval(vm.waitForContacts, 1000)
+    })
   },
   methods: {
     waitForContacts: function() {
@@ -133,6 +163,13 @@ export default {
         })
       }
       this.formattedContacts = c
+    },
+    ShowActivityLog() {
+      this.Show = true
+    },
+    onModalHide: function() {
+      // Hide modal.
+      this.Show = false
     },
     capitalizeFirstLetter(string) {
       return string.charAt(0).toUpperCase() + string.slice(1)
@@ -164,5 +201,10 @@ export default {
   margin: 5px 0;
   font-size: 18px;
   color: #fff !important;
+}
+
+.activity {
+  height: 500px;
+  overflow-y: auto;
 }
 </style>

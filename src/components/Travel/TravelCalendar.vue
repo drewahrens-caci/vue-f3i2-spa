@@ -1,6 +1,18 @@
 /* eslint-disable no-undef */ /* eslint-disable no-undef */
 <template>
   <b-container fluid class="p-0 contentHeight" id="Calendar">
+    <edit-travel :TripId="TripId" :Show="EditTravel"></edit-travel>
+    <new-travel :Show="NewTravel"></new-travel>
+    <trip-report :TripId="TripId" :Show="TripReport"></trip-report>
+    <b-toast id="busy-toast" variant="warning" solid no-auto-hide>
+      <template v-slot:toast-title>
+        <div class="d-flex flex-grow-1 align-items-baseline">
+          <b-img blank blank-color="#ff0000" class="mr-2" width="12" height="12"></b-img>
+          <strong class="mr-auto">{{ busyTitle }}</strong>
+        </div>
+      </template>
+      <b-spinner style="width: 7rem; height: 7rem;" variant="success" label="Waiting Spinner"></b-spinner>
+    </b-toast>
     <b-modal id="modal-wizard" size="xl" centered hide-footer hide-header @hide="onModalHide">
       <b-container fluid class="p-0">
         <div class="row" v-if="tabInvalid">
@@ -10,12 +22,38 @@
           <div class="col-12 p-0">
             <b-card no-body>
               <b-tabs ref="dashboardtabs" class="tabArea" card v-model="tabIndex" @activate-tab="onTabSelected">
+                <!-- <b-tab class="mtab" active>
+                  <template slot="title"
+                    ><font-awesome-icon fas icon="globe-americas" class="icon"></font-awesome-icon>
+                    Travel Type
+                  </template>
+                </b-tab> -->
                 <b-tab class="mtab" active>
                   <template slot="title"
                     ><font-awesome-icon fas icon="cog" class="icon"></font-awesome-icon>
                     Travel Information
                   </template>
                   <b-form>
+                    <div class="row">
+                      <div class="col-6">OCONUS</div>
+                      <div v-if="travelmodel.OCONUS == 'Yes'" class="col-6">OCONUS Location</div>
+                      <div v-else class="col-6"></div>
+                    </div>
+                    <div class="row">
+                      <div class="col-6">
+                        <b-form-select class="form-control-sm form-control-travel" v-model="travelmodel.OCONUS" :options="yesno" :state="ValidateMe('O')" ref="OCONUS" @change="onOCONUSSelected"></b-form-select>
+                        <b-form-invalid-feedback>
+                          Must Select Travel Type
+                        </b-form-invalid-feedback>
+                      </div>
+                      <div v-if="travelmodel.OCONUS == 'Yes'" class="col-6">
+                        <b-form-select class="form-control-sm form-control-travel" v-model="travelmodel.OCONUSLocation" :options="locations" :state="ValidateMe('OL')" ref="OCONUSLocation"></b-form-select>
+                        <b-form-invalid-feedback>
+                          Must Select OCONUS Location
+                        </b-form-invalid-feedback>
+                      </div>
+                      <div v-else class="col-6"></div>
+                    </div>
                     <div class="row">
                       <div class="col-12">Subject</div>
                     </div>
@@ -31,15 +69,16 @@
                     </div>
                     <div class="row">
                       <div class="col-6">
-                        <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.Company" :state="ValidateMe('Company')" ref="Company"></b-form-input>
+                        <!-- <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.Company" :state="ValidateMe('Company')" ref="Company"></b-form-input> -->
+                        <b-form-select class="form-control-sm form-control-travel" v-model="travelmodel.Company" :options="companies" :state="ValidateMe('Company')" ref="Company" @change="onCompanySelected"></b-form-select>
                         <b-form-invalid-feedback>
-                          Enter at least 3 letters
+                          Please Select A Company
                         </b-form-invalid-feedback>
                       </div>
                       <div class="col-6">
                         <b-form-select class="form-control-sm form-control-travel" v-model="travelmodel.WorkPlanNumber" :options="workplans" :state="ValidateMe('WorkPlan')" ref="WorkPlan" @change="onWorkplanSelected"></b-form-select>
                         <b-form-invalid-feedback>
-                          Enter in YY-XXXX format (Proper WorkPlan format)
+                          Please Select A WorkPlan
                         </b-form-invalid-feedback>
                       </div>
                     </div>
@@ -49,13 +88,13 @@
                     </div>
                     <div class="row">
                       <div class="col-6">
-                        <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.StartTime" ref="start" type="date" title="Start" :state="ValidateMe('start')"></b-form-input>
+                        <b-form-input class="form-control-sm form-control-travel form-control-travel-date" v-model="travelmodel.StartTime" ref="start" type="date" title="Start" :state="ValidateMe('start')"></b-form-input>
                         <b-form-invalid-feedback>
                           Enter a valid date (mm/dd/yyyy)
                         </b-form-invalid-feedback>
                       </div>
                       <div class="col-6">
-                        <b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.EndTime" ref="end" type="date" title="End" :state="ValidateMe('end')"></b-form-input>
+                        <b-form-input class="form-control-sm form-control-travel form-control-travel-date" v-model="travelmodel.EndTime" ref="end" type="date" title="End" :state="ValidateMe('end')"></b-form-input>
                         <b-form-invalid-feedback>
                           Enter a valid date (mm/dd/yyyy)
                         </b-form-invalid-feedback>
@@ -210,7 +249,7 @@
                     <div class="row">
                       <div class="col-12">
                         <b-form-textarea
-                          class="form-control-sm form-control-travel"
+                          class="form-control-sm form-control-travel-textarea"
                           v-model="travelmodel.Comments"
                           placeholder="Please enter 1-2 sentences to describe what is to be accomplished by taking this trip and why it is beneficial to the government.  Spell out all acronyms."
                           rows="3"
@@ -339,6 +378,7 @@
         id="TravelCalendar"
         ref="TravelCalendar"
         cssClass="contentHeight"
+        :enablePersistence="true"
         :eventSettings="eventSettings"
         :selectedDate="defaultDate"
         :views="views"
@@ -535,35 +575,48 @@
 </template>
 
 <script>
-/* eslint-disable no-unused-vars */
 import Vue from 'vue'
 import moment from 'moment'
 import axios from 'axios'
 import { SchedulePlugin, Day, Week, Month } from '@syncfusion/ej2-vue-schedule'
-import { GridPlugin, Page, Sort, Filter, Edit, Resize, Reorder, ColumnMenu, ContextMenu, Toolbar, VirtualScroll } from '@syncfusion/ej2-vue-grids'
-import { UploaderPlugin } from '@syncfusion/ej2-vue-inputs'
+import { Page, Sort, Filter, Edit, Resize, Reorder, ColumnMenu, ContextMenu, Toolbar, VirtualScroll } from '@syncfusion/ej2-vue-grids'
 import User from '@/models/User'
 import Travel from '@/models/Travel'
-import Personnel from '@/models/Personnel'
+/* import Personnel from '@/models/Personnel'
 import Workplan from '@/models/WorkPlan'
+import Company from '@/models/Company' */
+import EditTravel from './EditTravel'
+import NewTravel from './NewTravel'
+import TripReport from './TripReport'
 import { isNullOrUndefined } from 'util'
 
 Vue.use(SchedulePlugin)
-Vue.use(GridPlugin)
-Vue.use(UploaderPlugin)
 
 var vm = null // setup a global instance pointer to the vue component. This is set in mounted
 
 let data = []
 
-// eslint-disable-next-line no-undef
-let server = _spPageContextInfo.webAbsoluteUrl
-let library = 'TripReports'
+/* let server = _spPageContextInfo.webAbsoluteUrl
+let library = 'TripReports' */
 
 export default {
   name: 'Calendar',
+  components: {
+    EditTravel,
+    NewTravel,
+    TripReport
+  },
   props: {
     mode: String
+  },
+  errorCaptured(err, vm, info) {
+    const notification = {
+      type: 'danger',
+      title: 'Error in travelcalendar.vue ' + err,
+      message: info,
+      push: true
+    }
+    this.$store.dispatch('notification/add', notification, { root: true })
   },
   computed: {
     travelloaded() {
@@ -581,6 +634,9 @@ export default {
     workplans() {
       return Workplan.getters('DropDown')
     },
+    companies() {
+      return Company.getters('DropDown')
+    },
     currentuser() {
       return User.getters('CurrentUser')
     }
@@ -588,10 +644,11 @@ export default {
   provide: {
     // schedule: [Day, Week, Month, Resize, DragAndDrop],
     schedule: [Day, Week, Month],
-    grid: [Page, Sort, Filter, Edit, Reorder, Resize, ColumnMenu, ContextMenu]
+    grid: [Page, Sort, Filter, Edit, Reorder, Resize, ColumnMenu, ContextMenu, Toolbar, VirtualScroll]
   },
   data: function() {
     return {
+      busyTitle: 'Getting Data. Please Wait.',
       moreevents: false,
       reportdigest: null,
       reportlink: null,
@@ -601,6 +658,11 @@ export default {
       editing: false,
       fileSelected: null,
       fileBuffer: null,
+      TripId: 0,
+      EditTravel: false,
+      NewTravel: false,
+      TripReport: false,
+      IndexNumber: null,
       pdata: [],
       tabIndex: 0,
       tabInvalid: false,
@@ -633,6 +695,9 @@ export default {
         WorkPlanText: '',
         WorkPlanNumber: '',
         OriginalWorkPlanNumber: '',
+        OCONUS: '',
+        OCONUSLocation: 'Select...',
+        PreApproved: '',
         WorkPlanData: '',
         Company: '',
         Subject: '',
@@ -706,6 +771,16 @@ export default {
         { value: 'TS', text: 'TS' },
         { value: 'TSSCI', text: 'TS/SCI' }
       ],
+      yesno: [
+        { value: 'Select...', text: 'Select...' },
+        { value: 'No', text: 'No' },
+        { value: 'Yes', text: 'Yes' }
+      ],
+      locations: [
+        { value: 'Select...', text: 'Select...' },
+        { value: 'Germany', text: 'Germany' },
+        { value: 'Korea', text: 'Korea' }
+      ],
       approvalData: [],
       approvalItems: [],
       approvalfields: [
@@ -750,14 +825,56 @@ export default {
           thClass: 'bg-warning text-white text-center px60'
         }
       ],
-      requiresSecurity: false
+      requiresSecurity: false,
+      legenditems: [
+        {
+          id: 0,
+          name: 'ReportLate',
+          variant: 'red'
+        },
+        {
+          id: 1,
+          name: 'ReportDue',
+          variant: 'yellow',
+          classes: 'text-dark'
+        },
+        {
+          id: 2,
+          name: 'Approved',
+          variant: 'orange',
+          classes: 'text-dark'
+        },
+        {
+          id: 3,
+          name: 'WPMReview',
+          variant: 'blue'
+        },
+        {
+          id: 4,
+          name: 'AFRLReview',
+          variant: 'teal'
+        },
+        {
+          id: 5,
+          name: 'Completed',
+          variant: 'green'
+        }
+      ]
     }
   },
   mounted: function() {
     vm = this
+    vm.$bvToast.show('busy-toast')
     Travel.dispatch('getDigest')
-    Travel.dispatch('getTRIPS').then(function() {
-      vm.$options.interval = setInterval(vm.waitForEvents, 1000)
+    Personnel.dispatch('getPersonnel').then(function() {
+      Workplan.dispatch('getWorkplans').then(function() {
+        Company.dispatch('getCompanies').then(function() {
+          Travel.dispatch('getTRIPS').then(function() {
+            vm.$bvToast.hide('busy-toast')
+            vm.$options.interval = setInterval(vm.waitForEvents, 1000)
+          })
+        })
+      })
     })
   },
   methods: {
@@ -779,6 +896,7 @@ export default {
         this.$refs.TravelCalendar.deleteEvent(oldevents)
         this.$refs.TravelCalendar.addEvent(this.travel)
         this.pdata = this.personnel
+        this.$store.dispatch('support/setLegendItems', this.legenditems)
         if (!isNullOrUndefined(this.$route.query.id)) {
           document.getElementById('PageTitle').innerHTML = ' -  View'
           let id = Number(this.$route.query.id)
@@ -830,6 +948,9 @@ export default {
         WorkPlanText: '',
         WorkPlanNumber: '',
         OriginalWorkPlanNumber: '',
+        OCONUS: '',
+        OCONUSLocation: '',
+        PreApproved: '',
         WorkPlanData: '',
         Company: '',
         Subject: '',
@@ -853,7 +974,8 @@ export default {
         uri: ''
       }
     },
-    onModalHide: function(evt) {
+    /* --------------------------------------------------------------------------------- Begin Modal Events ------------------------------------------------------------------------*/
+    onModalHide: function() {
       this.editing = false
       vm.resetTravelModel()
       if (this.mode == 'default') {
@@ -864,7 +986,7 @@ export default {
         vm.$router.push({ name: 'Travel Calendar', params: { mode: 'default' } })
       }
     },
-    onModalCancel: function(evt) {
+    onModalCancel: function() {
       this.$bvModal.hide('modal-wizard')
     },
     onModalSave: function() {
@@ -908,25 +1030,24 @@ export default {
           // if a file is selected, the assumption is that this is a new trip report
           // need a report digest if we don't already have one
           vm.uploadTripReport(vm.fileSelected, vm.buffer, vm.reportdigest).then(function(response) {
-            console.log('FILE UPLOADED RESPONSE: ' + response)
+            // console.log('FILE UPLOADED RESPONSE: ' + response)
             // need to get the trip report file and update it's travel index number and title
             // need to then submit the updates to the travel request
             let itemlink = response.data.d.ListItemAllFields.__deferred.uri
             // set the item link so that we can get it later
             vm.reportlink = itemlink
-            let item = vm.getReportItem(itemlink)
+            /* let item = vm.getReportItem(itemlink)
             item.then(function(response) {
               // now we have the file item object and can then proceed to update it
-              console.log('GET FILE RESPONSE: ' + response)
-              console.log('INDEX: ' + vm.travelmodel.IndexNumber)
-              let updateitem = vm.updateReportItem(response.data.d.__metadata).then(function() {
+              // console.log('GET FILE RESPONSE: ' + response)
+              // console.log('INDEX: ' + vm.travelmodel.IndexNumber)
+              vm.updateReportItem(response.data.d.__metadata).then(function() {
                 // there is no response object on an update
                 // save travel request
                 event[0].TripReport = server + '/TripReports/' + vm.fileSelected
                 event[0].ReportFile = vm.fileSelected
                 event[0].Status = 'ReportFiled'
                 Travel.dispatch('editTrip', event).then(function() {
-                  /* vm.$bvModal.hide('modal-wizard') */
                   // console.log(event[0].WorkPlanNumber + ', ' + event[0].OriginalWorkPlanNumber)
                   if (event[0].WorkPlanNumber !== event[0].OriginalWorkPlanNumber) {
                     // The workplan was changed! So, update the travel index on the workplan. NOTE: This will cause a loss of some travel indexes
@@ -935,7 +1056,7 @@ export default {
                     payload.uri = vm.workplanuri
                     payload.etag = vm.workplanetag
                     payload.index = vm.newindex
-                    Workplan.dispatch('updateIndex', payload).then(function(response) {
+                    Workplan.dispatch('updateIndex', payload).then(function() {
                       // console.log('UPDATED LAST INDEX:' + response)
                       vm.$bvModal.hide('modal-wizard')
                     })
@@ -944,7 +1065,7 @@ export default {
                   }
                 })
               })
-            })
+            }) */
           })
         } else {
           // No trip report so just update the travel request
@@ -957,7 +1078,7 @@ export default {
               payload.uri = vm.workplanuri
               payload.etag = vm.workplanetag
               payload.index = vm.newindex
-              Workplan.dispatch('updateIndex', payload).then(function(response) {
+              Workplan.dispatch('updateIndex', payload).then(function() {
                 // console.log('UPDATED LAST INDEX:' + response)
               })
             }
@@ -974,19 +1095,21 @@ export default {
           // validate if email needs to be sent
           if (vm.emailRequired) {
             Travel.dispatch('sendEmail', id).then(function() {
-              console.log('EMAIL SENT TO SECURITY')
+              // console.log('EMAIL SENT TO SECURITY')
             })
           }
           // update workplan index
           let payload = {}
           payload.uri = vm.workplanuri
           payload.etag = vm.workplanetag
-          Workplan.dispatch('updateIndex', payload).then(function(response) {
+          Workplan.dispatch('updateIndex', payload).then(function() {
             // console.log(response)
           })
         })
       }
     },
+    /* --------------------------------------------------------------------------------- End Modal Events --------------------------------------------------------------------------*/
+    /* --------------------------------------------------------------------------------- Begin Calendar Events ---------------------------------------------------------------------*/
     onCellClick: function(args) {
       args.cancel = true
       if (this.moreevents) {
@@ -1059,20 +1182,11 @@ export default {
         this.$bvModal.show('modal-wizard')
       }
     },
-    onMoreEventsClick: function(args) {
+    onMoreEventsClick: function() {
       this.moreevents = true
     },
-    /* onPopupOpen: function(args) {
-      console.log('POPUP OPENED: ' + args)
-    },
-    onDragStop: function(args) {
-      args.cancel = true
-      console.log('DRAG STOPPED: ' + args)
-    },
-    onResizeStop: function(args) {
-      args.cancel = true
-      console.log('RESIZED: ' + args)
-    }, */
+    /* --------------------------------------------------------------------------------- End Calendar Events -----------------------------------------------------------------------*/
+    /* --------------------------------------------------------------------------------- Begin Form Events -------------------------------------------------------------------------*/
     onTabSelected: function(newidx, oldidx, event) {
       // Now we can validate the tabs based on what tab is clicked
       this.tabInvalid = false
@@ -1133,6 +1247,9 @@ export default {
       this.travelmodel.WorkPlanText = wp[1]
       this.travelmodel.IndexNumber = wp[0] + '-' + (parseInt(wp[3]) + 1)
     },
+    onCompanySelected: function() {
+      // TODO: Validate if this should drive the selection of workplans and personnel
+    },
     getRef(text, idx) {
       return text + '_' + idx
     },
@@ -1141,12 +1258,31 @@ export default {
       let emailPattern = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/
       let ret = false
       switch (control) {
+        case 'O':
+          if (this.travelmodel.OCONUS == 'Yes' || this.travelmodel.OCONUS == 'No') {
+            ret = true
+          }
+          break
+
+        case 'OL':
+          if (this.travelmodel.OCONUS == 'Yes') {
+            if (this.travelmodel.OCONUSLocation != 'Select...') {
+              ret = true
+            }
+          } else {
+            if (this.travelmodel.OCONUS != 'Yes') {
+              // Location would not be required here so it actually should validate as true
+              ret = true
+            }
+          }
+          break
+
         case 'Subject':
           ret = this.travelmodel.Subject.length > 2 ? true : false
           break
 
         case 'Company':
-          ret = this.travelmodel.Company.length > 2 ? true : false
+          ret = this.travelmodel.Company != '' ? true : false
           break
 
         case 'WorkPlan':
@@ -1269,25 +1405,11 @@ export default {
       this.travelmodel.VisitRequest = checked ? true : false
     },
     btnAddClick: function() {
+      // Used in PersonnelModal when selecting a traveler.
       this.$bvModal.show('PersonnelModal')
     },
-    onActionBegin(args) {
-      console.log('ACTION BEGIN: ' + args.requestType + ', args' + args)
-      switch (args.requestType) {
-        case 'toolbarItemRendering':
-          // something here
-          break
-      }
-    },
-    onActionComplete(args) {
-      console.log('ACTION COMPLETE: ' + args.requestType + ', args' + args)
-      switch (args.requestType) {
-        case 'toolbarItemRendered':
-          // something here
-          break
-      }
-    },
     actionBegin(args) {
+      // Used in PersonnelModal when selecting a traveler.
       switch (args.requestType) {
         case 'beginEdit':
           args.cancel = true
@@ -1323,7 +1445,6 @@ export default {
     async onFileSelect(args) {
       let response = await this.getFormDigest()
       vm.reportdigest = response.data.d.GetContextWebInformation.FormDigestValue
-      let input = document.getElementById('EditTripReport')
       vm.fileSelected = args.filesData[0].name
       let buffer = vm.getFileBuffer(args.filesData[0].rawFile)
       buffer.then(function(buff) {
@@ -1337,7 +1458,12 @@ export default {
         Accept: 'application/json;odata=verbose',
         'X-RequestDigest': digest
       }
-      try {
+      if (console) {
+        console.log('endpoint: ' + endpoint)
+        console.log('data: ' + data)
+        console.log('headers: ' + headers)
+      }
+      /* try {
         const response = await axios({
           url: endpoint,
           method: 'POST',
@@ -1348,8 +1474,14 @@ export default {
         })
         return response
       } catch (error) {
-        console.log('TravelService Error Adding Trip Report: ' + error)
-      }
+        const notification = {
+          type: 'danger',
+          title: 'Travel Service Error',
+          message: 'Error Adding Trip Report',
+          push: true
+        }
+        this.$store.dispatch('notification/add', notification, { root: true })
+      } */
     },
     getFileBuffer(file) {
       let p = new Promise(function(resolve, reject) {
@@ -1398,14 +1530,21 @@ export default {
           return response
         })
         .catch(function(error) {
-          console.log('Travel Error Updating Trip Report Data: ' + error)
+          // console.log('Travel Error Updating Trip Report Data: ' + error)
+          const notification = {
+            type: 'danger',
+            title: 'Travel Service Error: ' + error,
+            message: 'Error Updating Trip Report Data',
+            push: true
+          }
+          this.$store.dispatch('notification/add', notification, { root: true })
         })
     }
+    /* --------------------------------------------------------------------------------- End Form Events -----------------------------------------------------------------------*/
   },
   watch: {
     // eslint-disable-next-line no-unused-vars
     $route(to, from) {
-      console.log('ROUTE CHANGE FROM TRAVELCALENDAR: ' + to + ', ' + from)
       this.mode = to.params.mode
       switch (this.mode) {
         case 'view':
@@ -1437,7 +1576,6 @@ export default {
           break
 
         case 'default':
-          console.log('RELOADING TRIPS!')
           Travel.dispatch('getDigest')
           Travel.dispatch('getTRIPS').then(function() {
             vm.$options.interval = setInterval(vm.waitForEvents, 1000)
@@ -1454,6 +1592,31 @@ export default {
 </script>
 
 <style lang="scss">
+/* #Calendar .titlebar {
+  width: 100%;
+  font-size: 18px;
+  margin: 5px 0;
+  text-indent: 10px;
+  background-color: black !important;
+}
+#Calendar {
+  font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+  font-size: 12px;
+}
+#Calendar .title {
+  line-height: normal;
+  color: #ffffff;
+  margin-left: 10px;
+  margin-top: 10px;
+} */
+
+.form-control-travel-date.is-invalid,
+.form-control-travel-date.is-valid,
+.was-validated .form-control-travel-date:invalid,
+.was-validated .form-control-travel-date:valid {
+  background-position: right calc(1.5rem) center !important;
+}
+
 .e-time {
   display: none !important;
 }
@@ -1548,24 +1711,6 @@ export default {
   text-indent: 3px;
 }
 
-#Calendar .titlebar {
-  width: 100%;
-  font-size: 18px;
-  margin: 5px 0;
-  text-indent: 10px;
-  background-color: black !important;
-}
-#Calendar {
-  font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
-  font-size: 12px;
-}
-#Calendar .title {
-  line-height: normal;
-  color: #ffffff;
-  margin-left: 10px;
-  margin-top: 10px;
-}
-
 #ViewModal .modal-title {
   margin: 0 auto;
   line-height: 1.5;
@@ -1596,10 +1741,6 @@ export default {
   color: #ffffff !important;
   background-color: black !important;
   opacity: 1;
-}
-
-.calendar {
-  margin: 5px auto;
 }
 
 .form-control-travel {

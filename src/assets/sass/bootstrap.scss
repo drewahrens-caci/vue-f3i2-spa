@@ -32,77 +32,6 @@ $container-max-widths: (
 
 $enable-rounded: false;
 
-$blue:    #007bff; /* #007bff; #00e1ff;*/
-$indigo:  #6610f2;
-$purple:  #6f42c1;
-$pink:    #e83e8c;
-$red:     #dc3545;
-$orange:  #fd7e14;
-$yellow:  #ffc107;
-$green:   #28a745;
-$teal:    #20c997;
-$cyan:    #17a2b8;
-$black:   #000000;
-
-// holiday theme colors
-$hoho-red:    #ff1111;
-$hoho-green:  #18f118;
-
-$thickness: 20px;
-$stripeWidth: 24px;
-
-$colors: ();
-// stylelint-disable-next-line scss/dollar-variable-default
-$colors: map-merge(
-  (
-    "blue":       $blue,
-    "indigo":     $indigo,
-    "purple":     $purple,
-    "pink":       $pink,
-    "red":        $red,
-    "orange":     $orange,
-    "yellow":     $yellow,
-    "green":      $green,
-    "teal":       $teal,
-    "cyan":       $cyan,
-    "white":      $white,
-    "gray":       $gray-600,
-    "gray-dark":  $gray-800,
-    "black":      $black,
-    "hoho-red":   $hoho-red,
-    "hoho-green": $hoho-green
-  ),
-  $colors
-);
-
-$primary:       $blue;
-$secondary:     $white;
-$success:       $green;
-$info:          $cyan;
-$warning:       $orange;
-$danger:        $red;
-$light:         $gray-100;
-$dark:          $black;
-
-$theme-colors: ();
-// stylelint-disable-next-line scss/dollar-variable-default
-$theme-colors: map-merge(
-  (
-    "primary":    $primary,
-    "secondary":  $secondary,
-    "success":    $success,
-    "info":       $info,
-    "warning":    $warning,
-    "danger":     $danger,
-    "light":      $light,
-    "dark":       $dark,
-    "black":      $black
-  ),
-  $theme-colors
-);
-
-$enable-rounded: false;
-
 $grid-icon-color: $white;
 $tbar-default-bg: $warning;
 $tbar-hor-active-bg: $warning;
@@ -131,7 +60,7 @@ $input-box-border-color: $black; // override syncfusion input border color
 @import 'node_modules/@syncfusion/ej2-dropdowns/styles/bootstrap4.scss';
 @import 'node_modules/@syncfusion/ej2-gantt/styles/bootstrap4.scss';
 @import 'node_modules/@syncfusion/ej2-schedule/styles/bootstrap4.scss';
-@import 'node_modules/@syncfusion/ej2-vue-richtexteditor/styles/bootstrap4.scss';
+@import 'node_modules/@syncfusion/ej2-kanban/styles/bootstrap4.scss';
 
 .hidden { display: none; }
 

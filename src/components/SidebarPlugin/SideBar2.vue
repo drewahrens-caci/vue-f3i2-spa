@@ -19,12 +19,19 @@
           </sidebar-item>
         </slot>
       </ul>
+      <ul class="legend">
+        <li class="legend-item">
+          <b-alert variant="secondary" class="text-center" show>
+            <span class="text-dark">LEGEND</span>
+          </b-alert>
+        </li>
+        <legend-item v-for="item in legendItems" :key="item.id" :item="item"></legend-item>
+      </ul>
     </div>
   </div>
 </template>
 <script>
-// eslint-disable-next-line no-unused-vars
-let vm = null
+// let vm = null
 export default {
   name: 'sidebar',
   props: {
@@ -78,9 +85,11 @@ export default {
     sidebarStyle() {
       return {
         // backgroundImage: `url(${this.backgroundImage})`
-        backgroundColor: 'black',
-        opacity: 0.7
+        backgroundColor: 'rgba(0, 0, 0, 0.7)'
       }
+    },
+    legendItems() {
+      return this.$store.state.support.legendItems
     }
   },
   beforeDestroy() {
@@ -96,5 +105,31 @@ export default {
   .nav-mobile-menu {
     display: none;
   }
+}
+
+.legend {
+  display: block;
+  position: absolute !important;
+  bottom: 0;
+  left: 0;
+  background-color: black;
+  opacity: 1;
+  height: 350px;
+  overflow-y: auto;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.legend-item {
+  height: 34px;
+  margin-bottom: 2px;
+  font-size: 20px;
+}
+
+.alert {
+  padding: 0.25rem !important;
+  margin: 0 !important;
 }
 </style>

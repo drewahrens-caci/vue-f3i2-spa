@@ -9,11 +9,9 @@
       </p>
     </a>
     <div v-if="$slots.default || this.isMenu" class="ml-3">
-      <!-- <el-collapse-transition> -->
       <ul class="nav" v-show="!collapsed">
         <slot></slot>
       </ul>
-      <!-- </el-collapse-transition> -->
     </div>
     <slot name="title" v-if="children.length === 0 && !$slots.default && link.path">
       <component :to="link.path" @click.native="linkClick" :is="elementType(link, false)" :class="{ active: link.active }" class="nav-link" :target="link.target" :href="link.path">
@@ -38,13 +36,8 @@
   </component>
 </template>
 <script>
-// import CollapseTransition from 'element-ui/lib/transitions/collapse-transition'
-
 export default {
   name: 'sidebar-item',
-  /* components: {
-    [CollapseTransition.name]: CollapseTransition
-  }, */
   props: {
     menu: {
       type: Boolean,
@@ -78,7 +71,8 @@ export default {
   data() {
     return {
       children: [],
-      collapsed: true
+      collapsed: true,
+      linkcount: 0
     }
   },
   computed: {
@@ -120,6 +114,13 @@ export default {
       return matches.join('')
     },
     linkClick() {
+      /* console.log('LINK CLICK: ' + e.currentTarget.innerText)
+      if (e.currentTarget.innerText == 'Travel Tracker') {
+        this.linkcount += 1
+        if (this.linkcount > 1) {
+          this.$router.go(0)
+        }
+      } */
       if (this.autoClose && this.$sidebar && this.$sidebar.showSidebar === true) {
         this.$sidebar.displaySidebar(false)
       }

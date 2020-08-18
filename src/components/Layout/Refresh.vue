@@ -5,16 +5,24 @@
 </template>
 
 <script>
+/* eslint-disable */
 export default {
   name: 'Refresh',
   props: {
     action: String
   },
   mounted: function() {
-    console.log('REFRESH ACTION: ' + this.action)
     switch (this.action) {
       case 'travel':
         this.$router.push({ name: 'Travel Calendar', params: { mode: 'default' } })
+        break
+
+      /* case 'traveltracker':
+        this.$router.push({ name: 'Travel Tracker', params: { mode: 'tracker' } })
+        break */
+
+      case 'traveltracker':
+        this.$router.push({ name: 'Travel',  path: '/travel/home/tracker' })
         break
 
       case 'personnel':

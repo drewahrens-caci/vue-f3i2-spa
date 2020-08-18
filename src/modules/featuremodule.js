@@ -42,7 +42,7 @@ const actions = {
     return response
   },
   async editFeature({ state }, payload) {
-    console.log('PAYLOAD: ' + payload)
+    // console.log('PAYLOAD: ' + payload)
     let response = await FeatureService.editFeature(payload, state.digest)
     return response
   },
@@ -53,7 +53,7 @@ const actions = {
 }
 
 function formatFeature(j) {
-  console.log('FORMATTING FEATURES: ' + j)
+  // console.log('FORMATTING FEATURES: ' + j)
   let p = []
   for (let i = 0; i < j.length; i++) {
     p.push({
@@ -61,6 +61,7 @@ function formatFeature(j) {
       Id: j[i]['Id'],
       Title: j[i]['Title'], // This is the Title column in SharePoint
       Status: j[i]['Status'],
+      Product: j[i]['Product'],
       Priority: j[i]['Priority'],
       Effort: j[i]['Effort'],
       Comment: j[i]['Comment'],

@@ -25,17 +25,35 @@ export default {
     mode: {
       type: String,
       default: 'default'
+    },
+    action: {
+      type: String
     }
   },
   components: {
-    // Calendar
-    calendar: () => import(/* webpackChunkName: "travelcalendar" */ '../Calendar/TravelCalendar.vue')
+    calendar: () => import(/* webpackChunkName: "travel" */ './TravelCalendar.vue')
+  },
+  errorCaptured(err, vm, info) {
+    const notification = {
+      type: 'danger',
+      title: 'Error in UserMenu ' + err,
+      message: info,
+      push: true
+    }
+    this.$store.dispatch('notification/add', notification, { root: true })
+  },
+  data: function() {
+    return {
+      routeCount: 0
+    }
   },
   mounted: function() {
     this.$nextTick(function() {
       const notification = {
-        type: 'info',
-        message: 'Getting Trips, please wait'
+        type: 'success',
+        title: 'Getting Trips',
+        message: 'Please Wait...',
+        push: false
       }
       this.$store.dispatch('notification/add', notification, { root: true })
     })

@@ -32,7 +32,7 @@ const actions = {
       })
   },
   getCamlEvents({ state }) {
-    console.log('GET CAML EVENTS: ' + state.digest)
+    // console.log('GET CAML EVENTS: ' + state.digest)
     EventService.getEventsByCaml(state.digest)
       .then(response => {
         console.log('EVENTS BY CAML RESPONSE: ' + response)
@@ -58,7 +58,7 @@ const actions = {
       })
   },
   async addEvent({ state }, payload) {
-    console.log('PAYLOAD: ' + payload)
+    // console.log('PAYLOAD: ' + payload)
     Event.commit(state => {
       state.currentEvent = payload[0]
     })
@@ -66,7 +66,7 @@ const actions = {
     return response
   },
   async editEvent({ state }, payload) {
-    console.log('PAYLOAD: ' + payload)
+    // console.log('PAYLOAD: ' + payload)
     Event.commit(state => {
       state.currentEvent = payload[0]
     })
@@ -84,7 +84,7 @@ function formatEvent(j) {
   for (let i = 0; i < j.length; i++) {
     let c = ''
     let category = isNullOrUndefined(j[i]['Categories']) === true ? '' : j[i]['Categories']
-    console.log('SETTING CATEGORY: ' + category)
+    // console.log('SETTING CATEGORY: ' + category)
     switch (category) {
       case 'Checkpoints':
         c = 'checkpoints'

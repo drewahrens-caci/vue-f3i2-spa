@@ -1,3 +1,4 @@
+<!-- eslint-disable -->
 <template>
   <b-container fluid class="contentHeight">
     <b-row ref="GridRow" class="contentHeight">
@@ -233,25 +234,13 @@
 </template>
 
 <script>
-/* eslint-disable no-unused-vars */
+/* eslint-disable */
 import Vue from 'vue'
-import moment from 'moment'
-import VueLodash from 'vue-lodash'
-import lodash from 'lodash'
+// import moment from 'moment'
 import User from '@/models/User'
 import Personnel from '@/models/Personnel'
 import Workplan from '@/models/WorkPlan'
-import { GridPlugin, Page, Sort, Filter, Edit, Reorder, Resize, ColumnChooser, ColumnMenu, ContextMenu, Toolbar, VirtualScroll, ExcelExport, DetailRow } from '@syncfusion/ej2-vue-grids'
-import { DatePickerPlugin } from '@syncfusion/ej2-vue-calendars'
-import { DropDownListPlugin } from '@syncfusion/ej2-vue-dropdowns'
-import { CheckBoxPlugin } from '@syncfusion/ej2-vue-buttons'
-import { isNullOrUndefined } from 'util'
-
-Vue.use(GridPlugin)
-Vue.use(DatePickerPlugin)
-Vue.use(DropDownListPlugin)
-Vue.use(CheckBoxPlugin)
-Vue.use(VueLodash, { lodash: lodash })
+import { Page, Edit, Toolbar, VirtualScroll, ExcelExport, DetailRow } from '@syncfusion/ej2-vue-grids'
 
 let vm = null
 
@@ -262,6 +251,15 @@ export default {
       type: String,
       default: 'default'
     }
+  },
+  errorCaptured(err, vm, info) {
+    const notification = {
+      type: 'danger',
+      title: 'Error in personnel.vue ' + err,
+      message: info,
+      push: true
+    }
+    this.$store.dispatch('notification/add', notification, { root: true })
   },
   computed: {
     personnel() {
@@ -625,6 +623,13 @@ export default {
   },
   mounted: function() {
     vm = this
+    const notification = {
+      type: 'info',
+      title: 'Getting Data',
+      message: 'Getting Workplans and Personnel. Please wait...',
+      push: false
+    }
+    this.$store.dispatch('notification/add', notification, { root: true })
     Personnel.dispatch('getDigest')
     Workplan.dispatch('getWorkplans').then(function() {
       Personnel.dispatch('getPersonnel').then(function() {
@@ -634,10 +639,8 @@ export default {
   },
   methods: {
     waitForPeople: function() {
-      // console.log('WAITING FOR PERSONNEL')
       if (this.personnel && this.personnel.length > 0) {
         clearInterval(this.$options.interval)
-        // console.log('PERSONNEL LENGTH: ' + this.personnel.length)
         this.filteredpersonnel = this.personnel // set initial filter to all
         // load any saved filters
         this.loadfilters()
@@ -675,7 +678,6 @@ export default {
       vm.$router.push({ name: 'Refresh', params: { action: 'personnel' } })
     },
     actionBegin(args) {
-      // console.log('ACTION BEGIN: ' + args.requestType)
       switch (args.requestType) {
         case 'beginEdit':
           // args.rowData contains the data for the row. Place this data in our edit form and we can change it and then update the row and also SharePoint
@@ -688,14 +690,9 @@ export default {
           args.cancel = true
           this.$bvModal.show('NewModal')
           break
-
-        case 'filtering':
-          // console.log('BEGIN FILTERING: ' + args)
-          break
       }
     },
     actionComplete(args) {
-      console.log('ACTION COMPLETE: ' + args.requestType)
       if (args.requestType == 'columnstate') {
         this.$refs['PersonnelGrid'].autoFitColumns()
       }
@@ -709,7 +706,6 @@ export default {
     },
     dataBound: function() {
       this.$refs.PersonnelGrid.autoFitColumns()
-      // console.log('CHECKPOINT FOR REFS 1: ' + this.$refs.PersonnelGrid)
     },
     editRow: function(data) {
       console.log('TEST POINT DATA CHECK A: ' + data.WPData)
@@ -812,7 +808,6 @@ export default {
       }
     },
     showorhide: function(e) {
-      console.log('SHOW OR HIDE: ' + e)
       var checked = e.checked
       // var fieldname = e.event.target.value
       var displayname = e.event.target.labels[0].innerText
@@ -960,15 +955,15 @@ export default {
       window.localStorage.setItem('personnel', JSON.stringify(vm.fields))
     },
     loadfilters: function() {
-      if (!isNullOrUndefined(window.localStorage.getItem('personnel'))) {
+      let f = String(window.localStorage.getItem('personnel'))
+      if (f != 'null') {
         // here we will load the fields from local storage and test the version.
         // if the version matches the current app version then load the fields.
         // if not use the new fields from the file and alert the user that they need to rebuild their filters
-        let flds = JSON.parse(window.localStorage.getItem('personnel'))
+        let flds = JSON.parse(f)
         let version = flds[0]['Value']
-        console.log('TEST POINT A: ' + version + ', flds: ' + flds)
         if (version == this.appversion) {
-          // ask the user if they want to apply the saved filters or clear them
+          // ask the user if they want to apply the saved filters
           this.$bvModal
             .msgBoxConfirm('Load your saved filter?', {
               title: 'Please Confirm',
@@ -983,7 +978,7 @@ export default {
             })
             .then(value => {
               if (value == true) {
-                this.fields = JSON.parse(window.localStorage.getItem('personnel'))
+                this.fields = flds
                 // loop to display the selected columns
                 for (var i = 1; i < this.fields.length; i++) {
                   if (this.fields[i].Visible) {
@@ -1002,7 +997,13 @@ export default {
               }
             })
             .catch(err => {
-              console.log(err)
+              const notification = {
+                type: 'danger',
+                title: 'Error in personnel.vue loading filters ' + err,
+                message: info,
+                push: true
+              }
+              this.$store.dispatch('notification/add', notification, { root: true })
             })
         } else {
           // versions don't match so let the user know
@@ -1020,7 +1021,7 @@ export default {
     }
   },
   provide: {
-    grid: [Page, Sort, Filter, Edit, DetailRow, Reorder, Resize, ColumnChooser, ColumnMenu, ContextMenu, Toolbar, VirtualScroll, ExcelExport]
+    grid: [Page, Edit, DetailRow, Toolbar, VirtualScroll, ExcelExport]
   },
   watch: {
     // eslint-disable-next-line no-unused-vars

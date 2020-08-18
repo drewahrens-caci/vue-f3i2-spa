@@ -6,6 +6,9 @@ const getters = {
   allCompanies() {
     return Company.all()
   },
+  DropDown: state => {
+    return state.dropdown
+  },
   Loaded: state => {
     return state.loaded
   }
@@ -29,6 +32,7 @@ const actions = {
     Company.commit(state => {
       state.loaded = true
     })
+    state.dropdown = formatDropdown(response)
   },
   async addCompany({ state }, payload) {
     let response = await CompaniesService.saveCompany(payload, state.digest)
@@ -51,6 +55,21 @@ function formatCompany(j) {
       Title: j[i]['Title'], // This is the Title column in SharePoint
       etag: j[i]['__metadata']['etag'],
       uri: j[i]['__metadata']['uri']
+    })
+  }
+  return p
+}
+
+function formatDropdown(j) {
+  let p = []
+  p.push({
+    text: 'Select...',
+    value: 'S'
+  })
+  for (let i = 0; i < j.length; i++) {
+    p.push({
+      text: j[i]['Title'],
+      value: j[i]['Title']
     })
   }
   return p

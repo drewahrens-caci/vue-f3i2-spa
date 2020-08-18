@@ -6,11 +6,14 @@ export default class Travel extends Model {
   static state = {
     digest: null,
     trips: [],
+    afrltrips: [],
     trip: {},
     loaded: false,
+    triploaded: false,
     loading: true,
     sendEmail: false,
     createTask: false,
+    selectedtrip: {},
     currentEvent: {}
   }
 
@@ -20,6 +23,11 @@ export default class Travel extends Model {
       Id: this.number(null), // this is the actual field from SharePoint
       Subject: this.attr(''),
       Status: this.attr(''),
+      OCONUS: this.attr(''),
+      OCONUSLocation: this.attr(''),
+      OCONUSApprovedBy: this.attr(''),
+      OCONUSApprovedOn: this.attr(''),
+      OCONUSApprovedEmail: this.attr(''),
       StartTime: this.attr(''),
       EndTime: this.attr(''),
       class: this.attr(''),
@@ -38,10 +46,16 @@ export default class Travel extends Model {
       Comments: this.attr(''),
       Clearance: this.attr(''),
       VisitRequest: this.attr(''),
+      SecurityAction: this.attr(''),
+      SecurityActionCompleted: this.attr(''),
+      PreApproved: this.attr(''),
+      Approved: this.attr(''),
       EstimatedCost: this.attr(''),
       IndexNumber: this.attr(''),
       TripReport: this.attr(''),
       TripReportLink: this.attr(''),
+      Created: this.attr(''),
+      InternalData: this.attr(''),
       etag: this.attr(null), // Used for updating
       uri: this.attr(null) // Used for updating
     }

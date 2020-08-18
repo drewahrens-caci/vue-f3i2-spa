@@ -1,3 +1,4 @@
+/* eslint-disable */
 import Vue from 'vue'
 import bootstrap from './bootstrap'
 import App from './components/App.vue'
@@ -14,11 +15,17 @@ library.add(far, fas)
 dom.watch()
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
-console.log('USING BOOTSTRAP')
+// console.log('USING BOOTSTRAP')
 Vue.use(bootstrap)
+
+import jquery from 'jquery'
+Object.defineProperty(Vue.prototype, '$jQuery', { value: jquery })
+
 Vue.config.productionTip = false
 
 Vue.config.devtools = true
+
+export const EventBus = new Vue()
 
 /* function loadscript(url, callback) {
   let script = document.createElement('script')

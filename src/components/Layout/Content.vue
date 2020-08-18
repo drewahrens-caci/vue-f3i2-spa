@@ -1,7 +1,6 @@
 <template>
-  <div class="content">
+  <div class="content" id="maincontent">
     <div class="container-fluid">
-      <!-- <router-view name="dialog"></router-view> -->
       <router-view></router-view>
     </div>
   </div>
@@ -9,4 +8,8 @@
 <script>
 export default {}
 </script>
-<style></style>
+<style>
+.content {
+  position: relative;
+}
+</style>

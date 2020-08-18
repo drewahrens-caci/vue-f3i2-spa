@@ -1,16 +1,21 @@
-/* eslint-disable */
 import axios from 'axios'
 import moment from 'moment'
 
-let geturl = _spPageContextInfo.webServerRelativeUrl + "/_api/lists/getbytitle('Personnel')/items?$select=*&$orderby=Title"
-geturl += "&$filter=(Active eq 1)"
-let url = _spPageContextInfo.webServerRelativeUrl + "/_api/lists/getbytitle('Personnel')/items"
-let id = null
+let SPCI = null
+if (window._spPageContextInfo) {
+  SPCI = window._spPageContextInfo
+}
+
+let geturl = SPCI.webServerRelativeUrl + "/_api/lists/getbytitle('Personnel')/items?$select=*&$orderby=Title"
+geturl += '&$filter=(Active eq 1)'
+let curl = SPCI.webServerRelativeUrl + "/_api/lists/getbytitle('Personnel')/items?$select=*&$orderby=Title"
+curl += '&$filter=(Contact eq 1)'
+let url = SPCI.webServerRelativeUrl + "/_api/lists/getbytitle('Personnel')/items"
 
 export default {
   getFormDigest() {
     return axios.request({
-      url: _spPageContextInfo.webServerRelativeUrl + '/_api/contextinfo',
+      url: SPCI.webServerRelativeUrl + '/_api/contextinfo',
       method: 'post',
       headers: { Accept: 'application/json; odata=verbose' }
     })
@@ -22,8 +27,7 @@ export default {
         purl = geturl
       }
 
-      let response = await axios
-      .get(purl, {
+      let response = await axios.get(purl, {
         headers: {
           accept: 'application/json;odata=verbose'
         }
@@ -45,23 +49,30 @@ export default {
     let eurl = url
     eurl += "?$filter=(Email eq '" + email + "')"
     console.log('GETPERSONNELBYEMAIL FILTER: ' + eurl)
-    let response = await axios
-      .get(eurl, {
-        headers: {
-          accept: 'application/json;odata=verbose'
-        }
-      })
+    let response = await axios.get(eurl, {
+      headers: {
+        accept: 'application/json;odata=verbose'
+      }
+    })
+    let results = response.data.d.results
+    return results
+  },
+  async getContacts() {
+    let response = await axios.get(curl, {
+      headers: {
+        accept: 'application/json;odata=verbose'
+      }
+    })
     let results = response.data.d.results
     return results
   },
   async savePersonnel(payload, digest, action) {
     // payload is the full event object as json array with 1 element
     // action determines if it is new or edit
-    id = payload.Id
     let headers = null
 
-    switch(action) {
-      case 'edit':
+    switch (action) {
+      case 'edit': {
         url = payload.uri
         headers = {
           'Content-Type': 'application/json;odata=verbose',
@@ -73,7 +84,7 @@ export default {
         let config = {
           headers: headers
         }
-    
+
         let itemprops = {
           __metadata: { type: 'SP.Data.PersonnelListItem' },
           WPData: JSON.stringify(payload.WPData),
@@ -88,34 +99,64 @@ export default {
           Company: payload.Company,
           SubET: payload.SubET,
           CACStatus: payload.CACStatus,
-          CACRequestDate: moment(payload.CACRequestDate).isValid() ? String(moment(payload.CACRequestDate).add(6, 'hours').format('YYYY-MM-DD[T]HH:MM:[00Z]')) : null,
-          CACExpirationDate: moment(payload.CACExpirationDate).isValid() ? String(moment(payload.CACExpirationDate).add(6, 'hours').format('YYYY-MM-DD[T]HH:MM:[00Z]')) : null,
+          CACRequestDate: moment(payload.CACRequestDate).isValid()
+            ? String(
+                moment(payload.CACRequestDate)
+                  .add(6, 'hours')
+                  .format('YYYY-MM-DD[T]HH:MM:[00Z]')
+              )
+            : null,
+          CACExpirationDate: moment(payload.CACExpirationDate).isValid()
+            ? String(
+                moment(payload.CACExpirationDate)
+                  .add(6, 'hours')
+                  .format('YYYY-MM-DD[T]HH:MM:[00Z]')
+              )
+            : null,
           SCIFormStatus: payload.SCIFormStatus,
           SCIFormType: payload.SCIFormType,
-          SCIFormSubmitted: moment(payload.SCIFormSubmitted).isValid() ? String(moment(payload.SCIFormSubmitted).add(6, 'hours').format('YYYY-MM-DD[T]HH:MM:[00Z]')) : null,
-          PRDueDate: moment(payload.PRDueDate).isValid() ? String(moment(payload.PRDueDate).add(6, 'hours').format('YYYY-MM-DD[T]HH:MM:[00Z]')) : null,
-          CEDate: moment(payload.CEDate).isValid() ? String(moment(payload.CEDate).add(6, 'hours').format('YYYY-MM-DD[T]HH:MM:[00Z]')) : null
+          SCIFormSubmitted: moment(payload.SCIFormSubmitted).isValid()
+            ? String(
+                moment(payload.SCIFormSubmitted)
+                  .add(6, 'hours')
+                  .format('YYYY-MM-DD[T]HH:MM:[00Z]')
+              )
+            : null,
+          PRDueDate: moment(payload.PRDueDate).isValid()
+            ? String(
+                moment(payload.PRDueDate)
+                  .add(6, 'hours')
+                  .format('YYYY-MM-DD[T]HH:MM:[00Z]')
+              )
+            : null,
+          CEDate: moment(payload.CEDate).isValid()
+            ? String(
+                moment(payload.CEDate)
+                  .add(6, 'hours')
+                  .format('YYYY-MM-DD[T]HH:MM:[00Z]')
+              )
+            : null
         }
-    
+
         try {
-          const response = await axios.post(url, itemprops, config)
+          await axios.post(url, itemprops, config)
           // go get the data for the saved item to return back to the user
           return axios
-          .get(url, {
-            headers: {
-              accept: 'application/json;odata=verbose'
-            }
-          })
-          .then(function (response) {
-            return response
-          })
-        }
-        catch (error) {
+            .get(url, {
+              headers: {
+                accept: 'application/json;odata=verbose'
+              }
+            })
+            .then(function(response) {
+              return response
+            })
+        } catch (error) {
           console.log('PersonnelService Error Updating Personnel: ' + error)
         }
         break
+      }
 
-      case 'new':
+      case 'new': {
         headers = {
           'Content-Type': 'application/json;odata=verbose',
           Accept: 'application/json;odata=verbose',
@@ -125,7 +166,7 @@ export default {
         let config2 = {
           headers: headers
         }
-    
+
         let itemprops2 = {
           __metadata: { type: 'SP.Data.PersonnelListItem' },
           WPData: JSON.stringify(payload.WPData),
@@ -138,24 +179,24 @@ export default {
           Company: payload.Company,
           SubET: payload.SubET
         }
-    
+
         try {
-          const response = await axios.post(url, itemprops2, config2)
+          await axios.post(url, itemprops2, config2)
           // go get the data for the saved item to return back to the user
           return axios
-          .get(url, {
-            headers: {
-              accept: 'application/json;odata=verbose'
-            }
-          })
-          .then(function (response) {
-            return response
-          })
-        }
-        catch (error) {
+            .get(url, {
+              headers: {
+                accept: 'application/json;odata=verbose'
+              }
+            })
+            .then(function(response) {
+              return response
+            })
+        } catch (error) {
           console.log('PersonnelService Error Updating Personnel: ' + error)
         }
         break
+      }
     }
   }
 }

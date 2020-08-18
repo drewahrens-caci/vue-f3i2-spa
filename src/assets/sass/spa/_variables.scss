@@ -87,7 +87,20 @@ $theme-colors: map-merge(
     "warning":    $warning,
     "danger":     $danger,
     "light":      $light,
-    "dark":       $dark
+    "dark":       $dark,
+    "blue":       $blue,
+    "indigo":     $indigo,
+    "purple":     $purple,
+    "pink":       $pink,
+    "red":        $red,
+    "orange":     $orange,
+    "yellow":     $yellow,
+    "green":      $green,
+    "teal":       $teal,
+    "cyan":       $cyan,
+    "white":      $white,
+    "gray":       $gray-600,
+    "gray-dark":  $gray-800
   ),
   $theme-colors
 );
@@ -1028,6 +1041,11 @@ $modal-xl:                          1140px !default;
 $modal-lg:                          800px !default;
 $modal-md:                          500px !default;
 $modal-sm:                          300px !default;
+
+/* $modal-xl:                          none !default;
+$modal-lg:                          none !default;
+$modal-md:                          none !default;
+$modal-sm:                          none !default; */
 
 $modal-fade-transform:              translate(0, -50px) !default;
 $modal-show-transform:              none !default;

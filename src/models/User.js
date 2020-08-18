@@ -7,15 +7,20 @@ export default class User extends Model {
   static state() {
     return {
       appversion: '1.0.02',
+      loaded: false,
       userid: 0,
       usergroups: [],
+      isPM: false,
+      isSecurity: false,
+      isDeveloper: false,
       isOwner: false,
       isWPManager: false,
       isApprover: false,
       isTravelApprover: false,
       isPCA: false,
       isMember: false,
-      isMSRInputter: false
+      isMSRInputter: false,
+      isAdmin: false
     }
   }
 

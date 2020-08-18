@@ -3,10 +3,6 @@ import Vue from 'vue'
 import Workplan from '@/models/WorkPlan'
 import WorkplanService from '@/services/WorkplanService.js'
 import moment from 'moment'
-import VueLodash from 'vue-lodash'
-import lodash from 'lodash'
-
-Vue.use(VueLodash, { lodash: lodash })
 
 const getters = {
   allWorkplans() {
@@ -20,6 +16,12 @@ const getters = {
   },
   Managers: state => {
     return state.managers
+  },
+  Subs: state => {
+    return state.subs
+  },
+  SubsLoaded: state => {
+    return state.subsloaded
   }
 }
 
@@ -47,12 +49,25 @@ const actions = {
     let response = await WorkplanService.getManagers()
     state.managers = formatManagers(response.data.d.results)
   },
+  async getManagerByWPNumber({ state }, payload) {
+    let response = await WorkplanService.getManagerByWPNumber(state, payload)
+    return response
+  },
+  async getSubs({ state }, payload) {
+    let response = await WorkplanService.getSubs(payload)
+    state.subs = String(response[0]['Subs'])
+    state.subsloaded = true
+  },
   async addWorkplan({ state }, payload) {
     let response = await WorkplanService.saveWorkplan(payload, state.digest, 'new')
     return response
   },
   async editWorkplan({ state }, payload) {
     let response = await WorkplanService.saveWorkplan(payload, state.digest, 'edit')
+    return response
+  },
+  async saveWorkplanSubs({ state }, payload) {
+    let response = await WorkplanService.saveWorkplanSubs(payload, state.digest)
     return response
   },
   async updateIndex({ state }, payload) {
@@ -75,6 +90,7 @@ function formatWorkplan(j) {
       Title: j[i]['Title'], // This is the Title column in SharePoint
       Number: j[i]['Number'],
       Revision: j[i]['Revision'],
+      Subs: j[i]['Subs'],
       POPStart: moment(j[i]['POPStart']).isValid() ? moment(j[i]['POPStart']).format('MM/DD/YYYY') : '',
       POPEnd: moment(j[i]['POPEnd']).isValid() ? moment(j[i]['POPEnd']).format('MM/DD/YYYY') : '',
       DateApproved: moment(j[i]['DateApproved']).isValid() ? moment(j[i]['DateApproved']).format('MM/DD/YYYY') : '',
