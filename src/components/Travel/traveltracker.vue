@@ -117,6 +117,8 @@
               :actionBegin="actionBegin"
               :actionComplete="actionComplete"
               :rowDataBound="rowDataBound"
+              :queryCellInfo="formatCell"
+              :excelQueryCellInfo="formatExcelCell"
               rowHeight="20"
               height="100%"
               width="100%"
@@ -131,7 +133,7 @@
                 <e-column field="Created" headerText="Travel Requested" textAlign="Left" width="150" type="date" format="yMd"></e-column>
                 <e-column field="StartTime" headerText="Departure Date" textAlign="Left" width="140" type="date" format="yMd"></e-column>
                 <e-column field="EndTime" headerText="Return Date" textAlign="Left" width="140" type="date" format="yMd"></e-column>
-                <e-column headerText="Travelers" textAlign="Left" width="200" :template="TravelersTemplate"></e-column>
+                <e-column field="TravelersText" headerText="Travelers" textAlign="Left" width="200"></e-column>
                 <e-column field="Company" headerText="Company" textAlign="Left" width="150"></e-column>
                 <e-column field="Sponsor" headerText="Sponsor" textAlign="Left" width="150"></e-column>
                 <e-column field="EstimatedCost" headerText="Est Cost" textAlign="Left" width="100"></e-column>
@@ -169,6 +171,7 @@ import Travel from '@/models/Travel'
 import EditTravel from './EditTravel'
 import NewTravel from './NewTravel'
 import TripReport from './TripReport'
+import Company from '@/models/Company'
 
 Vue.use(SchedulePlugin)
 
@@ -209,6 +212,9 @@ export default {
     },
     currentuser() {
       return User.getters('CurrentUser')
+    },
+    companies() {
+      return Company.getters('DropDown')
     },
     offset() {
       let o = this.$moment().utcOffset()
@@ -266,7 +272,6 @@ export default {
             { text: 'WPMReview', value: 'WPMReview' },
             { text: 'Approved', value: 'Approved' },
             { text: 'Rejected', value: 'Rejected' },
-            { text: 'ReportFiled', value: 'ReportFiled' },
             { text: 'AFRLReview', value: 'AFRLReview' },
             { text: 'ATPRequested', value: 'ATPRequested' },
             { text: 'ATPApproved', value: 'ATPApproved' },
@@ -285,7 +290,7 @@ export default {
           Sort: ''
         },
         {
-          FieldName: 'WorkplanNumber',
+          FieldName: 'WorkPlanNumber',
           Visible: true,
           DisplayName: 'Workplan Number',
           Filter: false,
@@ -296,7 +301,7 @@ export default {
           Sort: ''
         },
         {
-          FieldName: 'WorkplanText',
+          FieldName: 'WorkPlanText',
           Visible: true,
           DisplayName: 'Workplan Name',
           Filter: false,
@@ -330,7 +335,7 @@ export default {
           Sort: ''
         },
         {
-          FieldName: 'StartTime',
+          FieldName: 'StartDate',
           Visible: true,
           DisplayName: 'Departure Date',
           Filter: false,
@@ -342,7 +347,7 @@ export default {
           Sort: ''
         },
         {
-          FieldName: 'EndTime',
+          FieldName: 'EndDate',
           Visible: true,
           DisplayName: 'Return Date',
           Filter: false,
@@ -684,7 +689,7 @@ export default {
           template: Vue.component('columnTemplate', {
             template: `
               <div>
-                <a :href="href">{{ tripreport }}</span>
+                <a :href="href" target="_blank">{{ tripreport }}</span>
               </div>
             `,
             data: function() {
@@ -730,8 +735,8 @@ export default {
               isWPManager() {
                 return User.getters('isWPManager')
               },
-              isMSRInputter() {
-                return User.getters('isMSRInputter')
+              isSubcontractor() {
+                return User.getters('isSubcontractor')
               }
             },
             methods: {
@@ -915,6 +920,35 @@ export default {
       }
       // args.row.classList.add(c)
     },
+    formatCell: function(args) {
+      if (args.column.field == 'TripReport') {
+        args.cell.classList.add('bg-white', 'text-dark')
+      }
+    },
+    formatExcelCell: function(args) {
+      switch (args.column.field) {
+        case 'Created': {
+          args.value = this.$moment(args.value).format('MM/DD/YYYY')
+          break
+        }
+        case 'StartTime': {
+          args.value = this.$moment(args.value).format('MM/DD/YYYY')
+          break
+        }
+        case 'EndTime': {
+          args.value = this.$moment(args.value).format('MM/DD/YYYY')
+          break
+        }
+        case 'OCONUSApprovedOn': {
+          args.value = this.$moment(args.value).format('MM/DD/YYYY')
+          break
+        }
+        case 'SecurityActionCompleted': {
+          args.value = this.$moment(args.value).format('MM/DD/YYYY')
+          break
+        }
+      }
+    },
     hideme: function(modal, action) {
       vm.$bvModal.hide(modal)
       if (action == 'refresh') {
@@ -1066,9 +1100,14 @@ export default {
               } else {
                 p = Vue._.orderBy(p, vm.sortfield, vm.sortdir)
               }
+            } else {
+              p = Vue._.orderBy(p, 'Id', 'desc')
             }
           }
         }
+      }
+      if (vm.sortfield == '') {
+        p = Vue._.orderBy(p, 'Id', 'desc')
       }
       vm.filteredtravel = p
     },
@@ -1356,9 +1395,11 @@ export default {
           }
           Travel.dispatch('getDigest')
           this.$bvToast.show('busy-toast')
-          Travel.dispatch('getTRIPS').then(function() {
-            vm.$bvToast.hide('busy-toast')
-            vm.$options.interval = setInterval(vm.waitForEvents, 1000)
+          Company.dispatch('getCompanies').then(function() {
+            Travel.dispatch('getTRIPS').then(function() {
+              vm.$bvToast.hide('busy-toast')
+              vm.$options.interval = setInterval(vm.waitForEvents, 1000)
+            })
           })
           break
         }

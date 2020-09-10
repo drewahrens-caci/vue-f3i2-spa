@@ -337,7 +337,7 @@
                     </tbody>
                   </table>
                 </b-tab>
-                <b-tab :disabled="!isWPManager || !isTravelApprover" class="mtab">
+                <b-tab :disabled="!isTravelApprover" class="mtab">
                   <template slot="title"
                     ><font-awesome-icon fas icon="thumbs-up" class="icon"></font-awesome-icon>
                     Approvals
@@ -345,7 +345,7 @@
                   <b-form>
                     <b-row v-if="travelmodel.OCONUS != 'Yes'" class="mb-1">
                       <b-col cols="4">PreApproved</b-col>
-                      <b-col cols="8"><b-form-select class="form-control-sm form-control-travel" v-model="travelmodel.PreApproved" :options="yesno"></b-form-select></b-col>
+                      <b-col cols="8"><b-form-select class="form-control-sm form-control-travel" v-model="travelmodel.PreApproved" :options="yesno" title="Select Yes if PreApproved otherwise don't set."></b-form-select></b-col>
                     </b-row>
                     <b-row v-if="travelmodel.OCONUS == 'Yes'" class="mb-1">
                       <b-col cols="4">Request OCONUS Approval To Proceed</b-col>
@@ -359,10 +359,10 @@
                       <b-col cols="4">OCONUSApprovedOn</b-col>
                       <b-col cols="8"><b-form-input class="form-control-sm form-control-travel form-control-travel-date" v-model="travelmodel.OCONUSApprovedOn" type="date"></b-form-input></b-col>
                     </b-row>
-                    <b-row v-if="travelmodel.OCONUS == 'Yes'" class="mb-1">
+                    <!-- <b-row v-if="travelmodel.OCONUS == 'Yes'" class="mb-1">
                       <b-col cols="4">OCONUSApprovedEmail</b-col>
                       <b-col cols="8"><b-form-textarea class="form-control-sm form-control-travel form-control-travel-textarea" rows="10" max-rows="10" v-model="travelmodel.OCONUSApprovedEmail"></b-form-textarea></b-col>
-                    </b-row>
+                    </b-row> -->
                     <b-row>
                       <b-col cols="4">Request Approval</b-col>
                       <b-col cols="8"><b-form-select class="form-control-sm form-control-travel" v-model="travelmodel.RequestApproval" :options="yesno"></b-form-select></b-col>
@@ -665,46 +665,43 @@ export default {
       // Waits for the travel item to load
       if (this.triploaded) {
         clearInterval(this.$options.interval)
-        if (console) {
-          console.log('Travel Item Loaded')
-          let giraffe = JSON.parse(this.selectedtrip.Travelers)
-          this.travelmodel.id = this.selectedtrip.id
-          this.travelmodel.Status = this.selectedtrip.Status
-          this.travelmodel.WorkPlan = this.selectedtrip.WorkPlan
-          this.travelmodel.WorkPlanNumber = this.selectedtrip.WorkPlanNumber
-          this.travelmodel.OriginalWorkPlanNumber = this.selectedtrip.OriginalWorkPlanNumber
-          this.travelmodel.WorkPlanText = this.selectedtrip.WorkPlanText
-          this.travelmodel.OCONUS = this.selectedtrip.OCONUS
-          this.travelmodel.OCONUSLocation = this.selectedtrip.OCONUSLocation
-          this.travelmodel.OCONUSApprovedBy = this.selectedtrip.OCONUSApprovedBy
-          this.travelmodel.OCONUSApprovedOn = this.$moment(this.selectedtrip.OCONUSApprovedOn).format('YYYY-MM-DD')
-          this.travelmodel.OCONUSApprovedEmail = this.selectedtrip.OCONUSApprovedEmail
-          this.travelmodel.PreApproved = this.selectedtrip.WorkPlanText
-          this.travelmodel.Company = this.selectedtrip.Company
-          this.travelmodel.Subject = this.selectedtrip.Subject
-          this.travelmodel.StartTime = this.$moment(this.selectedtrip.StartTime).format('YYYY-MM-DD')
-          this.travelmodel.EndTime = this.$moment(this.selectedtrip.EndTime).format('YYYY-MM-DD')
-          this.travelmodel.TravelFrom = this.selectedtrip.TravelFrom
-          this.travelmodel.TravelTo = this.selectedtrip.TravelTo
-          this.travelmodel.Sponsor = this.selectedtrip.Sponsor
-          this.travelmodel.POCName = this.selectedtrip.POCName
-          this.travelmodel.POCEmail = this.selectedtrip.POCEmail
-          this.travelmodel.POCPhone = this.selectedtrip.POCPhone
-          this.travelmodel.Comments = this.selectedtrip.Comments
-          this.travelmodel.InternalData = this.selectedtrip.InternalData !== '' ? JSON.parse(this.selectedtrip.InternalData) : ''
-          this.travelmodel.Clearance = this.selectedtrip.Clearance
-          this.travelmodel.VisitRequest = this.selectedtrip.VisitRequest
-          this.travelmodel.SecurityAction = this.selectedtrip.SecurityAction
-          this.travelmodel.SecurityActionCompleted = this.$moment(this.selectedtrip.SecurityActionCompleted).format('YYYY-MM-DD')
-          this.travelmodel.EstimatedCost = this.selectedtrip.EstimatedCost
-          this.travelmodel.IndexNumber = this.selectedtrip.IndexNumber
-          this.travelmodel.Travelers = giraffe.length > 0 ? giraffe : []
-          this.travelmodel.CreatedBy = this.selectedtrip.CreatedBy
-          this.travelmodel.CreatedByEmail = this.selectedtrip.CreatedByEmail
-          this.travelmodel.etag = this.selectedtrip.etag
-          this.travelmodel.uri = this.selectedtrip.uri
-          this.$bvToast.hide('form-toast')
-        }
+        let giraffe = JSON.parse(this.selectedtrip.Travelers)
+        this.travelmodel.id = this.selectedtrip.id
+        this.travelmodel.Status = this.selectedtrip.Status
+        this.travelmodel.WorkPlan = this.selectedtrip.WorkPlan
+        this.travelmodel.WorkPlanNumber = this.selectedtrip.WorkPlanNumber
+        this.travelmodel.OriginalWorkPlanNumber = this.selectedtrip.OriginalWorkPlanNumber
+        this.travelmodel.WorkPlanText = this.selectedtrip.WorkPlanText
+        this.travelmodel.OCONUS = this.selectedtrip.OCONUS
+        this.travelmodel.OCONUSLocation = this.selectedtrip.OCONUSLocation
+        this.travelmodel.OCONUSApprovedBy = this.selectedtrip.OCONUSApprovedBy
+        this.travelmodel.OCONUSApprovedOn = this.$moment(this.selectedtrip.OCONUSApprovedOn).format('YYYY-MM-DD')
+        this.travelmodel.OCONUSApprovedEmail = this.selectedtrip.OCONUSApprovedEmail
+        this.travelmodel.PreApproved = this.selectedtrip.WorkPlanText
+        this.travelmodel.Company = this.selectedtrip.Company
+        this.travelmodel.Subject = this.selectedtrip.Subject
+        this.travelmodel.StartTime = this.$moment(this.selectedtrip.StartTime).format('YYYY-MM-DD')
+        this.travelmodel.EndTime = this.$moment(this.selectedtrip.EndTime).format('YYYY-MM-DD')
+        this.travelmodel.TravelFrom = this.selectedtrip.TravelFrom
+        this.travelmodel.TravelTo = this.selectedtrip.TravelTo
+        this.travelmodel.Sponsor = this.selectedtrip.Sponsor
+        this.travelmodel.POCName = this.selectedtrip.POCName
+        this.travelmodel.POCEmail = this.selectedtrip.POCEmail
+        this.travelmodel.POCPhone = this.selectedtrip.POCPhone
+        this.travelmodel.Comments = this.selectedtrip.Comments
+        this.travelmodel.InternalData = this.selectedtrip.InternalData !== '' ? JSON.parse(this.selectedtrip.InternalData) : ''
+        this.travelmodel.Clearance = this.selectedtrip.Clearance
+        this.travelmodel.VisitRequest = this.selectedtrip.VisitRequest
+        this.travelmodel.SecurityAction = this.selectedtrip.SecurityAction
+        this.travelmodel.SecurityActionCompleted = this.$moment(this.selectedtrip.SecurityActionCompleted).format('YYYY-MM-DD')
+        this.travelmodel.EstimatedCost = this.selectedtrip.EstimatedCost
+        this.travelmodel.IndexNumber = this.selectedtrip.IndexNumber
+        this.travelmodel.Travelers = giraffe.length > 0 ? giraffe : []
+        this.travelmodel.CreatedBy = this.selectedtrip.CreatedBy
+        this.travelmodel.CreatedByEmail = this.selectedtrip.CreatedByEmail
+        this.travelmodel.etag = this.selectedtrip.etag
+        this.travelmodel.uri = this.selectedtrip.uri
+        this.$bvToast.hide('form-toast')
       }
     },
     getRef(text, idx) {
@@ -1007,34 +1004,36 @@ export default {
       // Get emails of travelers and the list of documents for the part of OCONUS Location so that this can be emailed to the travelers
       let emails = ''
       let body = ''
-      for (let i = 0; i < this.travelmodel.Travelers.length; i++) {
-        if (i == 0 && this.travelmodel.Travelers.length > 1) {
-          let email = String(this.travelmodel.Travelers[i]['email'])
-          email += '?cc='
-          emails.push(email)
-        } else if (i > 0 && this.travelmodel.Travelers.length > 1) {
-          let email = String(this.travelmodel.Travelers[i]['email'])
-          emails.push(email)
-        } else {
-          emails = this.travelmodel.Travelers[i]['email']
+      if (this.travelmodel.Travelers.length > 0) {
+        for (let i = 0; i < this.travelmodel.Travelers.length; i++) {
+          if (i == 0 && this.travelmodel.Travelers.length > 1) {
+            let email = String(this.travelmodel.Travelers[i]['email'])
+            email += '?cc='
+            emails = email
+          } else if (i > 0 && this.travelmodel.Travelers.length > 1) {
+            let email = String(this.travelmodel.Travelers[i]['email'])
+            emails += ', ' + email
+          } else {
+            emails = this.travelmodel.Travelers[i]['email']
+          }
         }
-      }
-      body += 'Please fill out these required documents: SERE Training, ISO Prep, AT Level 1, Travel Tracker'
-      // TODO: add docs based on OCONUSLocation
-      switch (this.travelmodel.OCONUSLocation) {
-        case 'Korea': {
-          body += ', USFK 700-19, USFK Theater Training, Ordinary Residency Memo'
-          break
-        }
+        body += 'Please fill out these required documents: SERE Training, ISO Prep, AT Level 1, Travel Tracker'
+        // TODO: add docs based on OCONUSLocation
+        switch (this.travelmodel.OCONUSLocation) {
+          case 'Korea': {
+            body += ', USFK 700-19, USFK Theater Training, Ordinary Residency Memo'
+            break
+          }
 
-        case 'Germany': {
-          body += ', BACO-90'
-          break
+          case 'Germany': {
+            body += ', BACO-90'
+            break
+          }
         }
+        let subject = 'Travel Documents For Trip ' + this.travelmodel.IndexNumber
+        let href = 'mailto:' + emails + '?subject=' + subject + '&body=' + body
+        return href
       }
-      let subject = 'Travel Documents For Trip ' + this.travelmodel.IndexNumber
-      let href = 'mailto:' + emails + '?subject=' + subject + '&body=' + body
-      return href
     },
     deleteme: function(idx) {
       this.travelmodel.Travelers.splice(idx, 1)
@@ -1139,6 +1138,7 @@ export default {
         // Load supporting data and the trip
         if (this.personnel && this.personnel.length > 0) {
           // If personnel exist then companies and workplans should exist. companies could already exist if opened from travel tracker.
+          vm.pdata = vm.personnel
           let payload = {}
           payload.id = vm.TripId
           Travel.dispatch('getTripById', payload).then(function() {

@@ -19,7 +19,7 @@ export default class User extends Model {
       isTravelApprover: false,
       isPCA: false,
       isMember: false,
-      isMSRInputter: false,
+      isSubcontractor: false,
       isAdmin: false
     }
   }

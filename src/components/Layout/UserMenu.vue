@@ -30,6 +30,8 @@
 <script>
 let vm = null
 import User from '@/models/User'
+import Personnel from '@/models/Personnel'
+import Workplan from '@/models/WorkPlan'
 
 let SPCI = null
 if (window._spPageContextInfo) {
@@ -80,6 +82,10 @@ export default {
   mounted: function() {
     vm = this
     this.$nextTick(function() {
+      Workplan.dispatch('getDigest')
+      Workplan.dispatch('getWorkplans')
+      Personnel.dispatch('getDigest')
+      Personnel.dispatch('getPersonnel')
       if (!vm.userloaded) {
         User.dispatch('getUserId').then(function() {
           vm.$options.interval = setInterval(vm.getUserProfile, 1000)

@@ -49,8 +49,8 @@ const getters = {
   isAdmin: state => {
     return state.isAdmin
   },
-  isMSRInputter: state => {
-    return state.isMSRInputter
+  isSubcontractor: state => {
+    return state.isSubcontractor
   }
 }
 
@@ -171,7 +171,7 @@ const actions = {
                 break
 
               case 'MSR Inputters':
-                state.isMSRInputter = true
+                state.isSubcontractor = true
                 break
 
               case 'F3I-2 Members':

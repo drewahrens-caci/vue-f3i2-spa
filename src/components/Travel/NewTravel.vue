@@ -477,6 +477,7 @@ export default {
         TravelFrom: '',
         TravelTo: '',
         Travelers: [],
+        TravelersText: '',
         Sponsor: '',
         POCName: '',
         POCEmail: '',
@@ -573,7 +574,9 @@ export default {
         { value: 'Germany', text: 'Germany' },
         { value: 'Korea', text: 'Korea' }
       ],
-      requiresSecurity: false
+      requiresSecurity: false,
+      wpetag: null,
+      wpuri: null
     }
   },
   methods: {
@@ -780,10 +783,12 @@ export default {
       wp = wp.split(', ')
       this.workplanuri = wp[4]
       this.workplanetag = wp[5]
-      this.newindex = parseInt(wp[3]) + 1
+      this.newindex = Number(wp[3]) + 1
+      this.wpetag = wp[5]
+      this.wpuri = wp[4]
       this.travelmodel.WorkPlan = t[0].data
       this.travelmodel.WorkPlanText = wp[1]
-      this.travelmodel.IndexNumber = wp[0] + '-' + (parseInt(wp[3]) + 1)
+      this.travelmodel.IndexNumber = wp[0] + '-' + this.newindex
       let manager = await Workplan.dispatch('getManagerByWPNumber', wp[0])
       console.log(manager)
       this.ManagerEmail = manager[0]['Manager']['EMail']
@@ -834,6 +839,7 @@ export default {
         TravelFrom: '',
         TravelTo: '',
         Travelers: [],
+        TravelersText: '',
         Sponsor: '',
         POCName: '',
         POCEmail: '',
@@ -860,6 +866,7 @@ export default {
     },
     async onModalSave() {
       // Update the trip information in SharePoint.
+      Workplan.dispatch('getDigest')
       let event = []
       let start = this.$moment(this.travelmodel.StartTime).format('YYYY-MM-DD[T]HH:MM:[00Z]')
       let end = this.$moment(this.travelmodel.EndTime).format('YYYY-MM-DD[T]HH:MM:[00Z]')
@@ -888,12 +895,15 @@ export default {
         InternalData: this.travelmodel.InternalData,
         Clearance: this.travelmodel.Clearance,
         VisitRequest: this.travelmodel.VisitRequest,
-        EstimatedCost: this.travelmodel.EstimatedCost,
-        etag: this.travelmodel.etag,
-        uri: this.travelmodel.uri
+        EstimatedCost: this.travelmodel.EstimatedCost
       })
       let response = await Travel.dispatch('addTrip', event)
       let id = response.data.d.Id
+      let payload = {}
+      payload.uri = this.wpuri
+      payload.etag = this.wpetag
+      payload.index = this.newindex
+      Workplan.dispatch('updateIndex', payload)
       if (this.emailRequired) {
         Travel.dispatch('sendEmail', id).then(function() {
           vm.$store.dispatch('support/addActivity', '<div class="bg-success">NewTravel - Sent Security Email</div>')
@@ -908,7 +918,7 @@ export default {
           })
         })
       }
-      let payload = {}
+      payload = {}
       payload.id = id
       payload.email = this.ManagerEmail
       Travel.dispatch('NewTripEmail', payload).then(function() {
@@ -925,6 +935,7 @@ export default {
       if (this.Show == true) {
         // Load supporting data and the trip
         if (this.personnel && this.personnel.length > 0) {
+          vm.pdata = vm.personnel
           // If personnel exist then companies and workplans should exist. companies could already exist if opened from travel tracker.
         } else {
           Personnel.dispatch('getPersonnel').then(function() {

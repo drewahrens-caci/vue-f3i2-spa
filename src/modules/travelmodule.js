@@ -78,11 +78,19 @@ const actions = {
     return response
   },
   async editTrip({ state }, payload) {
-    console.log('PAYLOAD: ' + payload)
+    // console.log('PAYLOAD: ' + payload)
     Travel.commit(state => {
       state.currentEvent = payload[0]
     })
     let response = await TravelService.editTrip(payload, state.digest)
+    return response
+  },
+  async editTraveler({ state }, payload) {
+    // console.log('PAYLOAD: ' + payload)
+    Travel.commit(state => {
+      state.currentEvent = payload[0]
+    })
+    let response = await TravelService.editTraveler(payload, state.digest)
     return response
   },
   async getTripById({ state }, payload) {
@@ -212,6 +220,7 @@ function formatTrip(j) {
   p.TravelFrom = j[0]['TravelFrom'] !== null ? String(j[0]['TravelFrom']) : ''
   p.TravelTo = j[0]['TravelTo'] !== null ? String(j[0]['TravelTo']) : ''
   p.Travelers = j[0]['Travelers'] !== null ? String(j[0]['Travelers']) : ''
+  p.TravelersText = j[0]['TravelersText'] !== null ? String(j[0]['TravelersText']) : ''
   p.Sponsor = j[0]['Sponsor'] !== null ? String(j[0]['Sponsor']) : ''
   p.POCName = j[0]['POCName'] !== null ? String(j[0]['POCName']) : ''
   p.POCEmail = j[0]['POCEmail'] !== null ? String(j[0]['POCEmail']) : ''
@@ -232,35 +241,10 @@ function formatTrip(j) {
 function formatTravel(j) {
   let p = []
   for (let i = 0; i < j.length; i++) {
-    let c = ''
-    let report = isNullOrUndefined(j[i]['TripReport']) === true ? false : true
-    let status = j[i]['Status']
     let start = moment(j[i]['StartDate']).isValid() ? moment(j[i]['StartDate']) : ''
     let end = moment(j[i]['EndDate']).isValid() ? moment(j[i]['EndDate']) : ''
-    let today = moment()
     let actioncompleted = moment(j[i]['SecurityActionCompleted']).isValid() ? moment(j[i]['SecurityActionCompleted']) : ''
     let approvedon = moment(j[i]['OCONUSApprovedOn']).isValid() ? moment(j[i]['OCONUSApprovedOn']) : ''
-    let diff = 0
-    if (end !== '') {
-      diff = end.diff(today, 'days')
-    }
-    switch (true) {
-      case diff < -6 && report == false:
-        c = 'travel-no-report'
-        break
-
-      case report == true:
-        c = 'travel-report'
-        break
-
-      case status == 'Approved':
-        c = 'travel-approved'
-        break
-
-      case status == 'New':
-        c = 'travel-new'
-        break
-    }
     let offset = moment().utcOffset()
     offset = offset * -1
     if (offset === 240) {
@@ -301,7 +285,6 @@ function formatTravel(j) {
       Created: created,
       StartTime: start,
       EndTime: end,
-      class: c,
       WorkPlan: j[i]['WorkPlan'] !== null ? String(j[i]['WorkPlan']) : '',
       WorkPlanText: j[i]['WorkPlanText'] !== null ? String(j[i]['WorkPlanText']) : '',
       WorkPlanNumber: j[i]['WorkPlanNumber'] !== null ? String(j[i]['WorkPlanNumber']) : '',
@@ -316,6 +299,7 @@ function formatTravel(j) {
       TravelFrom: j[i]['TravelFrom'] !== null ? String(j[i]['TravelFrom']) : '',
       TravelTo: j[i]['TravelTo'] !== null ? String(j[i]['TravelTo']) : '',
       Travelers: j[i]['Travelers'] !== null ? String(j[i]['Travelers']) : '',
+      TravelersText: j[i]['Travelers'] !== null ? String(j[i]['TravelersText']) : '',
       Sponsor: j[i]['Sponsor'] !== null ? String(j[i]['Sponsor']) : '',
       POCName: j[i]['POCName'] !== null ? String(j[i]['POCName']) : '',
       POCEmail: j[i]['POCEmail'] !== null ? String(j[i]['POCEmail']) : '',

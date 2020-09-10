@@ -8,13 +8,12 @@ if (window._spPageContextInfo) {
   SPCI = window._spPageContextInfo
 }
 
-let url = SPCI.webServerRelativeUrl + "/_api/lists/getbytitle('Travel')/items"
+let url = SPCI.webServerRelativeUrl + "/_api/lists/getbytitle('Travel')/items?$orderby=Id desc"
 let gurl = SPCI.webServerRelativeUrl + "/_api/lists/getbytitle('Travel')/items?$select=*&$filter=(Status eq 'AFRLReview')"
 let eurl = SPCI.webServerRelativeUrl + '/_api/SP.Utilities.Utility.SendEmail'
 let baseurl = SPCI.webAbsoluteUrl
 let geturl = SPCI.webServerRelativeUrl + "/_api/lists/getbytitle('Travel')/items"
 geturl += '?$select=*,Author/Title,Author/ID,Author/Name,Author/EMail&$expand=Author'
-// geturl += '&$filter=(Archived eq 0)'
 let reporturl = SPCI.webServerRelativeUrl + "/_api/web/lists/getbytitle('TripReports')/RootFolder/Files/Add"
 
 export default {
@@ -59,9 +58,6 @@ export default {
         }
       })
       .then(function(response) {
-        /* if (console) {
-          console.log('AFRL TRIPS: ' + response)
-        } */
         let results = response.data.d.results
         return results
       })
@@ -110,9 +106,6 @@ export default {
       })
   },
   async getReportItem(state, uri) {
-    /* if (console) {
-      console.log('TravelService getReportItem URI: ' + uri)
-    } */
     const response = await axios({
       method: 'GET',
       url: uri,
@@ -195,7 +188,7 @@ export default {
     // need to somehow pass the id in the link and then have the system display info for that travel request
     let body = '<p>A new Travel Request has been submitted on your workplan.</p><p></p>'
     body += '<p>Please click the link below for more details.</p><p></p>'
-    body += '<p><a href="' + baseurl + '/Pages/Test.aspx#/travel/home/edit?id=' + payload.id + '">Edit Travel Request</a></p>'
+    body += '<p><a href="' + baseurl + '/Pages/Home.aspx#/travel/home/edit?id=' + payload.id + '">Edit Travel Request</a></p>'
     let mail = {
       properties: {
         __metadata: { type: 'SP.Utilities.EmailProperties' },
@@ -230,7 +223,7 @@ export default {
     // send email to workplan manager regarding state of trip. Reminder of specific actions
     let body = '<p>Forward to AFRL for review of ' + payload.review + '</p><p></p>'
     body += '<p>Please click the link below for more details.</p><p></p>'
-    body += '<p><a href="' + baseurl + '/Pages/Test.aspx#/travel/home/edit?id=' + payload.id + '">Edit Travel Request</a></p>'
+    body += '<p><a href="' + baseurl + '/Pages/Home.aspx#/travel/home/edit?id=' + payload.id + '">Edit Travel Request</a></p>'
     let mail = {
       properties: {
         __metadata: { type: 'SP.Utilities.EmailProperties' },
@@ -264,6 +257,15 @@ export default {
   async addTrip(payload, digest) {
     // payload is the full event object as json array with 1 element
     let wp = String(payload[0].WorkPlan).split(', ')
+    let t = payload[0].Travelers
+    let s = ''
+    for (let i = 0; i < t.length; i++) {
+      if (i == 0) {
+        s += t[i].firstName + ' ' + t[i].lastName
+      } else {
+        s += ', ' + t[i].firstName + ' ' + t[i].lastName
+      }
+    }
     let headers = {
       'Content-Type': 'application/json;odata=verbose',
       Accept: 'application/json;odata=verbose',
@@ -289,12 +291,14 @@ export default {
       TravelFrom: payload[0].TravelFrom,
       TravelTo: payload[0].TravelTo,
       Travelers: JSON.stringify(payload[0].Travelers),
+      TravelersText: s,
       Sponsor: payload[0].Sponsor,
       POCName: payload[0].POCName,
       POCEmail: payload[0].POCEmail,
       POCPhone: payload[0].POCPhone,
       Comments: payload[0].Comments,
       Clearance: payload[0].Clearance,
+      IndexNumber: payload[0].IndexNumber,
       InternalData: JSON.stringify(payload[0].InternalData),
       VisitRequest: payload[0].VisitRequest === 'Yes' ? 'true' : 'false'
     }
@@ -307,6 +311,16 @@ export default {
   },
   async editTrip(payload, digest) {
     // payload is the full event object as json array with 1 element
+    console.log('EDIT TRIP: ' + payload)
+    let t = payload[0].Travelers
+    let s = ''
+    for (let i = 0; i < t.length; i++) {
+      if (i == 0) {
+        s += t[i].firstName + ' ' + t[i].lastName
+      } else {
+        s += ', ' + t[i].firstName + ' ' + t[i].lastName
+      }
+    }
     let url = payload[0].uri
     let headers = {
       'Content-Type': 'application/json;odata=verbose',
@@ -338,6 +352,7 @@ export default {
       TravelFrom: payload[0].TravelFrom,
       TravelTo: payload[0].TravelTo,
       Travelers: JSON.stringify(payload[0].Travelers),
+      TravelersText: s,
       Sponsor: payload[0].Sponsor,
       POCName: payload[0].POCName,
       POCEmail: payload[0].POCEmail,
@@ -349,6 +364,42 @@ export default {
       EstimatedCost: Number(payload[0].EstimatedCost),
       SecurityAction: payload[0].SecurityAction,
       SecurityActionCompleted: payload[0].SecurityActionCompleted
+    }
+
+    try {
+      const response = await axios.post(url, itemprops, config)
+      return response
+    } catch (error) {
+      console.log('TravelService Error Ediing Travel: ' + error)
+    }
+  },
+  async editTraveler(payload, digest) {
+    // payload is the full event object as json array with 1 element
+    console.log('EDIT TRAVELER: ' + payload)
+    let t = JSON.parse(payload[0].Travelers)
+    let s = ''
+    for (let i = 0; i < t.length; i++) {
+      if (i == 0) {
+        s += t[i].firstName + ' ' + t[i].lastName
+      } else {
+        s += ', ' + t[i].firstName + ' ' + t[i].lastName
+      }
+    }
+    let url = payload[0].uri
+    let headers = {
+      'Content-Type': 'application/json;odata=verbose',
+      Accept: 'application/json;odata=verbose',
+      'X-RequestDigest': digest,
+      'X-HTTP-Method': 'MERGE',
+      'If-Match': payload[0].etag
+    }
+    let config = {
+      headers: headers
+    }
+
+    let itemprops = {
+      __metadata: { type: 'SP.Data.TravelListItem' },
+      TravelersText: s
     }
 
     try {

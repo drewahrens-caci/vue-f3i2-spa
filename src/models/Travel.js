@@ -39,6 +39,7 @@ export default class Travel extends Model {
       TravelFrom: this.attr(''),
       TravelTo: this.attr(''),
       Travelers: this.attr(''),
+      TravelersText: this.attr(''),
       Sponsor: this.attr(''),
       POCName: this.attr(''),
       POCEmail: this.attr(''),
