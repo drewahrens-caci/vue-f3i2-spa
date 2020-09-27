@@ -43,5 +43,24 @@ export default {
       .then(function(response) {
         return response
       })
+  },
+  async getUserById(payload) {
+    let url = baseUrl + '/_api/Web/GetUserById(' + payload.id + ')'
+    console.log(url)
+    let response = await axios.get(url, {
+      headers: {
+        accept: 'application/json;odata=verbose'
+      }
+    })
+    return response
+  },
+  async getUserProfileFor(payload) {
+    let url = baseUrl + "/_api/sp.userprofiles.peoplemanager/GetPropertiesFor(AccountName=@v)?@v='" + encodeURIComponent(payload.login) + "'"
+    let response = await axios.get(url, {
+      headers: {
+        accept: 'application/json;odata=verbose'
+      }
+    })
+    return response
   }
 }

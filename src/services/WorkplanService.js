@@ -75,6 +75,18 @@ export default {
     let results = response.data.d.results
     return results
   },
+  async getPOPByWPNumber(state, payload) {
+    let geturl = SPCI.webServerRelativeUrl + "/_api/lists/getbytitle('WorkPlans')/items"
+    geturl += '?$select=POPStart,POPEnd'
+    geturl += "&$filter=(Number eq '" + payload + "')"
+    let response = await axios.get(geturl, {
+      headers: {
+        accept: 'application/json;odata=verbose'
+      }
+    })
+    let results = response.data.d.results
+    return results
+  },
   async saveWorkplan(payload, digest, action) {
     // payload is the full event object as json array with 1 element
     // action determines if it is new or edit

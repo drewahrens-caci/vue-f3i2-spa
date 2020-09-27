@@ -26,6 +26,7 @@
         :eventClick="onEventClick"
         :moreEventsClick="onMoreEventsClick"
         :cellClick="onCellClick"
+        :popupOpen="onPopupOpen"
         :select="onSelect"
         :actionBegin="onActionBegin"
         :actionComplete="onActionComplete"
@@ -196,7 +197,7 @@ export default {
       type: 'danger',
       title: 'Error in traveltracker.vue ' + err,
       message: info,
-      push: true
+      push: false
     }
     this.$store.dispatch('notification/add', notification, { root: true })
   },
@@ -220,6 +221,24 @@ export default {
       let o = this.$moment().utcOffset()
       o = o * -1
       return o
+    },
+    isDeveloper() {
+      return User.getters('isDeveloper')
+    },
+    isPM() {
+      return User.getters('isPM')
+    },
+    isWPManager() {
+      return User.getters('isWPManager')
+    },
+    isSecurity() {
+      return User.getters('isSecurity')
+    },
+    isTravelApprover() {
+      return User.getters('isTravelApprover')
+    },
+    isSubcontractor() {
+      return User.getters('isSubcontractor')
     }
   },
   provide: {
@@ -620,7 +639,12 @@ export default {
         { text: 'Equal', value: 'E' }
       ],
       pageSettings: { pageSize: 30 },
-      editSettings: { allowEditing: true, allowAdding: true, allowDeleting: false, mode: 'Dialog' },
+      editSettings: {
+        allowEditing: this.isWPManager || this.isAdmin ? true : false,
+        allowAdding: true,
+        allowDeleting: false,
+        mode: 'Dialog'
+      },
       toolbar: ['Add', 'Print', 'Search', 'ExcelExport'],
       rowData: {},
       legenditems: [
@@ -713,7 +737,7 @@ export default {
           template: Vue.component('actionsTemplate', {
             template: `
             <div>
-              <b-button variant="success" class="actionbutton" @click="edit(data)" title="Edit Travel">
+              <b-button v-if="isWPManager || isAdmin" variant="success" class="actionbutton" @click="edit(data)" title="Edit Travel">
                 <font-awesome-icon far icon="edit" class="icon"></font-awesome-icon>
               </b-button>
               <b-button variant="success" class="actionbutton" @click="report(data)" title="Add/Edit Trip Report">
@@ -729,8 +753,8 @@ export default {
               isPM() {
                 return User.getters('isPM')
               },
-              isDeveloper() {
-                return User.getters('isDeveloper')
+              isAdmin() {
+                return User.getters('isAdmin')
               },
               isWPManager() {
                 return User.getters('isWPManager')
@@ -859,7 +883,6 @@ export default {
       this.$refs['FilterModal'].toggle('#ShowFilters')
     },
     actionBegin(args) {
-      // if (console) { console.log('ACTION BEGIN: ' + args.requestType) }
       switch (args.requestType) {
         case 'add':
           args.cancel = true
@@ -1221,7 +1244,16 @@ export default {
     },
     /* ----------------------------------------------------------------------------------- END TRACKER EVENTS ----------------------------------------------------------------------------------- */
     /* ----------------------------------------------------------------------------------- BEGIN CALENDAR EVENTS -------------------------------------------------------------------------------- */
+    onPopupOpen: function(args) {
+      /* if (console) {
+        console.log('Cell Double Clicked: ' + args.requestType)
+      } */
+      args.cancel = true
+    },
     onCellClick: function(args) {
+      /* if (console) {
+        console.log('Cell Clicked: ' + args.requestType)
+      } */
       args.cancel = true
       if (this.moreevents) {
         // do nothing here
@@ -1259,9 +1291,9 @@ export default {
     },
     onSelect: function(args) {
       args.cancel = true
-      /* if (console) {
+      if (console) {
         console.log('ONSELECT: ' + args.requestType)
-      } */
+      }
       if (args.requestType === 'cellSelect') {
         let s = args.data.StartTime
         let e = args.data.EndTime
@@ -1290,6 +1322,17 @@ export default {
         html += '<div class="bg-info">traveltracker-onSelect: SelectedStart: ' + s + '</div><br/>'
         html += '<div class="bg-info">traveltracker-onSelect: SelectedEnd: ' + e + '</div><br/>'
         this.$store.dispatch('support/addActivity', html) */
+      }
+      if (args.requestType === 'eventSelect') {
+        this.EditTravel = false
+        this.TripId = args.event.id
+        if (this.moreevents) {
+          this.moreevents = false
+        } else {
+          if (this.isWPManager || this.isDeveloper) {
+            this.EditTravel = true
+          }
+        }
       }
     },
     onEventRendered: function(args) {
@@ -1333,7 +1376,9 @@ export default {
       if (this.moreevents) {
         this.moreevents = false
       } else {
-        this.EditTravel = true
+        if (this.isWPManager || this.isDeveloper) {
+          this.EditTravel = true
+        }
       }
     },
     onMoreEventsClick: function() {

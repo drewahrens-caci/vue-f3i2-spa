@@ -47,6 +47,16 @@ const actions = {
     let response = await PersonnelService.getPersonnelByEmail(email)
     return response
   },
+  async getPersonnelAllValuesById({ state }, id) {
+    // console.log('GETTING PERSONNEL BY EMAIL.')
+    let response = await PersonnelService.getPersonnelAllValuesById(id)
+    return formatPersonnel(response)
+  },
+  async getPersonnelById({ state }, id) {
+    // console.log('GETTING PERSONNEL BY EMAIL.')
+    let response = await PersonnelService.getPersonnelById(id)
+    return response
+  },
   async getContacts({ state, commit }) {
     // console.log('GETTING ALL PERSONNEL.')
     let response = await PersonnelService.getContacts()
@@ -55,12 +65,28 @@ const actions = {
       state.loaded = true
     })
   },
+  async addSub({ state }, payload) {
+    let response = await PersonnelService.savePersonnel(payload, state.digest, 'newSub')
+    return response
+  },
   async addPerson({ state }, payload) {
     let response = await PersonnelService.savePersonnel(payload, state.digest, 'new')
     return response
   },
   async editPerson({ state }, payload) {
     let response = await PersonnelService.savePersonnel(payload, state.digest, 'edit')
+    return response
+  },
+  async sendEmail({ state }, payload) {
+    let response = await PersonnelService.sendEmail(payload, state.digest)
+    return response
+  },
+  async newSubEmail({ state}, payload) {
+    let response = await PersonnelService.newSubEmail(payload, state.digest)
+    return response
+  },
+  async editSubEmail({ state }, payload) {
+    let response = await PersonnelService.editSubEmail(payload, state.digest)
     return response
   }
 }
@@ -91,7 +117,11 @@ function formatPersonnel(j) {
       SCIFormType: j[i]['SCIFormType'],
       SCIFormSubmitted: moment(j[i]['SCIFormSubmitted']).isValid() ? String(moment(j[i]['SCIFormSubmitted']).format('MM/DD/YYYY')) : '', // date
       PRDueDate: moment(j[i]['PRDueDate']).isValid() ? String(moment(j[i]['PRDueDate']).format('MM/DD/YYYY')) : '', // date
-      CEDate: moment(j[i]['CEDate']).isValid() ? String(moment(j[i]['CEDate']).format('MM/DD/YYYY')) : '', // date
+      CEDate: moment(j[i]['CEDate']).isValid() ? String(moment(j[i]['CEDate']).format('MM/DD/YYYY')) : '',  // date
+      ModifiedBy: j[i]['ModifiedBy'],
+      Modification: j[i]['Modification'],
+      ModDeniedReason: j[i]['ModDeniedReason'],
+      SubContractorModifier: j[i]['SubContractorModifier'],
       etag: j[i]['__metadata']['etag'],
       uri: j[i]['__metadata']['uri']
     })

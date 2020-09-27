@@ -9,6 +9,7 @@ export const state = {
   profile: {},
   loaded: false,
   activity: '',
+  portalemail: 'F3I-2Portal@caci.com',
   contentrect: {}
 }
 
@@ -86,5 +87,8 @@ export const getters = {
   },
   getContentRect(state) {
     return state.contentrect
+  },
+  getPortalEmail(state) {
+    return state.portalemail
   }
 }

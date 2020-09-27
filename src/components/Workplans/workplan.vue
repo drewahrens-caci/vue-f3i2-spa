@@ -76,7 +76,6 @@
             <ejs-grid
               id="WorkplanGrid"
               ref="WorkplanGrid"
-              :enablePersistence="true"
               :dataSource="filtereddata"
               :allowPaging="true"
               :allowReordering="true"
@@ -207,6 +206,9 @@ export default {
     },
     userid() {
       return User.getters('CurrentUserId')
+    },
+    isSubcontractor() {
+      return User.getters('isSubcontractor')
     }
   },
   data: function() {
@@ -327,9 +329,14 @@ export default {
         { text: 'Equal', value: 'E' }
       ],
       pageSettings: { pageSize: 30 },
-      editSettings: { allowEditing: true, allowAdding: true, allowDeleting: false, mode: 'Dialog' },
+      editSettings: {
+        allowEditing: this.isSubcontractor ? false : true,
+        allowAdding: this.isSubcontractor ? false : true,
+        allowDeleting: false,
+        mode: 'Dialog'
+      },
       filterSettings: { type: 'Menu' },
-      toolbar: ['Add', 'Edit', 'Print', 'Search', 'ExcelExport'],
+      toolbar: this.isSubcontractor ? ['Search'] : ['Add', 'Edit', 'Print', 'Search', 'ExcelExport'],
       rowData: {},
       newData: {
         Title: '',
@@ -345,11 +352,11 @@ export default {
           template: Vue.component('columnTemplate', {
             template: `
             <div>
-              <b-button class="actionbutton" @click="archiveme(data)" title="Archive">
-                <font-awesome-icon far icon="times-circle" class="icon" :style="{ color: 'red' }"></font-awesome-icon>
+              <b-button v-if="isWPManager" class="actionbutton" variant="danger" @click="archiveme(data)" title="Archive">
+                <font-awesome-icon far icon="times-circle" class="icon"></font-awesome-icon>
               </b-button>
-              <b-button :href="href" class="actionbutton ml-1" title="Email Workplan Manager">
-                <font-awesome-icon far icon="envelope" class="icon" :style="{ color: 'green' }"></font-awesome-icon>
+              <b-button :href="href" class="actionbutton ml-1" variant="success" title="Email Workplan Manager">
+                <font-awesome-icon far icon="envelope" class="icon"></font-awesome-icon>
               </b-button>
             </div>`,
             data: function() {
@@ -360,6 +367,9 @@ export default {
             computed: {
               href: function() {
                 return 'mailto:' + this.data.ManagerEmail
+              },
+              isWPManager() {
+                return User.getters('isWPManager')
               }
             },
             methods: {
@@ -404,24 +414,21 @@ export default {
     vm = this
     this.$bvToast.show('busy-toast')
     Workplan.dispatch('getDigest')
-    Personnel.dispatch('getPersonnel').then(function() {
-      Workplan.dispatch('getManagers').then(function() {
-        Workplan.dispatch('getWorkplans').then(function() {
-          vm.$options.interval = setInterval(vm.waitForPlans, 1000)
-        })
-      })
+    Workplan.dispatch('getManagers').then(function() {
+      vm.waitForPlans()
     })
   },
   methods: {
     waitForPlans: function() {
       if (this.workplans && this.workplans.length > 0) {
-        clearInterval(this.$options.interval)
         this.data = this.workplans
         this.filtereddata = this.workplans
         document.getElementById('PageTitle').innerHTML = ' -  Active Work Plans'
         this.$bvToast.hide('busy-toast')
         // load any saved filters
         this.loadfilters()
+      } else {
+        this.waitForPlans()
       }
     },
     getRef: function(text, idx) {
@@ -441,13 +448,17 @@ export default {
     actionBegin(args) {
       switch (args.requestType) {
         case 'beginEdit':
-          this.editRow(args.rowData)
+          if (!this.isSubcontractor) {
+            this.editRow(args.rowData)
+          }
           args.cancel = true
           break
 
         case 'add':
           args.cancel = true
-          this.$bvModal.show('NewModal')
+          if (!this.isSubcontractor) {
+            this.$bvModal.show('NewModal')
+          }
           break
       }
     },

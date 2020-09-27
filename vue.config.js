@@ -23,7 +23,7 @@ module.exports = {
     config.plugins.delete('preload')
   },
 
-  filenameHashing: false,
+  filenameHashing: true,
   productionSourceMap: false,
   runtimeCompiler: true
 }

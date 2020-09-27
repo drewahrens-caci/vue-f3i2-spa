@@ -5,6 +5,20 @@ import home from '@/components/Pages/home.vue'
 
 Vue.use(VueRouter)
 
+let adminMenu = {
+  path: '/admin',
+  component: ThemeLayout,
+  redirect: '/admin/home',
+  children: [
+    {
+      path: 'home/:mode',
+      name: 'Admin',
+      component: () => import(/* webpackChunkName: "admin" */ '../components/Admin/admin.vue'),
+      props: true
+    }
+  ]
+}
+
 let travelMenu = {
   path: '/travel',
   component: ThemeLayout,
@@ -14,6 +28,52 @@ let travelMenu = {
       path: 'home/:mode',
       name: 'Travel',
       component: () => import(/* webpackChunkName: "travel" */ '../components/Travel/traveltracker.vue'),
+      props: true
+    }
+  ]
+}
+
+let msrMenu = {
+  path: '/msr',
+  component: ThemeLayout,
+  redirect: '/msr/home',
+  children: [
+    {
+      path: 'home',
+      name: 'Home',
+      component: () => import(/* webpackChunkName: "msr" */ '../components/MSR/msrhome2.vue'),
+      props: true
+    },
+    {
+      path: 'form/:id',
+      name: 'MSRForm',
+      component: () => import(/* webpackChunkName: "msr" */ '../components/MSR/msrform3.vue'),
+      props: true
+    },
+    {
+      path: 'library',
+      name: 'MSR Library',
+      component: () => import(/* webpackChunkName: "msr" */ '../components/MSR/library.vue'),
+      props: true
+    }
+  ]
+}
+
+let financialMenu = {
+  path: '/financial',
+  component: ThemeLayout,
+  redirect: '/financial/home',
+  children: [
+    {
+      path: 'home',
+      name: 'Home',
+      component: () => import(/* webpackChunkName: "financial" */ '../components/Financial/dashboard.vue'),
+      props: true
+    },
+    {
+      path: 'library',
+      name: 'Financial Documents',
+      component: () => import(/* webpackChunkName: "financial" */ '../components/Financial/library.vue'),
       props: true
     }
   ]
@@ -139,6 +199,9 @@ const routes = [
     path: '/',
     redirect: '/pages/home'
   },
+  adminMenu,
+  msrMenu,
+  financialMenu,
   calendarMenu,
   travelMenu,
   featureMenu,

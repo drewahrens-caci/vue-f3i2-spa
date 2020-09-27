@@ -46,7 +46,6 @@ const actions = {
 }
 
 function formatCompany(j) {
-  // console.log('FORMATTING WORKPLANS: ' + j)
   let p = []
   for (let i = 0; i < j.length; i++) {
     p.push({
@@ -61,15 +60,16 @@ function formatCompany(j) {
 }
 
 function formatDropdown(j) {
+  let n = j.sort((a, b) => (a.Title > b.Title) ? 1 : -1)
   let p = []
   p.push({
     text: 'Select...',
     value: 'S'
   })
-  for (let i = 0; i < j.length; i++) {
+  for (let i = 0; i < n.length; i++) {
     p.push({
-      text: j[i]['Title'],
-      value: j[i]['Title']
+      text: n[i]['Title'],
+      value: n[i]['Title']
     })
   }
   return p

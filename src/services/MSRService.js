@@ -8,13 +8,6 @@ if (window._spPageContextInfo) {
 }
 
 let eurl = SPCI.webServerRelativeUrl + '/_api/SP.Utilities.Utility.SendEmail'
-// et url = SPCI.webServerRelativeUrl + "/_api/lists/getbytitle('MSRInputs')/items"
-let purl = SPCI.webServerRelativeUrl + "/_api/lists/getbytitle('Plans')/items"
-let aurl = SPCI.webServerRelativeUrl + "/_api/lists/getbytitle('Accomplishments')/items"
-let asurl = SPCI.webServerRelativeUrl + "/_api/lists/getbytitle('Assumptions')/items"
-let riurl = SPCI.webServerRelativeUrl + "/_api/lists/getbytitle('Risks')/items"
-let opurl = SPCI.webServerRelativeUrl + "/_api/lists/getbytitle('Opportunities')/items"
-let deurl = SPCI.webServerRelativeUrl + "/_api/lists/getbytitle('Deliverables')/items"
 let msrurl = SPCI.webServerRelativeUrl + "/_api/lists/getbytitle('MSRs')/items"
 
 let months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
@@ -31,15 +24,12 @@ export default {
     })
   },
   async getMSR(payload) {
-    // console.log('getMSR SERVICE payload: ' + payload)
     let url = msrurl + '(' + payload.Id + ')'
-    // console.log('URL FOR REQUEST: ' + url)
     let response = await axios.get(url, {
       headers: {
         accept: 'application/json;odata=verbose'
       }
     })
-    // console.log('RESPONSE FROM GET: ' + response)
     let results = response.data.d
     return results
   },
@@ -68,391 +58,41 @@ export default {
     }
     return getallMSRs(null)
   },
-  async getAccomplishments(payload) {
-    let zurl = aurl + "?$filter=(MSRID eq '" + payload.id + "')"
-    let response = await axios.get(zurl, {
-      headers: {
-        accept: 'application/json;odata=verbose'
-      }
-    })
-    let results = response.data.d.results
-    return results
-  },
-  async getPlans(payload) {
-    let zurl = purl + "?$filter=(MSRID eq '" + payload.id + "')"
-    let response = await axios.get(zurl, {
-      headers: {
-        accept: 'application/json;odata=verbose'
-      }
-    })
-    let results = response.data.d.results
-    return results
-  },
-  async getAssumptions(payload) {
-    let zurl = asurl + "?$filter=(MSRID eq '" + payload.id + "')"
-    let response = await axios.get(zurl, {
-      headers: {
-        accept: 'application/json;odata=verbose'
-      }
-    })
-    let results = response.data.d.results
-    return results
-  },
-  async getRisks(payload) {
-    let zurl = riurl + "?$filter=(MSRID eq '" + payload.id + "')"
-    let response = await axios.get(zurl, {
-      headers: {
-        accept: 'application/json;odata=verbose'
-      }
-    })
-    let results = response.data.d.results
-    return results
-  },
-  async getDeliverables(payload) {
-    let zurl = deurl + "?$filter=(MSRID eq '" + payload.id + "')"
-    let response = await axios.get(zurl, {
-      headers: {
-        accept: 'application/json;odata=verbose'
-      }
-    })
-    let results = response.data.d.results
-    return results
-  },
-  async getOpportunities(payload) {
-    let zurl = opurl + "?$filter=(MSRID eq '" + payload.id + "')"
-    let response = await axios.get(zurl, {
-      headers: {
-        accept: 'application/json;odata=verbose'
-      }
-    })
-    let results = response.data.d.results
-    return results
-  },
-  async updateAccomplishment(payload, digest) {
-    let action = payload.action
-    let headers = null
-    let url = aurl
-
-    if (action == 'New') {
-      headers = {
-        'Content-Type': 'application/json;odata=verbose',
-        Accept: 'application/json;odata=verbose',
-        'X-RequestDigest': digest,
-        'X-HTTP-Method': 'POST'
-      }
-    } else {
-      url = payload.uri
-      headers = {
-        'Content-Type': 'application/json;odata=verbose',
-        Accept: 'application/json;odata=verbose',
-        'X-RequestDigest': digest,
-        'X-HTTP-Method': 'MERGE',
-        'If-Match': payload.etag
-      }
+  async publishMSR(payload, digest) {
+    let furl = payload.uri
+    let headers = {
+      'Content-Type': 'application/json;odata=verbose',
+      Accept: 'application/json;odata=verbose',
+      'X-RequestDigest': digest,
+      'X-HTTP-Method': 'MERGE',
+      'If-Match': payload.etag
     }
-
-    let itemprops = {
-      __metadata: { type: 'SP.Data.AccomplishmentsListItem' },
-      WorkplanNumber: payload.WorkplanNumber,
-      Accomplishments: payload.Accomplishments,
-      Company: payload.Company,
-      Email: payload.Email,
-      Private: payload.Private,
-      Published: payload.Published,
-      Month: payload.Month,
-      Year: payload.Year,
-      MSRID: String(payload.MSRID)
-    }
-
     let config = {
       headers: headers
     }
-
-    try {
-      const response = await axios.post(url, itemprops, config)
-      return response
-    } catch (error) {
-      // console.log('MSRInputService Error Creating MSR: ' + error)
-      const notification = {
-        type: 'danger',
-        title: 'Error in MSRService.js updateAccomplishment function',
-        message: error,
-        push: true
-      }
-      store.dispatch('notification/add', notification, { root: true })
-    }
-  },
-  async updatePlan(payload, digest) {
-    let action = payload.action
-    let headers = null
-    let url = purl
-
-    if (action == 'New') {
-      headers = {
-        'Content-Type': 'application/json;odata=verbose',
-        Accept: 'application/json;odata=verbose',
-        'X-RequestDigest': digest,
-        'X-HTTP-Method': 'POST'
-      }
-    } else {
-      url = payload.uri
-      headers = {
-        'Content-Type': 'application/json;odata=verbose',
-        Accept: 'application/json;odata=verbose',
-        'X-RequestDigest': digest,
-        'X-HTTP-Method': 'MERGE',
-        'If-Match': payload.etag
-      }
-    }
-
     let itemprops = {
-      __metadata: { type: 'SP.Data.PlansListItem' },
-      WorkplanNumber: payload.WorkplanNumber,
-      Plans: payload.Plans,
-      Company: payload.Company,
-      Email: payload.Email,
-      Private: payload.Private,
-      Published: payload.Published,
-      Month: payload.Month,
-      Year: payload.Year,
-      MSRID: String(payload.MSRID)
+      __metadata: { type: 'SP.Data.MSRsListItem' }
     }
-
-    let config = {
-      headers: headers
-    }
-
+    itemprops.Status = 'Published'
     try {
-      const response = await axios.post(url, itemprops, config)
-      return response
+      await axios.post(furl, itemprops, config)
+      // go get the data for the saved item to return back to the user and use it to update the current MSR
+      return axios
+        .get(furl, {
+          headers: {
+            accept: 'application/json;odata=verbose'
+          }
+        })
+        .then(function(response) {
+          return response.data.d
+        })
     } catch (error) {
-      // console.log('MSRInputService Error Creating MSR: ' + error)
-      const notification = {
-        type: 'danger',
-        title: 'Error in MSRService.js updatePlan function',
-        message: error,
-        push: true
-      }
-      store.dispatch('notification/add', notification, { root: true })
-    }
-  },
-  async updateAssumption(payload, digest) {
-    let action = payload.action
-    let headers = null
-    let url = asurl
-
-    if (action == 'New') {
-      headers = {
-        'Content-Type': 'application/json;odata=verbose',
-        Accept: 'application/json;odata=verbose',
-        'X-RequestDigest': digest,
-        'X-HTTP-Method': 'POST'
-      }
-    } else {
-      url = payload.uri
-      headers = {
-        'Content-Type': 'application/json;odata=verbose',
-        Accept: 'application/json;odata=verbose',
-        'X-RequestDigest': digest,
-        'X-HTTP-Method': 'MERGE',
-        'If-Match': payload.etag
-      }
-    }
-
-    let itemprops = {
-      __metadata: { type: 'SP.Data.AssumptionsListItem' },
-      WorkplanNumber: payload.WorkplanNumber,
-      Assumptions: payload.Assumptions,
-      Company: payload.Company,
-      Email: payload.Email,
-      Private: payload.Private,
-      Published: payload.Published,
-      Month: payload.Month,
-      Year: payload.Year,
-      MSRID: String(payload.MSRID)
-    }
-
-    let config = {
-      headers: headers
-    }
-
-    try {
-      const response = await axios.post(url, itemprops, config)
-      return response
-    } catch (error) {
-      // console.log('MSRInputService Error Creating MSR: ' + error)
-      const notification = {
-        type: 'danger',
-        title: 'Error in MSRService.js updateAssumption function',
-        message: error,
-        push: true
-      }
-      store.dispatch('notification/add', notification, { root: true })
-    }
-  },
-  async updateRisk(payload, digest) {
-    let action = payload.action
-    let headers = null
-    let url = riurl
-
-    if (action == 'New') {
-      headers = {
-        'Content-Type': 'application/json;odata=verbose',
-        Accept: 'application/json;odata=verbose',
-        'X-RequestDigest': digest,
-        'X-HTTP-Method': 'POST'
-      }
-    } else {
-      url = payload.uri
-      headers = {
-        'Content-Type': 'application/json;odata=verbose',
-        Accept: 'application/json;odata=verbose',
-        'X-RequestDigest': digest,
-        'X-HTTP-Method': 'MERGE',
-        'If-Match': payload.etag
-      }
-    }
-
-    let itemprops = {
-      __metadata: { type: 'SP.Data.RisksListItem' },
-      WorkplanNumber: payload.WorkplanNumber,
-      Risks: payload.Risks,
-      Company: payload.Company,
-      Email: payload.Email,
-      Private: payload.Private,
-      Published: payload.Published,
-      Month: payload.Month,
-      Year: payload.Year,
-      MSRID: String(payload.MSRID)
-    }
-
-    let config = {
-      headers: headers
-    }
-
-    try {
-      const response = await axios.post(url, itemprops, config)
-      return response
-    } catch (error) {
-      // console.log('MSRInputService Error Creating MSR: ' + error)
-      const notification = {
-        type: 'danger',
-        title: 'Error in MSRService.js updateRisk function',
-        message: error,
-        push: true
-      }
-      store.dispatch('notification/add', notification, { root: true })
-    }
-  },
-  async updateOpportunity(payload, digest) {
-    let action = payload.action
-    let headers = null
-    let url = opurl
-
-    if (action == 'New') {
-      headers = {
-        'Content-Type': 'application/json;odata=verbose',
-        Accept: 'application/json;odata=verbose',
-        'X-RequestDigest': digest,
-        'X-HTTP-Method': 'POST'
-      }
-    } else {
-      url = payload.uri
-      headers = {
-        'Content-Type': 'application/json;odata=verbose',
-        Accept: 'application/json;odata=verbose',
-        'X-RequestDigest': digest,
-        'X-HTTP-Method': 'MERGE',
-        'If-Match': payload.etag
-      }
-    }
-
-    let itemprops = {
-      __metadata: { type: 'SP.Data.OpportunitiesListItem' },
-      WorkplanNumber: payload.WorkplanNumber,
-      Opportunites: payload.Opportunites,
-      Company: payload.Company,
-      Email: payload.Email,
-      Private: payload.Private,
-      Published: payload.Published,
-      Month: payload.Month,
-      Year: payload.Year,
-      MSRID: String(payload.MSRID)
-    }
-
-    let config = {
-      headers: headers
-    }
-
-    try {
-      const response = await axios.post(url, itemprops, config)
-      return response
-    } catch (error) {
-      const notification = {
-        type: 'danger',
-        title: 'Error in MSRService.js updateOpportunity function',
-        message: error,
-        push: true
-      }
-      store.dispatch('notification/add', notification, { root: true })
-    }
-  },
-  async updateDeliverable(payload, digest) {
-    let action = payload.action
-    let headers = null
-    let url = deurl
-
-    if (action == 'New') {
-      headers = {
-        'Content-Type': 'application/json;odata=verbose',
-        Accept: 'application/json;odata=verbose',
-        'X-RequestDigest': digest,
-        'X-HTTP-Method': 'POST'
-      }
-    } else {
-      url = payload.uri
-      headers = {
-        'Content-Type': 'application/json;odata=verbose',
-        Accept: 'application/json;odata=verbose',
-        'X-RequestDigest': digest,
-        'X-HTTP-Method': 'MERGE',
-        'If-Match': payload.etag
-      }
-    }
-
-    let itemprops = {
-      __metadata: { type: 'SP.Data.DeliverablesListItem' },
-      WorkplanNumber: payload.WorkplanNumber,
-      Deliverables: payload.Deliverables,
-      Company: payload.Company,
-      Email: payload.Email,
-      Private: payload.Private,
-      Published: payload.Published,
-      Month: payload.Month,
-      Year: payload.Year,
-      MSRID: String(payload.MSRID)
-    }
-
-    let config = {
-      headers: headers
-    }
-
-    try {
-      const response = await axios.post(url, itemprops, config)
-      return response
-    } catch (error) {
-      // console.log('MSRInputService Error Creating MSR: ' + error)
-      const notification = {
-        type: 'danger',
-        title: 'Error in MSRService.js updateDeliverable function',
-        message: error,
-        push: true
-      }
-      store.dispatch('notification/add', notification, { root: true })
+      console.log('MSRService Error Updating MSR: ' + error)
     }
   },
   async createMSR(payload, digest) {
     // This function creates the MSR.
+    // TODO: Update when ready to create all MSRS
     let headers = {
       'Content-Type': 'application/json;odata=verbose',
       Accept: 'application/json;odata=verbose',
@@ -526,7 +166,6 @@ export default {
         __metadata: { type: 'SP.Utilities.EmailProperties' },
         From: payload.From,
         To: { results: [payload.To] },
-        // To: { 'results': ['daniel.walker1@caci.com'] },
         Body: body,
         Subject: 'New Distribution Request For MSR'
       }
@@ -547,6 +186,52 @@ export default {
       })
       .catch(function(error) {
         console.log('TravelService Error Sending Email: ' + error)
+      })
+  },
+  async getMSRDocument(state, uri) {
+    const response = await axios({
+      method: 'GET',
+      url: uri,
+      headers: {
+        Accept: 'application/json;odata=verbose'
+      }
+    })
+    return response
+  },
+  async updateMSRDocument(payload, digest) {
+    let endpoint = payload.uri
+    let headers = {
+      'Content-Type': 'application/json;odata=verbose',
+      Accept: 'application/json;odata=verbose',
+      'X-RequestDigest': digest,
+      'X-HTTP-Method': 'MERGE',
+      'If-Match': payload.etag
+    }
+    let config = {
+      headers: headers
+    }
+    let itemprops = {
+      __metadata: { type: payload.type },
+      FileLeafRef: payload.name,
+      Title: payload.name,
+      WorkplanNumber: payload.WorkplanNumber,
+      WorkplanTitle: payload.WorkplanTitle,
+      Month: payload.Month,
+      Year: payload.Year
+    }
+    return axios
+      .post(endpoint, itemprops, config)
+      .then(function(response) {
+        return response
+      })
+      .catch(function(error) {
+        const notification = {
+          type: 'danger',
+          title: 'Travel Service Error: ' + error,
+          message: 'Error Updating Trip Report Data',
+          push: true
+        }
+        store.dispatch('notification/add', notification, { root: true })
       })
   }
 }

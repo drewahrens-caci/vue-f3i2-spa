@@ -17,7 +17,6 @@ let isoend = moment()
   .format()
 let caml = '<View><Query><CalendarDate>' + isostart + '</CalendarDate>'
 caml += "<Where><Or><Or><Or><Or><And><And><DateRangesOverlap><FieldRef Name='EventDate' /><FieldRef Name='EndDate' /><FieldRef Name='RecurrenceID' />"
-// caml += "<Value Type='DateTime'>" + isostart + "</Value></DateRangesOverlap><Eq><FieldRef Name='fRecurrence' /><Value Type='Text'>1</Value></Eq></And>"
 caml += "<Value Type='DateTime'><Year /></Value></DateRangesOverlap><Eq><FieldRef Name='fRecurrence' /><Value Type='Text'>1</Value></Eq></And>"
 caml += "<Leq><FieldRef Name='EventDate' /><Value Type='DateTime'>" + isoend + "</Value></Leq></And><And><And><Geq><FieldRef Name='EventDate' />"
 caml += "<Value Type='DateTime'>" + isostart + "</Value></Geq><Leq><FieldRef Name='EndDate' /><Value Type='DateTime'>" + isoend + '</Value></Leq></And>'
@@ -29,9 +28,7 @@ caml += "</Leq></And><Gt><FieldRef Name='EndDate' /><Value Type='DateTime'>" + i
 caml += "<Eq><FieldRef Name='fRecurrence' /><Value Type='Text'>0</Value></Eq></And></Or>"
 caml += "<And><And><Lt><FieldRef Name='EventDate' /><Value Type='DateTime'>" + isostart + "</Value></Lt><Gt><FieldRef Name='EndDate' /><Value Type='DateTime'>" + isoend + '</Value>'
 caml += "</Gt></And><Eq><FieldRef Name='fRecurrence' /><Value Type='Text'>0</Value></Eq></And></Or></Where>"
-// caml += "<QueryOptions><ExpandRecurrence>TRUE</ExpandRecurrence><RecurrencePatternXMLVersion>v3</RecurrencePatternXMLVersion><CalendarDate><Month /></CalendarDate><RecurrenceOrderBy>TRUE</RecurrenceOrderBy><ViewAttributes Scope='RecursiveAll' /></QueryOptions></Query></View>"
-caml +=
-  "<QueryOptions><IncludeMandatoryColumns>false</IncludeMandatoryColumns><ExpandRecurrence>true</ExpandRecurrence><RecurrencePatternXMLVersion>v3</RecurrencePatternXMLVersion><CalendarDate><Year /></CalendarDate><RecurrenceOrderBy>true</RecurrenceOrderBy><ViewAttributes Scope='RecursiveAll' /></QueryOptions></Query>"
+caml += "<QueryOptions><IncludeMandatoryColumns>false</IncludeMandatoryColumns><ExpandRecurrence>true</ExpandRecurrence><RecurrencePatternXMLVersion>v3</RecurrencePatternXMLVersion><CalendarDate><Year /></CalendarDate><RecurrenceOrderBy>true</RecurrenceOrderBy><ViewAttributes Scope='RecursiveAll' /></QueryOptions></Query>"
 caml +=
   "<ViewFields><FieldRef Name='Title' /><FieldRef Name='EventDate' /><FieldRef Name='Description' /><FieldRef Name='EndDate' /><FieldRef Name='Location' /><FieldRef Name='Author' /><FieldRef Name='EventType' /><FieldRef Name='Duration' /><FieldRef Name='Category' /><FieldRef Name='RecurrenceID' /><FieldRef Name='fRecurrence' /><FieldRef Name='RecurrenceData' /></ViewFields></View>"
 

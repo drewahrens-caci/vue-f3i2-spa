@@ -8,6 +8,9 @@ if (window._spPageContextInfo) {
   SPCI = window._spPageContextInfo
 }
 
+/* #region BASE */
+let portalemail = ''
+
 let url = SPCI.webServerRelativeUrl + "/_api/lists/getbytitle('Travel')/items?$orderby=Id desc"
 let gurl = SPCI.webServerRelativeUrl + "/_api/lists/getbytitle('Travel')/items?$select=*&$filter=(Status eq 'AFRLReview')"
 let eurl = SPCI.webServerRelativeUrl + '/_api/SP.Utilities.Utility.SendEmail'
@@ -15,6 +18,7 @@ let baseurl = SPCI.webAbsoluteUrl
 let geturl = SPCI.webServerRelativeUrl + "/_api/lists/getbytitle('Travel')/items"
 geturl += '?$select=*,Author/Title,Author/ID,Author/Name,Author/EMail&$expand=Author'
 let reporturl = SPCI.webServerRelativeUrl + "/_api/web/lists/getbytitle('TripReports')/RootFolder/Files/Add"
+/* #endregion */
 
 export default {
   async getFormDigest() {
@@ -23,6 +27,7 @@ export default {
       method: 'post',
       headers: { Accept: 'application/json; odata=verbose' }
     })
+    portalemail = store.state.support.portalemail
     return response
   },
   async getAllTrips() {
@@ -31,7 +36,6 @@ export default {
       if (purl === null) {
         purl = url
       }
-
       let response = await axios.get(purl, {
         headers: {
           accept: 'application/json;odata=verbose'
@@ -39,12 +43,11 @@ export default {
       })
       let results = response.data.d.results
       allTrips = allTrips.concat(results)
-      // recursively load people if there is a next result
+      // recursively load
       if (response.data.d.__next) {
         purl = response.data.d.__next
         return getAllTrips(purl)
       } else {
-        // console.log("Found " + allPersonnel.length + " people")
         return allTrips
       }
     }
@@ -97,7 +100,6 @@ export default {
         }
       })
       .then(function(response) {
-        // console.log('SINGLE TRIP: ' + response)
         let results = response.data.d.results
         return results
       })
@@ -159,9 +161,8 @@ export default {
     let mail = {
       properties: {
         __metadata: { type: 'SP.Utilities.EmailProperties' },
-        From: 'michele.dade@caci.com',
-        To: { results: ['michele.dade@caci.com', 'alexie.hazen@caci.com'] }, // TODO: Get these user emails from a list/group , 'daniel.walker1@caci.com'
-        // To: { 'results': ['daniel.walker1@caci.com'] },
+        From: portalemail,
+        To: { results: ['michele.dade@caci.com', 'alexie.hazen@caci.com'] },
         Body: body,
         Subject: 'New Travel Request Added To SharePoint'
       }
@@ -192,7 +193,7 @@ export default {
     let mail = {
       properties: {
         __metadata: { type: 'SP.Utilities.EmailProperties' },
-        From: 'daniel.walker1@caci.com',
+        From: portalemail,
         To: { results: [payload.email] },
         Body: body,
         Subject: 'F3I2Portal - New Travel Request Added To SharePoint'
@@ -221,16 +222,22 @@ export default {
   },
   EditTripEmail(state, digest, payload) {
     // send email to workplan manager regarding state of trip. Reminder of specific actions
-    let body = '<p>Forward to AFRL for review of ' + payload.review + '</p><p></p>'
+    let body = ''
+    if (payload.review && payload.review !== '') {
+      body += '<p>Forward to AFRL for review of ' + payload.review + '</p><p></p>'
+    }
+    if (payload.comments && payload.comments !== '') {
+      body += '<p>' + payload.comments + '</p><p></p>'
+    }
     body += '<p>Please click the link below for more details.</p><p></p>'
     body += '<p><a href="' + baseurl + '/Pages/Home.aspx#/travel/home/edit?id=' + payload.id + '">Edit Travel Request</a></p>'
     let mail = {
       properties: {
         __metadata: { type: 'SP.Utilities.EmailProperties' },
-        From: 'daniel.walker1@caci.com',
+        From: portalemail,
         To: { results: [payload.email] },
         Body: body,
-        Subject: 'Travel Request - Request ' + payload.review
+        Subject: 'Travel Request Updated'
       }
     }
     store.dispatch('support/addActivity', '<div class="bg-info">TravelService NewTripEmail TO: ' + payload.email + '</div>')
@@ -400,6 +407,61 @@ export default {
     let itemprops = {
       __metadata: { type: 'SP.Data.TravelListItem' },
       TravelersText: s
+    }
+
+    try {
+      const response = await axios.post(url, itemprops, config)
+      return response
+    } catch (error) {
+      console.log('TravelService Error Ediing Travel: ' + error)
+    }
+  },
+  async editTravelData(payload, digest) {
+    // payload is the full event object as json array with 1 element
+    console.log('EDIT TRAVEL DATA: ' + payload)
+    let o = payload[0].OCONUS
+    let i = payload[0].InternalData
+    if (i && i.length > 2) {
+      // internal data exists but needs to be updated to reflect new fields
+    } else {
+      // add standard interal data options accounting for OCONUS if already selected
+      i = {
+        Status: payload[0].Status,
+        PreApproved: 'No',
+        OCONUSTravel: o !== '' ? o : 'No',
+        ApprovalRequested: 'No',
+        Approval: '',
+        ApprovedBy: '',
+        ApprovedOn: '',
+        DeniedBy: '',
+        DeniedOn: '',
+        DenialComments: '',
+        ATPRequested: 'No',
+        ATP: '',
+        ATPGrantedBy: '',
+        ATPGrantedOn: '',
+        ATPDeniedBy: '',
+        ATPDeniedOn: '',
+        ATPDenialComments: '',
+        ManagerEmail: '',
+        date: moment().format('MM/DD/YYYY')
+      }
+    }
+    let url = payload[0].uri
+    let headers = {
+      'Content-Type': 'application/json;odata=verbose',
+      Accept: 'application/json;odata=verbose',
+      'X-RequestDigest': digest,
+      'X-HTTP-Method': 'MERGE',
+      'If-Match': payload[0].etag
+    }
+    let config = {
+      headers: headers
+    }
+
+    let itemprops = {
+      __metadata: { type: 'SP.Data.TravelListItem' },
+      InternalData: JSON.stringify(i)
     }
 
     try {

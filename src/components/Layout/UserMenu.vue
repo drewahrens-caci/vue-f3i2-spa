@@ -32,6 +32,7 @@ let vm = null
 import User from '@/models/User'
 import Personnel from '@/models/Personnel'
 import Workplan from '@/models/WorkPlan'
+import Company from '@/models/Company'
 
 let SPCI = null
 if (window._spPageContextInfo) {
@@ -82,6 +83,7 @@ export default {
   mounted: function() {
     vm = this
     this.$nextTick(function() {
+      Company.dispatch('getCompanies')
       Workplan.dispatch('getDigest')
       Workplan.dispatch('getWorkplans')
       Personnel.dispatch('getDigest')
@@ -128,73 +130,6 @@ export default {
 }
 </script>
 <style lang="css">
-/* #Todos table {
-  border-collapse: collapse;
-}
-
-#Todos table,
-#Todos th,
-#Todos td {
-  border: 1px solid black !important;
-}
-
-#Todos th,
-#Todos td {
-  height: 20px;
-}
-
-#Todos td {
-  text-indent: 3px;
-}
-
-#Todos .smallbutton {
-  padding: 0.1rem !important;
-  line-height: 1;
-  min-width: 1em;
-  font-size: 0.5rem !important;
-}
-
-#Todos .actionbutton {
-  padding: 0.1rem !important;
-  line-height: 1;
-  min-width: 1em;
-  font-size: 1rem !important;
-  color: black;
-  background-color: transparent;
-  border: none;
-  margin-left: 2px;
-}
-
-#Todos .modal-title {
-  margin: 0 auto;
-  line-height: 1.5;
-  width: 100%;
-  text-align: center;
-  color: #ffffff !important;
-}
-
-#Todos .close {
-  padding: 1rem 1rem;
-  margin: -1rem -1rem -1rem auto;
-  color: #ffffff !important;
-  opacity: 1;
-}
-
-#Profile .modal-title {
-  margin: 0 auto;
-  line-height: 1.5;
-  width: 100%;
-  text-align: center;
-  color: #ffffff !important;
-}
-
-#Profile .close {
-  padding: 1rem 1rem;
-  margin: -1rem -1rem -1rem auto;
-  color: #ffffff !important;
-  opacity: 1;
-} */
-
 .collapsed {
   transition: opacity 1s;
 }

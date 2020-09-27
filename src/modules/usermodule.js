@@ -1,3 +1,4 @@
+/* eslint-disable */
 import store from '../store/store'
 import UserProfileService from '@/services/UserProfileService.js'
 import User from '@/models/User'
@@ -43,6 +44,9 @@ const getters = {
   isPCA: state => {
     return state.isPCA
   },
+  isQA: state => {
+    return state.isQA
+  },
   isMember: state => {
     return state.isMember
   },
@@ -67,13 +71,24 @@ const actions = {
         console.log('There was an error getting User Id: ', error.response)
       })
   },
+  async getUserById({ state }, payload) {
+    let response = await UserProfileService.getUserById(payload);
+    return response;
+  },
+  async getUserProfileFor({ state }, payload) {
+    let response = await UserProfileService.getUserProfileFor(payload);
+    return response;
+  },
   async getPickerUserId(usr) {
     let response = await UserProfileService.getPickerUserId(usr)
     return response
   },
-  getUserProfile() {
+  async getUserProfile() {
     UserProfileService.getUserProfile()
       .then(response => {
+        if (console) {
+          console.log('PROFILE INFORMATION: ' + response)
+        }
         let profile = {}
         let userid = User.getters('CurrentUserId')
         let properties = response.data.d.UserProfileProperties.results
@@ -112,16 +127,19 @@ const actions = {
               break
           }
         }
-        // to get the Company and Workplan Data we need to get this from the Personnel list based on the current user
-        if (profile.Email && profile.Email.length > 2) {
-          Personnel.dispatch('getPersonnelByEmail', profile.Email).then(function(response) {
+        // to get the Company and Workplan Data we need to get this from the Personnel list based on the current user id
+        Personnel.dispatch('getPersonnelById', userid).then(function(response) {
+          if (console) {
+            console.log('GetPersonnelById Response: ' + response)
+          }
+          if (response && response[0].Company) {
             profile.Company = response[0].Company
+          }
+          if (response && response[0].WPData) {
             profile.WPData = JSON.parse(response[0].WPData)
-            User.insert({ data: profile })
-          })
-        } else {
+          }
           User.insert({ data: profile })
-        }
+        })
       })
       .catch(error => {
         // console.log('There was an error getting profile data: ', error.response)
@@ -150,7 +168,7 @@ const actions = {
                 state.isApprover = true
                 break
 
-              case 'SecurityOfficers':
+              case 'Security Officers':
                 state.isSecurity = true
                 break
 
@@ -166,11 +184,15 @@ const actions = {
                 state.isPCA = true
                 break
 
+              case 'F3I-2 QA':
+                state.isQA = true
+                break
+
               case 'F3I-2 Admins':
                 state.isAdmin = true
                 break
 
-              case 'MSR Inputters':
+              case 'Subcontractors':
                 state.isSubcontractor = true
                 break
 
@@ -184,6 +206,14 @@ const actions = {
 
               case 'Program Managers':
                 state.isPM = true
+                break
+
+              case 'AFRL':
+                state.isAFRL = true
+                break
+
+              case 'AFRLCEU':
+                state.isAFRLCEU = true
                 break
             }
           }

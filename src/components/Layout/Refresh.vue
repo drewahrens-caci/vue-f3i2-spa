@@ -25,8 +25,12 @@ export default {
         this.$router.push({ name: 'Travel',  path: '/travel/home/tracker' })
         break
 
+      case 'msrhome':
+        this.$router.push({ name: 'Home',  path: '/msr/home' })
+        break
+
       case 'personnel':
-        this.$router.push({ name: 'Reports', params: { mode: 'default' } })
+        this.$router.push({ path: '/personnel/home/reports/default' })
         break
 
       case 'features':

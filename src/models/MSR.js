@@ -7,22 +7,16 @@ export default class MSR extends Model {
     return {
       digest: null,
       loaded: false,
+      locked: false,
       msrloaded: false,
       dropdown: [],
       count: 0,
       currentcount: 0,
       currentmsrs: [],
       currentmsr: {},
-      homemsrs: [],
       currentyear: null,
       previousyear: null,
-      currentmonth: null,
-      accomplishments: [],
-      plans: [],
-      assumptions: [],
-      risks: [],
-      opportunities: [],
-      deliverables: []
+      currentmonth: null
     }
   }
 
@@ -32,6 +26,9 @@ export default class MSR extends Model {
       Id: this.attr(null), // SharePoint id
       WorkplanNumber: this.attr(''),
       WorkplanTitle: this.attr(''),
+      PCAReview: this.attr(''),
+      QAReview: this.attr(''),
+      WPMReview: this.attr(''),
       Status: this.attr(''),
       Funding: this.attr(''),
       Staffing: this.attr(''),
@@ -51,6 +48,7 @@ export default class MSR extends Model {
       Distribution: this.attr(''),
       Month: this.attr(''),
       Year: this.attr(''),
+      Locked: this.attr(''),
       etag: this.attr(null), // Used for updating
       uri: this.attr(null) // Used for updating
     }

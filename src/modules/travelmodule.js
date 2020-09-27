@@ -93,6 +93,10 @@ const actions = {
     let response = await TravelService.editTraveler(payload, state.digest)
     return response
   },
+  async editTravelData({ state }, payload) {
+    let response = await TravelService.editTravelData(payload, state.digest)
+    return response
+  },
   async getTripById({ state }, payload) {
     // console.log('PAYLOAD: ' + payload.id)
     let trip = await TravelService.getTripById(state.triploaded, payload.id)
@@ -312,6 +316,7 @@ function formatTravel(j) {
       SecurityActionCompleted: actioncompleted,
       EstimatedCost: j[i]['EstimatedCost'] !== null ? String(j[i]['EstimatedCost']) : '',
       IndexNumber: j[i]['IndexNumber'] !== null ? String(j[i]['IndexNumber']) : '',
+      Title: j[i]['IndexNumber'] + '-' + j[i]['Title'],
       TripReport: !isNullOrUndefined(j[i]['TripReport']) ? String(j[i]['TripReport']['Description']) : '',
       TripReportLink: !isNullOrUndefined(j[i]['TripReport']) ? String(j[i]['TripReport']['Url']) : '',
       etag: j[i]['__metadata']['etag'],

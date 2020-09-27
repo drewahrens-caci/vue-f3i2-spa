@@ -18,17 +18,14 @@
                   <b-form>
                     <div class="row">
                       <div class="col-6">OCONUS</div>
-                      <div v-if="travelmodel.OCONUS == 'Yes'" class="col-6">OCONUS Location</div>
+                      <div v-if="travelmodel.InternalData.OCONUSTravel == 'Yes'" class="col-6">OCONUS Location</div>
                       <div v-else class="col-6"></div>
                     </div>
                     <div class="row">
                       <div class="col-6">
-                        <b-form-select class="form-control-sm form-control-travel" v-model="travelmodel.OCONUS" :options="yesno" :state="ValidateMe('O')" ref="OCONUS" @change="onOCONUSSelected"></b-form-select>
-                        <b-form-invalid-feedback>
-                          Must Select Travel Type
-                        </b-form-invalid-feedback>
+                        <b-form-checkbox v-model="travelmodel.InternalData.OCONUSTravel" value="Yes" unchecked-value="No" switch @change="onOCONUSSelected"></b-form-checkbox>
                       </div>
-                      <div v-if="travelmodel.OCONUS == 'Yes'" class="col-6">
+                      <div v-if="travelmodel.InternalData.OCONUSTravel == 'Yes'" class="col-6">
                         <b-form-select class="form-control-sm form-control-travel" v-model="travelmodel.OCONUSLocation" :options="locations" :state="ValidateMe('OL')" ref="OCONUSLocation"></b-form-select>
                         <b-form-invalid-feedback>
                           Must Select OCONUS Location
@@ -338,6 +335,18 @@
     <b-modal id="NewTravelUser" ref="NewTravelUser" size="xl" centered hide-footer :header-bg-variant="headerBgVariant">
       <template v-slot:modal-title>Add Traveler [Double Click To Add The User]</template>
       <b-container fluid class="p-0">
+        <b-row class="m-0">
+          <b-col cols="12" class="p-0">
+            <b-input-group>
+              <b-form-input type="text" placeholder="Search..." class="form-control" v-model="searchinput" v-on:keyup.enter="searchme"></b-form-input>
+              <b-input-group-append>
+                <b-button variant="warning" @click.stop="searchme" title="Search">
+                  <font-awesome-icon far icon="search" class="icon"></font-awesome-icon>
+                </b-button>
+              </b-input-group-append>
+            </b-input-group>
+          </b-col>
+        </b-row>
         <div class="row m-0">
           <div class="col-12 p-0" style="min-height: 500px;">
             <ejs-grid
@@ -380,7 +389,7 @@ import Personnel from '@/models/Personnel'
 import Workplan from '@/models/WorkPlan'
 import Company from '@/models/Company'
 import { Toolbar as RTEToolbar, Link, Image, Count, HtmlEditor, QuickToolbar, Table } from '@syncfusion/ej2-vue-richtexteditor'
-import { Page, Sort, Filter, Edit, Resize, Reorder, ColumnMenu, Toolbar } from '@syncfusion/ej2-vue-grids'
+import { Page, Sort, Filter, Edit, Resize, Reorder, ColumnMenu, Toolbar, Search } from '@syncfusion/ej2-vue-grids'
 
 let vm = null
 
@@ -404,7 +413,7 @@ export default {
   },
   provide: {
     richtexteditor: [RTEToolbar, Link, Image, Count, HtmlEditor, QuickToolbar, Table],
-    grid: [Page, Sort, Filter, Edit, Reorder, Resize, ColumnMenu, Toolbar]
+    grid: [Page, Sort, Filter, Edit, Reorder, Resize, ColumnMenu, Toolbar, Search]
   },
   computed: {
     emailRequired() {
@@ -430,6 +439,9 @@ export default {
     },
     isDeveloper() {
       return User.getters('isDeveloper')
+    },
+    portalemail() {
+      return this.$store.state.support.portalemail
     }
   },
   mounted: function() {
@@ -446,6 +458,7 @@ export default {
   data: function() {
     return {
       busyTitle: 'Getting Trip Data. Please Wait.',
+      searchinput: '',
       reportdigest: null,
       reportlink: null,
       workplanuri: null,
@@ -487,8 +500,21 @@ export default {
         InternalData: {
           Status: 'WPMReview',
           PreApproved: 'No',
-          OCONUSRequest: 'No',
-          ApprovalRequest: 'No',
+          OCONUSTravel: 'No',
+          ApprovalRequested: 'No',
+          Approval: '',
+          ApprovedBy: '',
+          ApprovedOn: '',
+          DeniedBy: '',
+          DeniedOn: '',
+          DenialComments: '',
+          ATPRequested: 'No',
+          ATP: '',
+          ATPGrantedBy: '',
+          ATPGrantedOn: '',
+          ATPDeniedBy: '',
+          ATPDeniedOn: '',
+          ATPDenialComments: '',
           ManagerEmail: '',
           date: this.$moment().format('MM/DD/YYYY')
         },
@@ -526,7 +552,7 @@ export default {
         ]
       },
       NewTravelfilterSettings: { type: 'Menu' },
-      fieldsFirstTab: ['OCONUS', 'WorkPlan', 'Company', 'start', 'end', 'TravelFrom', 'TravelTo'],
+      fieldsFirstTab: ['WorkPlan', 'Company', 'start', 'end', 'TravelFrom', 'TravelTo'],
       fieldsThirdTab: ['Sponsor', 'EstimatedCost', 'POCName', 'POCEmail', 'POCPhone', 'Comments', 'Clearance'],
       fieldsFourthTab: ['Clearance'],
       travelerData: [],
@@ -767,9 +793,12 @@ export default {
         }
       }
     },
+    searchme: function() {
+      this.$refs.TravelPersonnelGrid.search(this.searchinput)
+    },
     onOCONUSSelected: function() {
       // TODO: Maybe show location area from here
-      if (this.travelmodel.OCONUS == 'Yes') {
+      if (this.travelmodel.InternalData.OCONUSTravel == 'Yes') {
         this.fieldsFirstTab.push('OCONUSLocation')
       } else {
         // if the user accidentally selected yes and then changes it, we have to remove location from the validation array
@@ -848,8 +877,21 @@ export default {
         InternalData: {
           Status: 'WPMReview',
           PreApproved: 'No',
-          OCONUSRequest: 'No',
-          ApprovalRequest: 'No',
+          OCONUSTravel: 'No',
+          ApprovalRequested: 'No',
+          Approval: '',
+          ApprovedBy: '',
+          ApprovedOn: '',
+          DeniedBy: '',
+          DeniedOn: '',
+          DenialComments: '',
+          ATPRequested: 'No',
+          ATP: '',
+          ATPGrantedBy: '',
+          ATPGrantedOn: '',
+          ATPDeniedBy: '',
+          ATPDeniedOn: '',
+          ATPDenialComments: '',
           ManagerEmail: '',
           date: this.$moment().format('MM/DD/YYYY')
         },
@@ -881,7 +923,7 @@ export default {
         OriginalWorkPlanNumber: this.travelmodel.OriginalWorkPlanNumber,
         WorkPlanText: this.travelmodel.WorkPlanText,
         IndexNumber: this.travelmodel.IndexNumber,
-        OCONUS: this.travelmodel.OCONUS,
+        OCONUS: this.travelmodel.InternalData.OCONUSTravel,
         OCONUSLocation: this.travelmodel.OCONUSLocation,
         Company: this.travelmodel.Company,
         TravelFrom: this.travelmodel.TravelFrom,
@@ -895,7 +937,9 @@ export default {
         InternalData: this.travelmodel.InternalData,
         Clearance: this.travelmodel.Clearance,
         VisitRequest: this.travelmodel.VisitRequest,
-        EstimatedCost: this.travelmodel.EstimatedCost
+        EstimatedCost: this.travelmodel.EstimatedCost,
+        etag: this.travelmodel.etag,
+        uri: this.travelmodel.uri
       })
       let response = await Travel.dispatch('addTrip', event)
       let id = response.data.d.Id

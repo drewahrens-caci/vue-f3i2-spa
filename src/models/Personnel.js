@@ -39,6 +39,8 @@ export default class Personnel extends Model {
       SCIFormSubmitted: this.attr(''),
       PRDueDate: this.attr(''),
       CEDate: this.attr(''),
+      Modification: this.attr(''),
+      ModDeniedREason: this.attr(''),
       etag: this.attr(null), // Used for updating
       uri: this.attr(null) // Used for updating
     }

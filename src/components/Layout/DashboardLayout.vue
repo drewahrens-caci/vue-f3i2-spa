@@ -23,6 +23,15 @@
           <sidebar-item :link="{ name: 'Features', library: 'fas', icon: 'cubes', path: '/features/home' }"></sidebar-item>
           <sidebar-item :link="{ name: 'Bugs', library: 'fas', icon: 'spider', path: '/bugs/home' }"></sidebar-item>
         </sidebar-item>
+        <sidebar-item :link="{ name: 'Monthly Status Reports', library: 'fas', icon: 'file-contract' }">
+          <sidebar-item :link="{ name: 'Edit Reports', library: 'fas', icon: 'file-signature', path: '/msr/home' }"></sidebar-item>
+          <sidebar-item v-if="!isSubcontractor" :link="{ name: 'Report Library', library: 'fas', icon: 'folder', path: '/msr/library' }"></sidebar-item>
+        </sidebar-item>
+        <sidebar-item v-if="!isSubcontractor" :link="{ name: 'Financial', library: 'fas', icon: 'money-check-alt' }">
+          <sidebar-item :link="{ name: 'Dashboard', library: 'fas', icon: 'file-invoice', path: '/financial/home' }"></sidebar-item>
+          <sidebar-item :link="{ name: 'Documents', library: 'fas', icon: 'book', path: '/financial/library' }"></sidebar-item>
+        </sidebar-item>
+        <sidebar-item v-if="isAdmin" :link="{ name: 'Portal Administration', library: 'fas', icon: 'user-lock', path: '/admin/home/home' }"></sidebar-item>
       </template>
     </side-bar>
     <div class="main-panel">
@@ -43,6 +52,9 @@ export default {
   computed: {
     isAdmin() {
       return User.getters('isAdmin')
+    },
+    isSubcontractor() {
+      return User.getters('isSubcontractor')
     }
   },
   components: {
@@ -56,7 +68,6 @@ export default {
     // get the bounds of the content class which represents the main content area.
     let el = document.getElementById('maincontent')
     let rect = el.getBoundingClientRect()
-    // console.log(rect.left + ', ' + rect.top + ', ' + rect.height + ', ' + rect.width)
     this.$store.dispatch('support/setContentRect', rect)
     this.$store.dispatch('support/addActivity', '<div class="bg-success text-white">DashboardLayout-MOUNTED: ' + rect.top + ', ' + rect.left + ', ' + rect.width + ', ' + rect.height + '</div>')
   },
@@ -69,4 +80,9 @@ export default {
   }
 }
 </script>
-<style lang="scss"></style>
+<style lang="scss">
+.main-panel {
+  /*border: 2px solid red !important;*/
+  background-color: black !important;
+}
+</style>

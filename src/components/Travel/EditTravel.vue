@@ -27,17 +27,14 @@
                   <b-form>
                     <div class="row">
                       <div class="col-6">OCONUS</div>
-                      <div v-if="travelmodel.OCONUS == 'Yes'" class="col-6">OCONUS Location</div>
+                      <div v-if="travelmodel.InternalData.OCONUSTravel == 'Yes'" class="col-6">OCONUS Location</div>
                       <div v-else class="col-6"></div>
                     </div>
                     <div class="row">
                       <div class="col-6">
-                        <b-form-select class="form-control-sm form-control-travel" v-model="travelmodel.OCONUS" :options="yesno" :state="ValidateMe('O')" ref="OCONUS" @change="onOCONUSSelected"></b-form-select>
-                        <b-form-invalid-feedback>
-                          Must Select Travel Type
-                        </b-form-invalid-feedback>
+                        <b-form-checkbox v-model="travelmodel.InternalData.OCONUSTravel" value="Yes" unchecked-value="No" switch @change="onOCONUSSelected"></b-form-checkbox>
                       </div>
-                      <div v-if="travelmodel.OCONUS == 'Yes'" class="col-6">
+                      <div v-if="travelmodel.InternalData.OCONUSTravel == 'Yes'" class="col-6">
                         <b-form-select class="form-control-sm form-control-travel" v-model="travelmodel.OCONUSLocation" :options="locations" :state="ValidateMe('OL')" ref="OCONUSLocation"></b-form-select>
                         <b-form-invalid-feedback>
                           Must Select OCONUS Location
@@ -338,39 +335,103 @@
                   </table>
                 </b-tab>
                 <b-tab :disabled="!isTravelApprover" class="mtab">
-                  <template slot="title"
-                    ><font-awesome-icon fas icon="thumbs-up" class="icon"></font-awesome-icon>
+                  <template slot="title">
+                    <font-awesome-icon fas icon="thumbs-up" class="icon"></font-awesome-icon>
                     Approvals
                   </template>
                   <b-form>
-                    <b-row v-if="travelmodel.OCONUS != 'Yes'" class="mb-1">
-                      <b-col cols="4">PreApproved</b-col>
-                      <b-col cols="8"><b-form-select class="form-control-sm form-control-travel" v-model="travelmodel.PreApproved" :options="yesno" title="Select Yes if PreApproved otherwise don't set."></b-form-select></b-col>
-                    </b-row>
-                    <b-row v-if="travelmodel.OCONUS == 'Yes'" class="mb-1">
-                      <b-col cols="4">Request OCONUS Approval To Proceed</b-col>
-                      <b-col cols="8"><b-form-select class="form-control-sm form-control-travel" v-model="travelmodel.OCONUSRequest" :options="yesno"></b-form-select></b-col>
-                    </b-row>
-                    <b-row v-if="travelmodel.OCONUS == 'Yes'" class="mb-1">
-                      <b-col cols="4">OCONUSApprovedBy</b-col>
-                      <b-col cols="8"><b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.OCONUSApprovedBy"></b-form-input></b-col>
-                    </b-row>
-                    <b-row v-if="travelmodel.OCONUS == 'Yes'" class="mb-1">
-                      <b-col cols="4">OCONUSApprovedOn</b-col>
-                      <b-col cols="8"><b-form-input class="form-control-sm form-control-travel form-control-travel-date" v-model="travelmodel.OCONUSApprovedOn" type="date"></b-form-input></b-col>
-                    </b-row>
-                    <!-- <b-row v-if="travelmodel.OCONUS == 'Yes'" class="mb-1">
-                      <b-col cols="4">OCONUSApprovedEmail</b-col>
-                      <b-col cols="8"><b-form-textarea class="form-control-sm form-control-travel form-control-travel-textarea" rows="10" max-rows="10" v-model="travelmodel.OCONUSApprovedEmail"></b-form-textarea></b-col>
-                    </b-row> -->
-                    <b-row>
-                      <b-col cols="4">Request Approval</b-col>
-                      <b-col cols="8"><b-form-select class="form-control-sm form-control-travel" v-model="travelmodel.RequestApproval" :options="yesno"></b-form-select></b-col>
-                    </b-row>
-                    <b-row v-if="isTravelApprover">
-                      <b-col cols="4">Travel Approval</b-col>
-                      <b-col cols="8"><b-form-select class="form-control-sm form-control-travel" v-model="travelmodel.Approval" :options="yesno"></b-form-select></b-col>
-                    </b-row>
+                    <b-card no-body>
+                      <b-tabs class="tabArea" card>
+                        <b-tab class="mtab" active>
+                          <template slot="title">
+                            <font-awesome-icon fas icon="cog" class="icon"></font-awesome-icon>
+                            CACI Approvals
+                          </template>
+                          <b-row v-if="travelmodel.InternalData.OCONUSTravel !== 'Yes'" class="mb-1">
+                            <b-col cols="4">PreApproved</b-col>
+                            <b-col cols="8">
+                              <b-form-checkbox v-model="travelmodel.InternalData.PreApproved" value="Yes" unchecked-value="No" switch></b-form-checkbox>
+                            </b-col>
+                          </b-row>
+                          <b-row v-if="travelmodel.InternalData.OCONUSTravel == 'Yes'" class="mb-1">
+                            <b-col v-if="isWPManager" cols="4">Request Authorization To Proceed</b-col>
+                            <b-col v-if="isWPManager" cols="8">
+                              <b-form-checkbox v-model="travelmodel.InternalData.ATPRequested" value="Yes" unchecked-value="No" switch></b-form-checkbox>
+                            </b-col>
+                          </b-row>
+                          <b-row v-if="travelmodel.InternalData.OCONUSTravel == 'No' || travelmodel.InternalData.ATP == 'Granted'" class="mb-1">
+                            <b-col v-if="isWPManager" cols="4">Request Travel Approval</b-col>
+                            <b-col v-if="isWPManager" cols="8">
+                              <b-form-checkbox v-model="travelmodel.InternalData.ApprovalRequested" value="Yes" unchecked-value="No" switch></b-form-checkbox>
+                            </b-col>
+                          </b-row>
+                        </b-tab>
+                        <b-tab class="mtab">
+                          <template slot="title">
+                            <font-awesome-icon fas icon="cog" class="icon"></font-awesome-icon>
+                            Government Approvals
+                          </template>
+                          <b-row v-if="travelmodel.InternalData.ATPRequested == 'Yes' || travelmodel.InternalData.ATP != ''" class="mb-1">
+                            <b-col cols="4">Authorization To Proceed</b-col>
+                            <b-col cols="8">
+                              <b-form-group>
+                                <b-form-checkbox class="float-left ml-1" v-model="travelmodel.InternalData.ATP" value="Granted" @change="ATPChanged">Grant</b-form-checkbox>
+                                <b-form-checkbox class="float-left ml-3" v-model="travelmodel.InternalData.ATP" value="Denied" @change="ATPDeniedChanged">Deny</b-form-checkbox>
+                              </b-form-group>
+                            </b-col>
+                          </b-row>
+                          <b-row v-if="travelmodel.InternalData.ATP == 'Granted'" class="mb-1">
+                            <b-col cols="4">Authorization Granted By</b-col>
+                            <b-col cols="8"><b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.InternalData.ATPGrantedBy"></b-form-input></b-col>
+                          </b-row>
+                          <b-row v-if="travelmodel.InternalData.ATP == 'Granted'" class="mb-1">
+                            <b-col cols="4">Authorization Granted On</b-col>
+                            <b-col cols="8"><b-form-input class="form-control-sm form-control-travel form-control-travel-date" v-model="travelmodel.InternalData.ATPGrantedOn" type="date"></b-form-input></b-col>
+                          </b-row>
+                          <b-row v-if="travelmodel.InternalData.ATP == 'Denied'" class="mb-1">
+                            <b-col cols="4">Authorization Denied By</b-col>
+                            <b-col cols="8"><b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.InternalData.ATPDeniedBy"></b-form-input></b-col>
+                          </b-row>
+                          <b-row v-if="travelmodel.InternalData.ATP == 'Denied'" class="mb-1">
+                            <b-col cols="4">Authorization Denied On</b-col>
+                            <b-col cols="8"><b-form-input class="form-control-sm form-control-travel form-control-travel-date" v-model="travelmodel.InternalData.ATPDeniedOn" type="date"></b-form-input></b-col>
+                          </b-row>
+                          <b-row v-if="travelmodel.InternalData.ATP == 'Denied'" class="mb-1">
+                            <b-col cols="4">Authorization Denial Comments</b-col>
+                            <b-col cols="8"><b-form-textarea class="form-control-sm form-control-travel" v-model="travelmodel.InternalData.ATPDenialComments"></b-form-textarea></b-col>
+                          </b-row>
+                          <b-row v-if="travelmodel.InternalData.ApprovalRequested == 'Yes' || travelmodel.InternalData.Approval != ''" class="mb-1">
+                            <b-col cols="4">Approval</b-col>
+                            <b-col cols="8">
+                              <b-form-group>
+                                <b-form-checkbox class="float-left ml-1" v-model="travelmodel.InternalData.Approval" value="Approved" @change="ApprovedChanged">Approve</b-form-checkbox>
+                                <b-form-checkbox class="float-left ml-3" v-model="travelmodel.InternalData.Approval" value="Denied" @change="DeniedChanged">Deny</b-form-checkbox>
+                              </b-form-group>
+                            </b-col>
+                          </b-row>
+                          <b-row v-if="travelmodel.InternalData.Approval == 'Approved'" class="mb-1">
+                            <b-col cols="4">Travel Approved By</b-col>
+                            <b-col cols="8"><b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.InternalData.ApprovedBy"></b-form-input></b-col>
+                          </b-row>
+                          <b-row v-if="travelmodel.InternalData.Approval == 'Approved'" class="mb-1">
+                            <b-col cols="4">Travel Approved On</b-col>
+                            <b-col cols="8"><b-form-input class="form-control-sm form-control-travel form-control-travel-date" v-model="travelmodel.InternalData.ApprovedOn" type="date"></b-form-input></b-col>
+                          </b-row>
+                          <b-row v-if="travelmodel.InternalData.Approval == 'Denied'" class="mb-1">
+                            <b-col cols="4">Travel Denied By</b-col>
+                            <b-col cols="8"><b-form-input class="form-control-sm form-control-travel" v-model="travelmodel.InternalData.DeniedBy"></b-form-input></b-col>
+                          </b-row>
+                          <b-row v-if="travelmodel.InternalData.Approval == 'Denied'" class="mb-1">
+                            <b-col cols="4">Travel Denied On</b-col>
+                            <b-col cols="8"><b-form-input class="form-control-sm form-control-travel form-control-travel-date" v-model="travelmodel.InternalData.DeniedOn" type="date"></b-form-input></b-col>
+                          </b-row>
+                          <b-row v-if="travelmodel.InternalData.Approval == 'Denied'" class="mb-1">
+                            <b-col cols="4">Travel Denial Comments</b-col>
+                            <b-col cols="8"><b-form-textarea class="form-control-sm form-control-travel" v-model="travelmodel.InternalData.DenialComments"></b-form-textarea></b-col>
+                          </b-row>
+                        </b-tab>
+                      </b-tabs>
+                    </b-card>
                   </b-form>
                 </b-tab>
               </b-tabs>
@@ -405,6 +466,18 @@
     <b-modal id="EditTravelUser" ref="EditTravelUser" size="xl" centered hide-footer :header-bg-variant="headerBgVariant">
       <template v-slot:modal-title>Add Traveler [Double Click To Add The User]</template>
       <b-container fluid class="p-0">
+        <b-row class="m-0">
+          <b-col cols="12" class="p-0">
+            <b-input-group>
+              <b-form-input type="text" placeholder="Search..." class="form-control" v-model="searchinput" v-on:keyup.enter="searchme"></b-form-input>
+              <b-input-group-append>
+                <b-button variant="warning" @click.stop="searchme" title="Search">
+                  <font-awesome-icon far icon="search" class="icon"></font-awesome-icon>
+                </b-button>
+              </b-input-group-append>
+            </b-input-group>
+          </b-col>
+        </b-row>
         <div class="row m-0">
           <div class="col-12 p-0" style="min-height: 500px;">
             <ejs-grid
@@ -524,6 +597,7 @@ export default {
   data: function() {
     return {
       busyTitle: 'Getting Trip Data. Please Wait.',
+      searchinput: '',
       newindex: null,
       editing: false,
       pdata: [],
@@ -543,7 +617,6 @@ export default {
         OCONUSRequest: 'Select...',
         OCONUSApprovedBy: '',
         OCONUSApprovedOn: '',
-        OCONUSApprovedEmail: '',
         PreApproved: 'Select...',
         RequestApproval: 'Select...',
         Approval: 'Select...',
@@ -561,7 +634,27 @@ export default {
         POCPhone: '',
         Comments: '',
         Clearance: 'None',
-        InternalData: null,
+        InternalData: {
+          Status: 'WPMReview',
+          PreApproved: 'No',
+          OCONUSTravel: 'No',
+          ApprovalRequested: 'No',
+          Approval: '',
+          ApprovedBy: '',
+          ApprovedOn: '',
+          DeniedBy: '',
+          DeniedOn: '',
+          DenialComments: '',
+          ATPRequested: 'No',
+          ATP: '',
+          ATPGrantedBy: '',
+          ATPGrantedOn: '',
+          ATPDeniedBy: '',
+          ATPDeniedOn: '',
+          ATPDenialComments: '',
+          ManagerEmail: '',
+          date: this.$moment().format('MM/DD/YYYY')
+        },
         VisitRequest: '',
         SecurityAction: '',
         SecurityActionCompleted: '',
@@ -600,7 +693,7 @@ export default {
         ]
       },
       filterSettings: { type: 'Menu' },
-      fieldsFirstTab: ['OCONUS', 'WorkPlan', 'Company', 'start', 'end', 'TravelFrom', 'TravelTo'],
+      fieldsFirstTab: ['WorkPlan', 'Company', 'start', 'end', 'TravelFrom', 'TravelTo'],
       fieldsThirdTab: ['Sponsor', 'EstimatedCost', 'POCName', 'POCEmail', 'POCPhone', 'Comments', 'IndexNumber'],
       fieldsFourthTab: ['Clearance'],
       travelerData: [],
@@ -644,6 +737,14 @@ export default {
         { value: 'No', text: 'No' },
         { value: 'Yes', text: 'Yes' }
       ],
+      approval: [
+        { value: 'Approved', text: 'Approve' },
+        { value: 'Denied', text: 'Deny' }
+      ],
+      grant: [
+        { value: 'Granted', text: 'Grant' },
+        { value: 'Denied', text: 'Deny' }
+      ],
       locations: [
         { value: 'Select...', text: 'Select...' },
         { value: 'Germany', text: 'Germany' },
@@ -672,7 +773,7 @@ export default {
         this.travelmodel.WorkPlanNumber = this.selectedtrip.WorkPlanNumber
         this.travelmodel.OriginalWorkPlanNumber = this.selectedtrip.OriginalWorkPlanNumber
         this.travelmodel.WorkPlanText = this.selectedtrip.WorkPlanText
-        this.travelmodel.OCONUS = this.selectedtrip.OCONUS
+        this.travelmodel.OCONUS = this.selectedtrip.InternalData.OCONUSTravel
         this.travelmodel.OCONUSLocation = this.selectedtrip.OCONUSLocation
         this.travelmodel.OCONUSApprovedBy = this.selectedtrip.OCONUSApprovedBy
         this.travelmodel.OCONUSApprovedOn = this.$moment(this.selectedtrip.OCONUSApprovedOn).format('YYYY-MM-DD')
@@ -748,7 +849,27 @@ export default {
         POCPhone: '',
         Comments: '',
         Clearance: 'None',
-        InternalData: null,
+        InternalData: {
+          Status: 'WPMReview',
+          PreApproved: 'No',
+          OCONUSTravel: 'No',
+          ApprovalRequested: 'No',
+          Approval: '',
+          ApprovedBy: '',
+          ApprovedOn: '',
+          DeniedBy: '',
+          DeniedOn: '',
+          DenialComments: '',
+          ATPRequested: 'No',
+          ATP: '',
+          ATPGrantedBy: '',
+          ATPGrantedOn: '',
+          ATPDeniedBy: '',
+          ATPDeniedOn: '',
+          ATPDenialComments: '',
+          ManagerEmail: '',
+          date: this.$moment().format('MM/DD/YYYY')
+        },
         VisitRequest: '',
         SecurityAction: '',
         SecurityActionCompleted: '',
@@ -949,9 +1070,12 @@ export default {
         }
       }
     },
+    searchme: function() {
+      this.$refs.TravelPersonnelGrid.search(this.searchinput)
+    },
     onOCONUSSelected: function() {
       // TODO: Maybe show location area from here
-      if (this.travelmodel.OCONUS == 'Yes') {
+      if (this.travelmodel.InternalData.OCONUSTravel == 'Yes') {
         this.fieldsFirstTab.push('OCONUSLocation')
       } else {
         // if the user accidentally selected yes and then changes it, we have to remove location from the validation array
@@ -1038,52 +1162,114 @@ export default {
     deleteme: function(idx) {
       this.travelmodel.Travelers.splice(idx, 1)
     },
+    DeniedChanged: function(checked) {
+      console.log('DeniedChanged: ' + checked)
+      if (checked) {
+        // Reset the ATP request to no
+        this.travelmodel.InternalData.ATPRequested = 'No'
+        this.travelmodel.InternalData.ApprovalRequested = 'No'
+      }
+    },
+    ApprovedChanged: function(checked) {
+      console.log('ApprovedChanged: ' + checked)
+      if (checked) {
+        // Reset the ATP request to no
+        this.travelmodel.InternalData.ATPRequested = 'No'
+        this.travelmodel.InternalData.ApprovalRequested = 'No'
+      }
+    },
+    ATPDeniedChanged: function(checked) {
+      console.log('DeniedChanged: ' + checked)
+      if (checked) {
+        // Reset the ATP request to no
+        this.travelmodel.InternalData.ATPRequested = 'No'
+        this.travelmodel.InternalData.ApprovalRequested = 'No'
+      }
+    },
+    ATPChanged: function(checked) {
+      console.log('ApprovedChanged: ' + checked)
+      if (checked) {
+        // Reset the ATP request to no
+        this.travelmodel.InternalData.ATPRequested = 'No'
+        this.travelmodel.InternalData.ApprovalRequested = 'No'
+      }
+    },
     async onModalSave() {
       // Update the trip information in SharePoint.
       // Need to calculate the status based on current state of selected fields
       let event = []
       let start = this.$moment(this.travelmodel.StartTime).format('YYYY-MM-DD[T]HH:MM:[00Z]')
       let end = this.$moment(this.travelmodel.EndTime).format('YYYY-MM-DD[T]HH:MM:[00Z]')
-      let oconusapprovedon = this.$moment(this.travelmodel.OCONUSApprovedOn).isValid() ? this.$moment(this.travelmodel.OCONUSApprovedOn).format('YYYY-MM-DD[T]HH:MM:[00Z]') : null
+      // let oconusapprovedon = this.$moment(this.travelmodel.OCONUSApprovedOn).isValid() ? this.$moment(this.travelmodel.OCONUSApprovedOn).format('YYYY-MM-DD[T]HH:MM:[00Z]') : null
       let securityactioncompleted = this.$moment(this.travelmodel.SecurityActionCompleted).isValid() ? this.$moment(this.travelmodel.SecurityActionCompleted).format('YYYY-MM-DD[T]HH:MM:[00Z]') : null
       let status = this.travelmodel.Status
-      let preapproved = this.travelmodel.PreApproved
-      let approvalrequest = this.travelmodel.RequestApproval
-      let request = this.travelmodel.OCONUSRequest
-      let approval = this.travelmodel.Approval
       // TODO: Setup internal data to ensure that we can track what to do for tracking state
-      if (preapproved == 'Yes') {
+      if (this.travelmodel.InternalData.PreApproved == 'Yes') {
         status = 'Approved'
         this.travelmodel.InternalData.Status = 'Approved'
-        this.travelmodel.InternalData.PreApproved = 'Yes'
       }
-      if (approvalrequest == 'Yes') {
+      if (this.travelmodel.InternalData.ApprovalRequested == 'Yes') {
         status = 'AFRLReview'
         this.travelmodel.InternalData.Status = 'AFRLReview'
-        this.travelmodel.InternalData.ApprovalRequest = 'Yes'
-        this.travelmodel.InternalData.OCONUSRequest = 'No'
         let payload = {}
         payload.id = this.TripId
         payload.email = this.travelmodel.InternalData.ManagerEmail
         payload.review = 'Travel Approval'
         Travel.dispatch('EditTripEmail', payload)
       }
-      if (request == 'Yes') {
+      if (this.travelmodel.InternalData.ATPRequested == 'Yes') {
         status = 'AFRLReview'
         this.travelmodel.InternalData.Status = 'AFRLReview'
-        this.travelmodel.InternalData.ApprovalRequest = 'No'
-        this.travelmodel.InternalData.OCONUSRequest = 'Yes'
         let payload = {}
         payload.id = this.TripId
         payload.email = this.travelmodel.InternalData.ManagerEmail
-        payload.review = 'OCONUS Travel Permission To Proceed'
+        payload.review = 'OCONUS Travel Authorization To Proceed'
         Travel.dispatch('EditTripEmail', payload)
       }
-      if (approval == 'Yes') {
+      if (this.travelmodel.InternalData.ATP == 'Granted') {
+        status = 'WPMReview'
+        this.travelmodel.InternalData.Status = 'WPMReview'
+        let payload = {}
+        payload.id = this.TripId
+        payload.email = this.travelmodel.InternalData.ManagerEmail
+        payload.comments = 'OCONUS Travel Authorization To Proceed Granted'
+        Travel.dispatch('EditTripEmail', payload)
+      }
+      if (this.travelmodel.InternalData.ATP == 'Denied') {
+        status = 'Denied'
+        this.travelmodel.InternalData.Status = 'Denied'
+        this.travelmodel.InternalData.ApprovalRequested = 'No'
+        let payload = {}
+        payload.id = this.TripId
+        payload.email = this.travelmodel.InternalData.ManagerEmail
+        payload.comments = 'OCONUS Travel Authorization To Proceed Denied'
+        Travel.dispatch('EditTripEmail', payload)
+      }
+      if (this.travelmodel.InternalData.Approval == 'Approved') {
         status = 'Approved'
         this.travelmodel.InternalData.Status = 'Approved'
-        this.travelmodel.InternalData.ApprovalRequest = 'No'
-        this.travelmodel.InternalData.OCONUSRequest = 'No'
+        this.travelmodel.InternalData.ApprovalRequested = 'No'
+        this.travelmodel.InternalData.ATPRequested = 'No'
+        if (this.travelmodel.InternalData.OCONUSTravel == 'Yes') {
+          this.travelmodel.OCONUSApprovedBy = this.travelmodel.InternalData.ApprovedBy
+          this.travelmodel.OCONUSApprovedOn = this.travelmodel.InternalData.ApprovedOn
+        }
+        let payload = {}
+        payload.id = this.TripId
+        payload.email = this.travelmodel.InternalData.ManagerEmail
+        payload.comments = 'Travel Approved'
+        Travel.dispatch('EditTripEmail', payload)
+      }
+      if (this.travelmodel.InternalData.Approval == 'Denied') {
+        status = 'Denied'
+        this.travelmodel.InternalData.Status = 'Denied'
+        this.travelmodel.InternalData.ApprovalRequested = 'No'
+        this.travelmodel.InternalData.ATPRequested = 'No'
+        let payload = {}
+        payload.id = this.TripId
+        payload.email = this.travelmodel.InternalData.ManagerEmail
+        payload.comments = 'Travel Denied'
+        Travel.dispatch('EditTripEmail', payload)
       }
       this.travelmodel.InternalData.date = this.$moment().format('MM/DD/YYYY')
 
@@ -1099,10 +1285,7 @@ export default {
         IndexNumber: this.travelmodel.IndexNumber,
         OCONUS: this.travelmodel.OCONUS,
         OCONUSLocation: this.travelmodel.OCONUSLocation,
-        OCONUSApprovedBy: this.travelmodel.OCONUSApprovedBy,
-        OCONUSApprovedOn: oconusapprovedon,
-        OCONUSApprovedEmail: this.travelmodel.OCONUSApprovedEmail,
-        PreApproved: this.travelmodel.PreApproved,
+        PreApproved: this.travelmodel.InternalData.PreApproved,
         Company: this.travelmodel.Company,
         TravelFrom: this.travelmodel.TravelFrom,
         TravelTo: this.travelmodel.TravelTo,
@@ -1132,7 +1315,6 @@ export default {
   },
   watch: {
     Show: function() {
-      // console.log('SHOW: ' + this.Show)
       if (this.Show == true) {
         this.$bvToast.show('form-toast')
         // Load supporting data and the trip

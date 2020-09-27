@@ -19,6 +19,8 @@ import Bug from '@/models/Bug'
 import bugmodule from '@/modules/bugmodule'
 import Company from '@/models/Company'
 import companymodule from '@/modules/companymodule'
+import MSR from '@/models/MSR'
+import msrmodule from '@/modules/msrmodule'
 
 Vue.use(Vuex)
 const database = new VuexORM.Database()
@@ -32,6 +34,7 @@ database.register(WorkPlan, workplanmodule)
 database.register(Feature, featuremodule)
 database.register(Bug, bugmodule)
 database.register(Company, companymodule)
+database.register(MSR, msrmodule)
 
 Vue.config.devtools = true
 

@@ -122,9 +122,9 @@
               background: transparent;
               padding-left: 55px;
               text-transform: capitalize;
-              padding: 5px 15px 5px 15px;
+              padding: 0.25rem 0.5rem 0.25rem 0.5rem;
               font-weight: 400;
-              font-size: 14px;
+              font-size: 0.75rem;
             }
 
             &:hover,
@@ -136,7 +136,7 @@
             }
           }
           .sidebar-normal{
-            left: 15px;
+            left: 0.5rem;
           }
         }
       }
@@ -145,8 +145,8 @@
     .nav .nav-link{
       p{
         margin: 0;
-        line-height: 30px;
-        font-size: 12px;
+        line-height: 1.5rem;
+        font-size: 0.75rem;
         font-weight: 600;
         text-transform: uppercase;
         white-space: nowrap;
@@ -252,7 +252,7 @@
     border-top: 4px solid\9;
     border-right: 4px solid transparent;
     border-left: 4px solid transparent;
-    margin-top: 13px;
+    margin-top: 0.5rem;
     position: absolute;
     right: 0;
     @include transition(150ms, ease-in);
@@ -274,14 +274,14 @@
     .nav-item{
       .nav-link{
         color: $white;
-        margin: 5px 5px 0px 5px;
+        margin: 0;
         opacity: .86;
         border-radius: 4px;
         text-transform: uppercase;
-        line-height: 30px;
-        font-size: 12px;
+        line-height: 1.5rem;
+        font-size: 0.75rem;
         font-weight: 600;
-        padding: 10px 15px;
+        padding: 0.25rem 0.5rem;
         white-space: nowrap;
 
         &:hover{
@@ -299,9 +299,9 @@
         }
 
         svg{
-          font-size: 28px;
-          margin-right: 15px;
-          width: 30px;
+          font-size: 1.5rem;
+          margin-right: 0.5rem;
+          width: 1rem;
           text-align: center;
           vertical-align: middle;
           float: left;
@@ -466,9 +466,9 @@
     background: transparent;
   }
 
-  .footer{
+  /* .footer{
     border-top: 1px solid #000000;
-  }
+  } */
 
   .navbar{
     margin-bottom: 0;
@@ -484,7 +484,7 @@
       .nav-item:hover{
         .collapse{
           .nav-item .nav-link{
-            padding: 5px 15px;
+            padding: 0.25rem 0.75rem;
           }
         }
       }
@@ -513,7 +513,7 @@
   opacity: 1;
   white-space: nowrap;
   display: inline-block;
-  line-height: 23px;
+  line-height: 1rem;
 }
 .sidebar .nav .nav-item .nav-link .sidebar-mini{
   padding-left: 5px !important;
@@ -531,7 +531,7 @@
       display: inline-block !important;
     }
     .sidebar{
-      width: 80px;
+      width: 4rem;
       display: block;
       font-weight: 200;
       z-index: 3;
@@ -550,7 +550,7 @@
 
       .sidebar-wrapper{
         overflow: inherit;
-        width: 80px;
+        width: 4rem;
         box-shadow: none;
 
         .nav [data-toggle="collapse"] ~ div > ul > li > a .sidebar-normal,
@@ -661,8 +661,8 @@
     }
 
     .main-panel{
-      width: calc(100% - 80px);
-      margin-left: 80px;
+      width: calc(100% - 4rem);
+      margin-left: 4rem;
     }
 
     .wrapper{
@@ -677,7 +677,7 @@
     }
 
     .navbar-fixed{
-      width: calc(100% - 80px) !important;
+      width: calc(100% - 4rem) !important;
     }
   }
 }
@@ -740,5 +740,3 @@
     }
   }
 }
-
-

@@ -1,8 +1,9 @@
+/* eslint-disable vue/valid-v-bind */
 <template>
   <div class="sidebar" :style="sidebarStyle" :data-color="backgroundColor" :data-image="backgroundImage" :data-active-color="activeColor">
     <div class="sidebar-wrapper">
       <div class="logo">
-        <a class="logo-mini" href="/sites/f3i2/Pages/Home.aspx">
+        <a class="logo-mini" href="/sites/F3I2/DEV/Pages/Home.aspx">
           <div class="logo-img">
             <font-awesome-icon fas icon="fighter-jet" class="icon"></font-awesome-icon>
           </div>
@@ -19,13 +20,15 @@
           </sidebar-item>
         </slot>
       </ul>
-      <ul class="legend">
+      <ul class="legend" @click="setLegend" :class="{ 'legend-expanded': legendHeightExpanded }">
         <li class="legend-item">
           <b-alert variant="secondary" class="text-center" show>
-            <span class="text-dark">LEGEND</span>
+            <span class="text-dark">LEGEND <b class="caret legend-caret" :class="{ 'legend-expanded-caret': legendHeightExpanded }"></b></span>
           </b-alert>
         </li>
-        <legend-item v-for="item in legendItems" :key="item.id" :item="item"></legend-item>
+        <div>
+          <legend-item v-for="item in legendItems" :key="item.id" :item="item"></legend-item>
+        </div>
       </ul>
     </div>
   </div>
@@ -37,7 +40,7 @@ export default {
   props: {
     title: {
       type: String,
-      default: 'F3I-2'
+      default: 'F3I2'
     },
     backGround: {
       type: String,
@@ -53,7 +56,7 @@ export default {
     },
     backgroundImage: {
       type: String,
-      default: '/sites/f3i2/SiteAssets/html/static/img/sidebar-3.jpg'
+      default: '/sites/F3I2/DEV/SiteAssets/html/static/img/background-1.JPG'
     },
     activeColor: {
       type: String,
@@ -65,7 +68,7 @@ export default {
     },
     logo: {
       type: String,
-      default: '/sites/f3i2/SiteAssets/html/static/img/vue-logo.png'
+      default: '/sites/F3I2/DEV/SiteAssets/html/static/img/vue-logo.png'
     },
     sidebarLinks: {
       type: Array,
@@ -74,6 +77,11 @@ export default {
     autoClose: {
       type: Boolean,
       default: true
+    }
+  },
+  data: function() {
+    return {
+      legendHeightExpanded: false // TODO: Save this state to localStorage and read from there.
     }
   },
   provide() {
@@ -90,6 +98,27 @@ export default {
     },
     legendItems() {
       return this.$store.state.support.legendItems
+    }
+  },
+  mounted: function() {
+    this.getLegend()
+  },
+  methods: {
+    getLegend: function() {
+      let l = String(window.localStorage.getItem('legend'))
+      if (l) {
+        let legend = JSON.parse(l)
+        if (legend) {
+          this.legendHeightExpanded = legend.value
+        }
+      }
+    },
+    setLegend: function() {
+      this.legendHeightExpanded = !this.legendHeightExpanded
+      var legend = {
+        value: this.legendHeightExpanded
+      }
+      window.localStorage.setItem('legend', JSON.stringify(legend))
     }
   },
   beforeDestroy() {
@@ -114,7 +143,7 @@ export default {
   left: 0;
   background-color: black;
   opacity: 1;
-  height: 350px;
+  height: 2.5rem;
   overflow-y: auto;
   width: 100%;
   margin: 0;
@@ -122,10 +151,22 @@ export default {
   list-style-type: none;
 }
 
+.legend-expanded {
+  height: 15rem !important;
+}
+
 .legend-item {
-  height: 34px;
-  margin-bottom: 2px;
-  font-size: 20px;
+  height: 1.5rem;
+  margin-bottom: 0.25rem;
+  font-size: 0.75rem;
+}
+
+.legend-caret {
+  right: 1.5rem !important;
+}
+
+.legend-expanded-caret {
+  transform: rotate(180deg);
 }
 
 .alert {
