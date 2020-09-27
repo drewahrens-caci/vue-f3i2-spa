@@ -307,7 +307,7 @@ export default {
       Clearance: payload[0].Clearance,
       IndexNumber: payload[0].IndexNumber,
       InternalData: JSON.stringify(payload[0].InternalData),
-      VisitRequest: payload[0].VisitRequest === 'Yes' ? 'true' : 'false'
+      VisitRequest: payload[0].VisitRequest === 'Yes' ? 'Yes' : 'No'
     }
     try {
       const response = await axios.post(url, itemprops, config)
@@ -367,7 +367,7 @@ export default {
       Comments: payload[0].Comments,
       Clearance: payload[0].Clearance,
       InternalData: JSON.stringify(payload[0].InternalData),
-      VisitRequest: payload[0].VisitRequest === 'Yes' ? 'true' : 'false',
+      VisitRequest: payload[0].VisitRequest === 'Yes' ? 'Yes' : 'No',
       EstimatedCost: Number(payload[0].EstimatedCost),
       SecurityAction: payload[0].SecurityAction,
       SecurityActionCompleted: payload[0].SecurityActionCompleted

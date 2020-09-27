@@ -1,5 +1,5 @@
 {
-  "name": "vue-dev-f3i2-spa",
+  "name": "vue-f3i2-spa",
   "version": "0.1.5",
   "private": false,
   "scripts": {
@@ -41,6 +41,7 @@
     "push.js": "^1.0.12",
     "vue": "^2.6.12",
     "vue-clickaway": "^2.2.2",
+    "vue-crono": "^2.0.9",
     "vue-lodash": "^2.1.2",
     "vue-moment": "^4.1.0",
     "vue-router": "^3.4.3",
@@ -94,8 +95,8 @@
           "singleQuote": true,
           "semi": false,
           "trailingComma": "none",
-          "code": 280,
-          "printWidth": 280,
+          "code": 350,
+          "printWidth": 350,
           "ignoreComments": true,
           "ignoreStrings": true,
           "ignoreTemplateLiterals": true
@@ -115,6 +116,6 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/danwalker-caci/vue-dev-f3i2-spa.git"
+    "url": "https://github.com/danwalker-caci/vue-f3i2-spa.git"
   }
 }

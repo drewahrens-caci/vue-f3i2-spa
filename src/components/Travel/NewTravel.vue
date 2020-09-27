@@ -447,14 +447,14 @@ export default {
   mounted: function() {
     vm = this // Setting up page specific handle to 'this' which represents the vue component. Used in promise functions as they will have their on 'this'.
   },
-  updated: function() {
+  /* updated: function() {
     if (this.Start != null) {
       this.travelmodel.StartTime = this.Start
     }
     if (this.End != null) {
       this.travelmodel.EndTime = this.End
     }
-  },
+  }, */
   data: function() {
     return {
       busyTitle: 'Getting Trip Data. Please Wait.',
@@ -979,7 +979,13 @@ export default {
       if (this.Show == true) {
         // Load supporting data and the trip
         if (this.personnel && this.personnel.length > 0) {
-          vm.pdata = vm.personnel
+          this.pdata = this.personnel
+          if (this.Start != null) {
+            this.travelmodel.StartTime = this.Start
+          }
+          if (this.End != null) {
+            this.travelmodel.EndTime = this.End
+          }
           // If personnel exist then companies and workplans should exist. companies could already exist if opened from travel tracker.
         } else {
           Personnel.dispatch('getPersonnel').then(function() {
@@ -987,6 +993,12 @@ export default {
               Company.dispatch('getCompanies').then(function() {
                 // all data should be loaded
                 vm.pdata = vm.personnel
+                if (this.Start != null) {
+                  this.travelmodel.StartTime = this.Start
+                }
+                if (this.End != null) {
+                  this.travelmodel.EndTime = this.End
+                }
               })
             })
           })

@@ -232,7 +232,7 @@ function formatTrip(j) {
   p.Comments = j[0]['Comments'] !== null ? String(j[0]['Comments']) : ''
   p.Clearance = j[0]['Clearance'] !== null ? String(j[0]['Clearance']) : ''
   p.InternalData = j[0]['InternalData'] !== null ? String(j[0]['InternalData']) : ''
-  p.VisitRequest = j[0]['VisitRequest'] === true ? 'Yes' : 'No'
+  p.VisitRequest = j[0]['VisitRequest'] === 'Yes' ? 'Yes' : 'No'
   p.SecurityAction = j[0]['SecurityAction'] !== null ? String(j[0]['SecurityAction']) : ''
   p.SecurityActionCompleted = actioncompleted
   p.EstimatedCost = j[0]['EstimatedCost'] !== null ? String(j[0]['EstimatedCost']) : ''
@@ -311,7 +311,7 @@ function formatTravel(j) {
       Comments: j[i]['Comments'] !== null ? String(j[i]['Comments']) : '',
       Clearance: j[i]['Clearance'] !== null ? String(j[i]['Clearance']) : '',
       InternalData: j[i]['InternalData'] !== null ? String(j[i]['InternalData']) : '',
-      VisitRequest: j[i]['VisitRequest'] === true ? 'Yes' : 'No',
+      VisitRequest: j[i]['VisitRequest'] === 'Yes' ? 'Yes' : 'No',
       SecurityAction: j[i]['SecurityAction'] !== null ? String(j[i]['SecurityAction']) : '',
       SecurityActionCompleted: actioncompleted,
       EstimatedCost: j[i]['EstimatedCost'] !== null ? String(j[i]['EstimatedCost']) : '',

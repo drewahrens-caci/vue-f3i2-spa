@@ -1245,10 +1245,20 @@ export default {
     /* ----------------------------------------------------------------------------------- END TRACKER EVENTS ----------------------------------------------------------------------------------- */
     /* ----------------------------------------------------------------------------------- BEGIN CALENDAR EVENTS -------------------------------------------------------------------------------- */
     onPopupOpen: function(args) {
-      /* if (console) {
-        console.log('Cell Double Clicked: ' + args.requestType)
-      } */
-      args.cancel = true
+      if (console) {
+        console.log('Popup Open')
+      }
+      try {
+        let element = String(args.data.element.className)
+        if (element.indexOf('more') <= 0) {
+          args.cancel = true
+        }
+      } catch (e) {
+        if (console) {
+          console.log(e)
+        }
+        args.cancel = true
+      }
     },
     onCellClick: function(args) {
       /* if (console) {

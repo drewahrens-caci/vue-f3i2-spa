@@ -568,27 +568,25 @@ export default {
       ],
       cacstatus: [
         { text: 'Select...', value: 'S' },
-        { text: 'N/A', value: 'N/A' },
+        { text: 'Not Required', value: 'Not Required' },
+        { text: 'Pending Info', value: 'Pending Info' },
         { text: 'CACI Review', value: 'CACI Review' },
         { text: 'Requested', value: 'Requested' },
-        { text: 'Pending Info', value: 'Pending Info' },
-        { text: 'Return Pending', value: 'Return Pending' },
-        { text: 'Returned', value: 'Returned' },
-        { text: 'Renewed', value: 'Renewed' },
         { text: 'Issued', value: 'Issued' },
+        { text: 'Return Pending', value: 'Return Pending' },
+        { text: 'Disposition-Returned', value: 'Disposition-Returned' },
         { text: 'Disposition-Transferred', value: 'Disposition-Transferred' },
-        { text: 'Non F3I-2 CAC', value: 'Non F3I-2 CAC' },
-        { text: 'Issuance Cancelled ', value: 'Issuance Cancelled ' }
+        { text: 'Non-F3I2 CAC', value: 'Non-F3I2 CAC' }
       ],
       formstatus: [
         { text: 'Select...', value: 'S' },
-        { text: 'CACI Review', value: 'CACI Review' },
         { text: 'Not Required', value: 'Not Required' },
         { text: 'Pending Info', value: 'Pending Info' },
+        { text: 'CACI Review', value: 'CACI Review' },
         { text: 'Submitted', value: 'Submitted' },
-        { text: 'Debrief Notification Submitted', value: 'Debrief Notification Submitted' },
         { text: 'SSO Processed', value: 'SSO Processed' },
-        { text: 'Disposition-TIS', value: 'Disposition-TIS' },
+        { text: 'Debrief Notification Submitted', value: 'Debrief Notification Submitted' },
+        { text: 'Disposition-Transfer', value: 'Disposition-Transfer' },
         { text: 'Disposition-Debriefed', value: 'Disposition-Debriefed' }
       ],
       formtype: [

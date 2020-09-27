@@ -138,7 +138,7 @@ export default {
         Travel.dispatch('editTripReport', event).then(function() {
           // Reload tracker
           vm.$store.dispatch('support/addActivity', '<div class="bg-success">TripReport-EDITRIPREPORT COMPLETED.</div>')
-          vm.Show = false
+          vm.$emit('close')
           let path = '/travel/home/refresh' + vm.mode
           vm.$router.push({ path: path })
         })
