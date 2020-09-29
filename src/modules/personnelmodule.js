@@ -41,6 +41,9 @@ const actions = {
     // console.log('GETTING ALL PERSONNEL.')
     let response = await PersonnelService.getPersonnel()
     Personnel.create({ data: formatPersonnel(response) })
+    Personnel.commit(state => {
+      state.loaded = true
+    })
   },
   async getPersonnelByEmail({ state }, email) {
     // console.log('GETTING PERSONNEL BY EMAIL.')

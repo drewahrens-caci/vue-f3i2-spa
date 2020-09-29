@@ -80,9 +80,4 @@ export default {
   }
 }
 </script>
-<style lang="scss">
-.main-panel {
-  /*border: 2px solid red !important;*/
-  background-color: black !important;
-}
-</style>
+<style lang="scss"></style>

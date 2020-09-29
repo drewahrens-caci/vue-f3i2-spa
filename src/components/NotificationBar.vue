@@ -1,5 +1,4 @@
 <template>
-  <!-- <b-alert show :variant="notification.type">{{ notification.message }}</b-alert> -->
   <b-toast :variant="notification.type" solid append-toast auto-hide-delay="8000" visible>
     <template v-slot:toast-title>
       <div class="d-flex flex-grow-1 align-items-baseline">
@@ -12,8 +11,8 @@
 
 <script>
 /* eslint-disable */
-import push from 'push.js'
-import { mapActions } from 'vuex'
+import push from "push.js";
+import { mapActions } from "vuex";
 
 export default {
   props: {
@@ -25,33 +24,37 @@ export default {
   data() {
     return {
       timeout: null
-    }
+    };
   },
   mounted() {
-    this.timeout = setTimeout(() => this.remove(this.notification), 5000)
+    this.timeout = setTimeout(() => this.remove(this.notification), 5000);
     if (this.notification.push == true) {
       push.create(this.notification.title, {
         body: this.notification.message,
-        icon: _spPageContextInfo.webAbsoluteUrl + '/SiteAssets/html/static/img/' + this.notification.type + '.png',
-        link: '/#',
+        icon:
+          _spPageContextInfo.webAbsoluteUrl +
+          "/SiteAssets/html/static/img/" +
+          this.notification.type +
+          ".png",
+        link: "/#",
         timeout: 10000,
         onClick: function() {
-          window.focus()
-          this.close()
+          window.focus();
+          this.close();
         }
-      })
+      });
     }
   },
   beforeDestroy() {
-    clearTimeout(this.timeout)
+    clearTimeout(this.timeout);
   },
   computed: {
     notificationTypeClass() {
-      return `-text-${this.notification.type}`
+      return `-text-${this.notification.type}`;
     }
   },
-  methods: mapActions('notification', ['remove'])
-}
+  methods: mapActions("notification", ["remove"])
+};
 </script>
 
 <style scoped>

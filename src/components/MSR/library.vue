@@ -7,13 +7,18 @@
 <script>
 export default {
   mounted: function() {
-    this.$options.interval = setInterval(this.hideRibbon, 1000)
+    this.$options.interval = setInterval(this.hideRibbon, 1500)
   },
   methods: {
     hideRibbon: function() {
-      let frame = document.getElementsByTagName('iframe')[0].contentWindow
-      frame.document.getElementById('s4-ribbonrow').style.display = 'none'
-      frame.document.getElementById('s4-workspace').style.padding = '15px'
+      clearInterval(this.$options.interval)
+      try {
+        let frame = document.getElementsByTagName('iframe')[0].contentWindow
+        frame.document.getElementById('s4-ribbonrow').style.display = 'none'
+        frame.document.getElementById('s4-workspace').style.padding = '15px'
+      } catch (e) {
+        // don't care here
+      }
     }
   }
 }

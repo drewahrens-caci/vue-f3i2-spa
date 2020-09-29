@@ -2,46 +2,151 @@
 <template>
   <b-container fluid class="contentHeight">
     <b-row ref="GridRow" class="contentHeight">
-      <b-modal ref="FilterModal" id="FilterModal" size="sm" no-fade modal-class="animated bounceInLeft">
+      <b-modal
+        ref="FilterModal"
+        id="FilterModal"
+        size="sm"
+        no-fade
+        modal-class="animated bounceInLeft"
+      >
         <template v-slot:modal-title>Personnel Filter</template>
         <div>
           <ul id="ulFields">
             <li v-for="field in fields" :key="field">
               <div v-if="field.FieldName !== 'Version'">
-                <ejs-checkbox :label="field.DisplayName" :checked="field.Visible" @change="showorhide" :value="field.FieldName"></ejs-checkbox>
-                <b-button size="sm" class="actionbutton float-right" :class="field.Filter ? null : 'collapsed'" :aria-expanded="field.Filter ? 'true' : 'false'" :aria-controls="getRef('collapse', field.FieldName)" @click="field.Filter = !field.Filter">
-                  <font-awesome-icon fas icon="filter" class="icon"></font-awesome-icon>
+                <ejs-checkbox
+                  :label="field.DisplayName"
+                  :checked="field.Visible"
+                  @change="showorhide"
+                  :value="field.FieldName"
+                ></ejs-checkbox>
+                <b-button
+                  size="sm"
+                  class="actionbutton float-right"
+                  :class="field.Filter ? null : 'collapsed'"
+                  :aria-expanded="field.Filter ? 'true' : 'false'"
+                  :aria-controls="getRef('collapse', field.FieldName)"
+                  @click="field.Filter = !field.Filter"
+                >
+                  <font-awesome-icon
+                    fas
+                    icon="filter"
+                    class="icon"
+                  ></font-awesome-icon>
                 </b-button>
-                <b-button size="sm" class="actionbutton float-right" :class="field.Sort == 'Down' ? 'sorted' : ''" :id="getRef('sortdown', field.FieldName)" @click="sortdown(field.FieldName, field.Type)">
-                  <font-awesome-icon fas icon="arrow-down" class="icon"></font-awesome-icon>
+                <b-button
+                  size="sm"
+                  class="actionbutton float-right"
+                  :class="field.Sort == 'Down' ? 'sorted' : ''"
+                  :id="getRef('sortdown', field.FieldName)"
+                  @click="sortdown(field.FieldName, field.Type)"
+                >
+                  <font-awesome-icon
+                    fas
+                    icon="arrow-down"
+                    class="icon"
+                  ></font-awesome-icon>
                 </b-button>
-                <b-button size="sm" class="actionbutton float-right" :class="field.Sort == 'Up' ? 'sorted' : ''" :id="getRef('sortup', field.FieldName)" @click="sortup(field.FieldName, field.Type)">
-                  <font-awesome-icon fas icon="arrow-up" class="icon"></font-awesome-icon>
+                <b-button
+                  size="sm"
+                  class="actionbutton float-right"
+                  :class="field.Sort == 'Up' ? 'sorted' : ''"
+                  :id="getRef('sortup', field.FieldName)"
+                  @click="sortup(field.FieldName, field.Type)"
+                >
+                  <font-awesome-icon
+                    fas
+                    icon="arrow-up"
+                    class="icon"
+                  ></font-awesome-icon>
                 </b-button>
-                <b-collapse class="mt-1" :id="getRef('collapse', field.FieldName)" v-model="field.Filter">
+                <b-collapse
+                  class="mt-1"
+                  :id="getRef('collapse', field.FieldName)"
+                  v-model="field.Filter"
+                >
                   <b-container fluid>
                     <b-row class="mb-1" v-if="field.Type !== 'Dropdown'">
-                      <ejs-dropdownlist v-if="field.Type == 'Text'" v-model="field.Predicate" :dataSource="textpredicate" :fields="ddfields"></ejs-dropdownlist>
-                      <ejs-dropdownlist v-if="field.Type == 'Date'" v-model="field.Predicate" :dataSource="datepredicate" :fields="ddfields"></ejs-dropdownlist>
+                      <ejs-dropdownlist
+                        v-if="field.Type == 'Text'"
+                        v-model="field.Predicate"
+                        :dataSource="textpredicate"
+                        :fields="ddfields"
+                      ></ejs-dropdownlist>
+                      <ejs-dropdownlist
+                        v-if="field.Type == 'Date'"
+                        v-model="field.Predicate"
+                        :dataSource="datepredicate"
+                        :fields="ddfields"
+                      ></ejs-dropdownlist>
                     </b-row>
                     <b-row v-else class="mb-1">
-                      <ejs-dropdownlist v-if="field.DropdownSource === 'subet'" v-model="field.Selected" :dataSource="subet" :fields="ddfields"></ejs-dropdownlist>
-                      <ejs-dropdownlist v-else-if="field.DropdownSource === 'companies'" v-model="field.Selected" :dataSource="companies" :fields="ddfields"></ejs-dropdownlist>
-                      <ejs-dropdownlist v-else-if="field.DropdownSource === 'cacstatus'" v-model="field.Selected" :dataSource="cacstatus" :fields="ddfields"></ejs-dropdownlist>
-                      <ejs-dropdownlist v-else-if="field.DropdownSource === 'formstatus'" v-model="field.Selected" :dataSource="formstatus" :fields="ddfields"></ejs-dropdownlist>
-                      <ejs-dropdownlist v-else-if="field.DropdownSource === 'formtype'" v-model="field.Selected" :dataSource="formtype" :fields="ddfields"></ejs-dropdownlist>
+                      <ejs-dropdownlist
+                        v-if="field.DropdownSource === 'subet'"
+                        v-model="field.Selected"
+                        :dataSource="subet"
+                        :fields="ddfields"
+                      ></ejs-dropdownlist>
+                      <ejs-dropdownlist
+                        v-else-if="field.DropdownSource === 'companies'"
+                        v-model="field.Selected"
+                        :dataSource="companies"
+                        :fields="ddfields"
+                      ></ejs-dropdownlist>
+                      <ejs-dropdownlist
+                        v-else-if="field.DropdownSource === 'cacstatus'"
+                        v-model="field.Selected"
+                        :dataSource="cacstatus"
+                        :fields="ddfields"
+                      ></ejs-dropdownlist>
+                      <ejs-dropdownlist
+                        v-else-if="field.DropdownSource === 'formstatus'"
+                        v-model="field.Selected"
+                        :dataSource="formstatus"
+                        :fields="ddfields"
+                      ></ejs-dropdownlist>
+                      <ejs-dropdownlist
+                        v-else-if="field.DropdownSource === 'formtype'"
+                        v-model="field.Selected"
+                        :dataSource="formtype"
+                        :fields="ddfields"
+                      ></ejs-dropdownlist>
                     </b-row>
                     <b-row class="mb-1">
-                      <b-form-input class="filterform" v-if="field.Type == 'Text'" v-model="field.FilterValue"></b-form-input>
-                      <ejs-datepicker v-if="field.Type == 'Date'" v-model="field.FilterValue"></ejs-datepicker>
+                      <b-form-input
+                        class="filterform"
+                        v-if="field.Type == 'Text'"
+                        v-model="field.FilterValue"
+                      ></b-form-input>
+                      <ejs-datepicker
+                        v-if="field.Type == 'Date'"
+                        v-model="field.FilterValue"
+                      ></ejs-datepicker>
                     </b-row>
                     <b-row v-if="field.Predicate == 'B'" class="mb-1">
-                      <ejs-datepicker v-if="field.Type == 'Date'" v-model="field.FilterValue2"></ejs-datepicker>
+                      <ejs-datepicker
+                        v-if="field.Type == 'Date'"
+                        v-model="field.FilterValue2"
+                      ></ejs-datepicker>
                     </b-row>
                     <b-row>
                       <div class="full">
-                        <b-button size="sm" variant="danger" :id="getRef('clear', field.FieldName)" class="float-right ml-1" @click="clearfilter">Clear</b-button>
-                        <b-button size="sm" variant="success" :id="getRef('filter', field.FieldName)" class="float-right" @click="setfilter">Filter</b-button>
+                        <b-button
+                          size="sm"
+                          variant="danger"
+                          :id="getRef('clear', field.FieldName)"
+                          class="float-right ml-1"
+                          @click="clearfilter"
+                          >Clear</b-button
+                        >
+                        <b-button
+                          size="sm"
+                          variant="success"
+                          :id="getRef('filter', field.FieldName)"
+                          class="float-right"
+                          @click="setfilter"
+                          >Filter</b-button
+                        >
                       </div>
                     </b-row>
                   </b-container>
@@ -50,8 +155,22 @@
             </li>
             <li class="py30">
               <div class="full py30">
-                <b-button size="sm" variant="danger" id="clearfilters" class="float-right ml-1" @click="clearfilters">Clear Filters</b-button>
-                <b-button size="sm" variant="success" id="savefilters" class="float-right" @click="savefilters">Save Filters</b-button>
+                <b-button
+                  size="sm"
+                  variant="danger"
+                  id="clearfilters"
+                  class="float-right ml-1"
+                  @click="clearfilters"
+                  >Clear Filters</b-button
+                >
+                <b-button
+                  size="sm"
+                  variant="success"
+                  id="savefilters"
+                  class="float-right"
+                  @click="savefilters"
+                  >Save Filters</b-button
+                >
               </div>
             </li>
           </ul>
@@ -60,7 +179,11 @@
       <b-col cols="12" class="m-0 p-0">
         <b-row class="contentHeight">
           <div class="col-12 py40">
-            <b-button id="ShowFilters" class="btn btn-warning" @click="ToggleFilters">
+            <b-button
+              id="ShowFilters"
+              class="btn btn-warning"
+              @click="ToggleFilters"
+            >
               Toggle Filters
             </b-button>
           </div>
@@ -86,28 +209,164 @@
               width="100%"
             >
               <e-columns>
-                <e-column field="LastName" headerText="Last" textAlign="Left" width="100" :showInColumnChooser="false"></e-column>
-                <e-column field="FirstName" headerText="First" width="100" :showInColumnChooser="false"></e-column>
-                <e-column field="Middle" headerText="Middle" textAlign="Left" width="100"></e-column>
-                <e-column field="Cadency" headerText="Cadency" textAlign="Left" width="100"></e-column>
-                <e-column field="Position" headerText="Position" textAlign="Left" width="180"></e-column>
-                <e-column field="Location" headerText="Location" textAlign="Left" width="150"></e-column>
-                <e-column field="Email" headerText="Email" textAlign="Left" width="300"></e-column>
-                <e-column field="Phone" headerText="Phone" textAlign="Left" width="100"></e-column>
-                <e-column field="Company" headerText="Company" textAlign="Left" width="250"></e-column>
-                <e-column field="SubET" headerText="Sub ET" textAlign="Left" width="100"></e-column>
-                <e-column field="CACStatus" :visible="false" :showInColumnChooser="true" headerText="CAC Status" textAlign="Left" width="110"></e-column>
-                <e-column field="CACRequestDate" :visible="false" :showInColumnChooser="true" headerText="CAC Req Date" textAlign="Left" width="180"></e-column>
-                <e-column field="CACExpirationDate" :visible="false" :showInColumnChooser="true" headerText="CAC Exp Date" textAlign="Left" width="180"></e-column>
-                <e-column field="SCIFormStatus" :visible="false" :showInColumnChooser="true" headerText="SCI Form Status" textAlign="Left" width="150"></e-column>
-                <e-column field="SCIFormType" :visible="false" :showInColumnChooser="true" headerText="SCI Form Type" textAlign="Left" width="150"></e-column>
-                <e-column field="SCIFormSubmitted" :visible="false" :showInColumnChooser="true" headerText="SCI Form Submitted" textAlign="Left" width="150"></e-column>
-                <e-column field="PRDueDate" :visible="false" :showInColumnChooser="true" headerText="PR Due Date" textAlign="Left" width="180"></e-column>
-                <e-column field="CEDate" :visible="false" :showInColumnChooser="true" headerText="CE Date" textAlign="Left" width="180"></e-column>
-                <e-column field="Contact" headerText="Contact" :visible="false" textAlign="Left" width="70" :showInColumnChooser="false"></e-column>
-                <e-column field="Active" headerText="Active" :visible="false" textAlign="Left" width="70" :showInColumnChooser="false"></e-column>
-                <e-column field="Id" headerText="Id" :visible="false" textAlign="Left" width="40" :isPrimaryKey="true" :showInColumnChooser="false"></e-column>
-                <e-column field="WPData" headerText="WPData" :visible="false" textAlign="Left" width="40" :showInColumnChooser="false"></e-column>
+                <e-column
+                  field="LastName"
+                  headerText="Last"
+                  textAlign="Left"
+                  width="100"
+                  :showInColumnChooser="false"
+                ></e-column>
+                <e-column
+                  field="FirstName"
+                  headerText="First"
+                  width="100"
+                  :showInColumnChooser="false"
+                ></e-column>
+                <e-column
+                  field="Middle"
+                  headerText="Middle"
+                  textAlign="Left"
+                  width="100"
+                ></e-column>
+                <e-column
+                  field="Cadency"
+                  headerText="Cadency"
+                  textAlign="Left"
+                  width="100"
+                ></e-column>
+                <e-column
+                  field="Position"
+                  headerText="Position"
+                  textAlign="Left"
+                  width="180"
+                ></e-column>
+                <e-column
+                  field="Location"
+                  headerText="Location"
+                  textAlign="Left"
+                  width="150"
+                ></e-column>
+                <e-column
+                  field="Email"
+                  headerText="Email"
+                  textAlign="Left"
+                  width="300"
+                ></e-column>
+                <e-column
+                  field="Phone"
+                  headerText="Phone"
+                  textAlign="Left"
+                  width="100"
+                ></e-column>
+                <e-column
+                  field="Company"
+                  headerText="Company"
+                  textAlign="Left"
+                  width="250"
+                ></e-column>
+                <e-column
+                  field="SubET"
+                  headerText="Sub ET"
+                  textAlign="Left"
+                  width="100"
+                ></e-column>
+                <e-column
+                  field="CACStatus"
+                  :visible="false"
+                  :showInColumnChooser="true"
+                  headerText="CAC Status"
+                  textAlign="Left"
+                  width="110"
+                ></e-column>
+                <e-column
+                  field="CACRequestDate"
+                  :visible="false"
+                  :showInColumnChooser="true"
+                  headerText="CAC Req Date"
+                  textAlign="Left"
+                  width="180"
+                ></e-column>
+                <e-column
+                  field="CACExpirationDate"
+                  :visible="false"
+                  :showInColumnChooser="true"
+                  headerText="CAC Exp Date"
+                  textAlign="Left"
+                  width="180"
+                ></e-column>
+                <e-column
+                  field="SCIFormStatus"
+                  :visible="false"
+                  :showInColumnChooser="true"
+                  headerText="SCI Form Status"
+                  textAlign="Left"
+                  width="150"
+                ></e-column>
+                <e-column
+                  field="SCIFormType"
+                  :visible="false"
+                  :showInColumnChooser="true"
+                  headerText="SCI Form Type"
+                  textAlign="Left"
+                  width="150"
+                ></e-column>
+                <e-column
+                  field="SCIFormSubmitted"
+                  :visible="false"
+                  :showInColumnChooser="true"
+                  headerText="SCI Form Submitted"
+                  textAlign="Left"
+                  width="150"
+                ></e-column>
+                <e-column
+                  field="PRDueDate"
+                  :visible="false"
+                  :showInColumnChooser="true"
+                  headerText="PR Due Date"
+                  textAlign="Left"
+                  width="180"
+                ></e-column>
+                <e-column
+                  field="CEDate"
+                  :visible="false"
+                  :showInColumnChooser="true"
+                  headerText="CE Date"
+                  textAlign="Left"
+                  width="180"
+                ></e-column>
+                <e-column
+                  field="Contact"
+                  headerText="Contact"
+                  :visible="false"
+                  textAlign="Left"
+                  width="70"
+                  :showInColumnChooser="false"
+                ></e-column>
+                <e-column
+                  field="Active"
+                  headerText="Active"
+                  :visible="false"
+                  textAlign="Left"
+                  width="70"
+                  :showInColumnChooser="false"
+                ></e-column>
+                <e-column
+                  field="Id"
+                  headerText="Id"
+                  :visible="false"
+                  textAlign="Left"
+                  width="40"
+                  :isPrimaryKey="true"
+                  :showInColumnChooser="false"
+                ></e-column>
+                <e-column
+                  field="WPData"
+                  headerText="WPData"
+                  :visible="false"
+                  textAlign="Left"
+                  width="40"
+                  :showInColumnChooser="false"
+                ></e-column>
               </e-columns>
             </ejs-grid>
           </div>
@@ -115,7 +374,10 @@
       </b-col>
     </b-row>
     <b-modal id="EditModal" ref="EditModal" size="xl" centered>
-      <template v-slot:modal-title>Edit Details For {{ rowData.FirstName + ' ' + rowData.LastName }}</template>
+      <template v-slot:modal-title
+        >Edit Details For
+        {{ rowData.FirstName + " " + rowData.LastName }}</template
+      >
       <b-container fluid>
         <p v-if="isSubcontractor">{{ rowData.ModDeniedReason }}</p>
         <table id="EditTable" class="personneltable">
@@ -129,14 +391,48 @@
               <th>Company</th>
             </tr>
             <tr class="text-white">
-              <td><input class="e-input" type="text" v-model="rowData.LastName" /><p v-if="showOldData" class="text-info">Original Value: {{ oldData.LastName }}</p></td>
-              <td><input class="e-input" type="text" v-model="rowData.FirstName" /><p v-if="showOldData" class="text-info">Original Value: {{ oldData.FirstName }}</p></td>
-              <td><input class="e-input" type="text" v-model="rowData.Middle" /><p v-if="showOldData" class="text-info">Original Value: {{ oldData.Middle }}</p></td>
-              <td><input class="e-input" type="text" v-model="rowData.Cadency" /><p v-if="showOldData" class="text-info">Original Value: {{ oldData.Cadency }}</p></td>
-              <td><input class="e-input" type="text" v-model="rowData.Location" /><p v-if="showOldData" class="text-info">Original Value: {{ oldData.Location }}</p></td>
               <td>
-                <ejs-dropdownlist v-model="rowData.Company" :dataSource="companies"></ejs-dropdownlist>
-                <p v-if="showOldData" class="text-info">Original Value: {{ oldData.Company }}</p>
+                <input class="e-input" type="text" v-model="rowData.LastName" />
+                <p v-if="showOldData" class="text-info">
+                  Original Value: {{ oldData.LastName }}
+                </p>
+              </td>
+              <td>
+                <input
+                  class="e-input"
+                  type="text"
+                  v-model="rowData.FirstName"
+                />
+                <p v-if="showOldData" class="text-info">
+                  Original Value: {{ oldData.FirstName }}
+                </p>
+              </td>
+              <td>
+                <input class="e-input" type="text" v-model="rowData.Middle" />
+                <p v-if="showOldData" class="text-info">
+                  Original Value: {{ oldData.Middle }}
+                </p>
+              </td>
+              <td>
+                <input class="e-input" type="text" v-model="rowData.Cadency" />
+                <p v-if="showOldData" class="text-info">
+                  Original Value: {{ oldData.Cadency }}
+                </p>
+              </td>
+              <td>
+                <input class="e-input" type="text" v-model="rowData.Location" />
+                <p v-if="showOldData" class="text-info">
+                  Original Value: {{ oldData.Location }}
+                </p>
+              </td>
+              <td>
+                <ejs-dropdownlist
+                  v-model="rowData.Company"
+                  :dataSource="companies"
+                ></ejs-dropdownlist>
+                <p v-if="showOldData" class="text-info">
+                  Original Value: {{ oldData.Company }}
+                </p>
                 <!-- <input class="e-input" type="text" v-model="rowData.Company" /> -->
               </td>
             </tr>
@@ -147,10 +443,34 @@
               <th>SubET</th>
             </tr>
             <tr class="text-white">
-              <td colspan="2"><input class="e-input" type="text" v-model="rowData.Position" /><p v-if="showOldData" class="text-info">Original Value: {{ oldData.Position }}</p></td>
-              <td colspan="2"><input class="e-input" type="text" v-model="rowData.Email" /><p v-if="showOldData" class="text-info">Original Value: {{ oldData.Email }}</p></td>
-              <td><input class="e-input" type="text" v-model="rowData.Phone" /><p v-if="showOldData" class="text-info">Original Value: {{ oldData.Phone }}</p></td>
-              <td><ejs-dropdownlist v-model="rowData.SubET" :dataSource="subet" :fields="ddfields"></ejs-dropdownlist><p v-if="showOldData" class="text-info">Original Value: {{ oldData.SubET }}</p></td>
+              <td colspan="2">
+                <input class="e-input" type="text" v-model="rowData.Position" />
+                <p v-if="showOldData" class="text-info">
+                  Original Value: {{ oldData.Position }}
+                </p>
+              </td>
+              <td colspan="2">
+                <input class="e-input" type="text" v-model="rowData.Email" />
+                <p v-if="showOldData" class="text-info">
+                  Original Value: {{ oldData.Email }}
+                </p>
+              </td>
+              <td>
+                <input class="e-input" type="text" v-model="rowData.Phone" />
+                <p v-if="showOldData" class="text-info">
+                  Original Value: {{ oldData.Phone }}
+                </p>
+              </td>
+              <td>
+                <ejs-dropdownlist
+                  v-model="rowData.SubET"
+                  :dataSource="subet"
+                  :fields="ddfields"
+                ></ejs-dropdownlist>
+                <p v-if="showOldData" class="text-info">
+                  Original Value: {{ oldData.SubET }}
+                </p>
+              </td>
             </tr>
             <tr class="bg-info text-white">
               <th colspan="2" title="CAC Status">CAC Status</th>
@@ -158,9 +478,33 @@
               <th colspan="2" title="CAC Expiration Date">CAC Exp Date</th>
             </tr>
             <tr class="text-white">
-              <td colspan="2"><ejs-dropdownlist v-model="rowData.CACStatus" :dataSource="cacstatus" :fields="ddfields"></ejs-dropdownlist><p v-if="showOldData" class="text-info">Original Value: {{ oldData.CACStatus }}</p></td>
-              <td colspan="2"><ejs-datepicker v-model="rowData.CACRequestDate"></ejs-datepicker><p v-if="showOldData" class="text-info">Original Value: {{ oldData.CACRequestDate }}</p></td>
-              <td colspan="2"><ejs-datepicker v-model="rowData.CACExpirationDate" :placeholder="waterMark"></ejs-datepicker><p v-if="showOldData" class="text-info">Original Value: {{ oldData.CACExpirationDate }}</p></td>
+              <td colspan="2">
+                <ejs-dropdownlist
+                  v-model="rowData.CACStatus"
+                  :dataSource="cacstatus"
+                  :fields="ddfields"
+                ></ejs-dropdownlist>
+                <p v-if="showOldData" class="text-info">
+                  Original Value: {{ oldData.CACStatus }}
+                </p>
+              </td>
+              <td colspan="2">
+                <ejs-datepicker
+                  v-model="rowData.CACRequestDate"
+                ></ejs-datepicker>
+                <p v-if="showOldData" class="text-info">
+                  Original Value: {{ oldData.CACRequestDate }}
+                </p>
+              </td>
+              <td colspan="2">
+                <ejs-datepicker
+                  v-model="rowData.CACExpirationDate"
+                  :placeholder="waterMark"
+                ></ejs-datepicker>
+                <p v-if="showOldData" class="text-info">
+                  Original Value: {{ oldData.CACExpirationDate }}
+                </p>
+              </td>
             </tr>
             <tr class="bg-info text-white">
               <th colspan="2" title="SCI Form Status">SCI Form Status</th>
@@ -168,57 +512,171 @@
               <th colspan="2" title="SCI Form Submitted">SCI Form Submiited</th>
             </tr>
             <tr class="text-white">
-              <td colspan="2"><ejs-dropdownlist v-model="rowData.SCIFormStatus" :dataSource="formstatus" :fields="ddfields"></ejs-dropdownlist><p v-if="showOldData" class="text-info">Original Value: {{ oldData.SCIFormStatus }}</p></td>
-              <td colspan="2"><ejs-dropdownlist v-model="rowData.SCIFormType" :dataSource="formtype" :fields="ddfields"></ejs-dropdownlist><p v-if="showOldData" class="text-info">Original Value: {{ oldData.SCIFormType }}</p></td>
-              <td colspan="2"><ejs-datepicker v-model="rowData.SCIFormSubmitted" :placeholder="waterMark"></ejs-datepicker><p v-if="showOldData" class="text-info">Original Value: {{ oldData.SCIFormSubmitted }}</p></td>
+              <td colspan="2">
+                <ejs-dropdownlist
+                  v-model="rowData.SCIFormStatus"
+                  :dataSource="formstatus"
+                  :fields="ddfields"
+                ></ejs-dropdownlist>
+                <p v-if="showOldData" class="text-info">
+                  Original Value: {{ oldData.SCIFormStatus }}
+                </p>
+              </td>
+              <td colspan="2">
+                <ejs-dropdownlist
+                  v-model="rowData.SCIFormType"
+                  :dataSource="formtype"
+                  :fields="ddfields"
+                ></ejs-dropdownlist>
+                <p v-if="showOldData" class="text-info">
+                  Original Value: {{ oldData.SCIFormType }}
+                </p>
+              </td>
+              <td colspan="2">
+                <ejs-datepicker
+                  v-model="rowData.SCIFormSubmitted"
+                  :placeholder="waterMark"
+                ></ejs-datepicker>
+                <p v-if="showOldData" class="text-info">
+                  Original Value: {{ oldData.SCIFormSubmitted }}
+                </p>
+              </td>
             </tr>
             <tr class="bg-info text-white">
               <th colspan="3" title="PR Due Date">PR Due Date</th>
               <th colspan="3" title="CE Date">CE Date</th>
             </tr>
             <tr class="text-white">
-              <td colspan="3"><ejs-datepicker v-model="rowData.PRDueDate" :placeholder="waterMark"></ejs-datepicker><p v-if="showOldData" class="text-info">Original Value: {{ oldData.PRDueDate }}</p></td>
-              <td colspan="3"><ejs-datepicker v-model="rowData.CEDate" :placeholder="waterMark"></ejs-datepicker><p v-if="showOldData" class="text-info">Original Value: {{ oldData.CEDate }}</p></td>
+              <td colspan="3">
+                <ejs-datepicker
+                  v-model="rowData.PRDueDate"
+                  :placeholder="waterMark"
+                ></ejs-datepicker>
+                <p v-if="showOldData" class="text-info">
+                  Original Value: {{ oldData.PRDueDate }}
+                </p>
+              </td>
+              <td colspan="3">
+                <ejs-datepicker
+                  v-model="rowData.CEDate"
+                  :placeholder="waterMark"
+                ></ejs-datepicker>
+                <p v-if="showOldData" class="text-info">
+                  Original Value: {{ oldData.CEDate }}
+                </p>
+              </td>
             </tr>
             <tr class="bg-info text-white text-center">
               <td colspan="6"><b>Work Plans</b></td>
             </tr>
             <tr>
               <td colspan="6">
-                <b-table id="WPTable" ref="WPTable" v-model="WPData" :items="Plans" :fields="WPFields" style="table-layout: fixed;">
+                <b-table
+                  id="WPTable"
+                  ref="WPTable"
+                  v-model="WPData"
+                  :items="Plans"
+                  :fields="WPFields"
+                  style="table-layout: fixed;"
+                >
                   <template v-slot:cell(actions)="data">
-                    <button size="sm" class="actionbutton" @click="deleteme(data.index)" title="Delete It">
-                      <font-awesome-icon far icon="trash-alt" class="icon" :style="{ color: 'red' }"></font-awesome-icon>
+                    <button
+                      size="sm"
+                      class="actionbutton"
+                      @click="deleteme(data.index)"
+                      title="Delete It"
+                    >
+                      <font-awesome-icon
+                        far
+                        icon="trash-alt"
+                        class="icon"
+                        :style="{ color: 'red' }"
+                      ></font-awesome-icon>
                     </button>
                   </template>
                   <template v-slot:cell(Workplan)="data">
-                    <ejs-dropdownlist v-model="WPData[data.index].Workplan" :dataSource="workplans" :fields="ddfields2" :id="getRef('Workplan', data.index)" @change="changewp"></ejs-dropdownlist>
+                    <ejs-dropdownlist
+                      v-model="WPData[data.index].Workplan"
+                      :dataSource="workplans"
+                      :fields="ddfields2"
+                      :id="getRef('Workplan', data.index)"
+                      @change="changewp"
+                    ></ejs-dropdownlist>
                   </template>
                   <template v-slot:cell(PercentSupport)="data">
-                    <ejs-dropdownlist v-model="WPData[data.index].PercentSupport" :dataSource="support" :fields="ddfields"></ejs-dropdownlist>
+                    <ejs-dropdownlist
+                      v-model="WPData[data.index].PercentSupport"
+                      :dataSource="support"
+                      :fields="ddfields"
+                    ></ejs-dropdownlist>
                   </template>
                 </b-table>
-                <button size="sm" @click="btnAddClick" variant="success">Add Work Plan</button>
+                <button size="sm" @click="btnAddClick" variant="success">
+                  Add Work Plan
+                </button>
               </td>
             </tr>
           </tbody>
         </table>
       </b-container>
       <template v-slot:modal-footer>
-        <div id="editModalButtons" v-show="!approvalOnly" class="editModalButtons">
-          <b-button variant="secondary" size="sm" @click="editClose">Close</b-button><b-button variant="primary" size="sm" @click="editOk">OK</b-button>
+        <div
+          id="editModalButtons"
+          v-show="!approvalOnly"
+          class="editModalButtons"
+        >
+          <b-button variant="danger" size="sm" @click="editClose"
+            >Close</b-button
+          ><b-button variant="success" size="sm" @click="editOk">OK</b-button>
         </div>
-        <div id="EditPersonnelButtons" v-show="!showDenial" class="editModalButtons">
-          <b-button v-if="isWPManager" size="sm" @click="showDenial = !showDenial" variant="secondary">Deny</b-button><b-button v-if="isWPManager" size="sm" @click="btnApproveClick" variant="primary">Approve</b-button>
+        <div
+          id="EditPersonnelButtons"
+          v-show="!showDenial && approvalOnly"
+          class="editModalButtons"
+        >
+          <b-button
+            v-if="isWPManager"
+            size="sm"
+            @click="showDenial = !showDenial"
+            variant="secondary"
+            >Deny</b-button
+          ><b-button
+            v-if="isWPManager"
+            size="sm"
+            @click="btnApproveClick"
+            variant="primary"
+            >Approve</b-button
+          >
         </div>
         <div id="wpmDenial" v-show="showDenial" class="editModalButtons">
           Reason: <textarea id="DeniedReason"></textarea>
-          <b-button size="sm" @click="showDenial = !showDenial" variant="secondary">Cancel</b-button>
-          <b-button size="sm" @click="btnDenyClick" class="btn-success" variant="primary">Submit</b-button>
+          <b-button
+            size="sm"
+            @click="showDenial = !showDenial"
+            variant="secondary"
+            >Close</b-button
+          >
+          <b-button
+            size="sm"
+            @click="btnDenyClick"
+            class="btn-success"
+            variant="primary"
+            >Submit</b-button
+          >
         </div>
       </template>
     </b-modal>
-    <b-modal id="NewModal" ref="NewModal" size="xl" centered @ok="newOk">
+    <b-modal
+      id="NewModal"
+      ref="NewModal"
+      size="xl"
+      centered
+      @ok="newOk"
+      cancel-title="Close"
+      ok-title="Submit"
+      ok-variant="success"
+      cancel-variant="danger"
+    >
       <template v-slot:modal-title>Add New User</template>
       <div class="container-fluid">
         <table id="NewTable" class="personneltable">
@@ -234,13 +692,20 @@
                 <input class="e-input" type="text" v-model="newData.LastName" />
               </td>
               <td>
-                <input class="e-input" type="text" v-model="newData.FirstName" />
+                <input
+                  class="e-input"
+                  type="text"
+                  v-model="newData.FirstName"
+                />
               </td>
               <td>
                 <input class="e-input" type="text" v-model="newData.Middle" />
               </td>
               <td>
-                <ejs-dropdownlist v-model="newData.Company" :dataSource="companies"></ejs-dropdownlist>
+                <ejs-dropdownlist
+                  v-model="newData.Company"
+                  :dataSource="companies"
+                ></ejs-dropdownlist>
               </td>
             </tr>
             <tr class="bg-warning text-white">
@@ -585,7 +1050,10 @@ export default {
         { text: 'CACI Review', value: 'CACI Review' },
         { text: 'Submitted', value: 'Submitted' },
         { text: 'SSO Processed', value: 'SSO Processed' },
-        { text: 'Debrief Notification Submitted', value: 'Debrief Notification Submitted' },
+        {
+          text: 'Debrief Notification Submitted',
+          value: 'Debrief Notification Submitted'
+        },
         { text: 'Disposition-Transfer', value: 'Disposition-Transfer' },
         { text: 'Disposition-Debriefed', value: 'Disposition-Debriefed' }
       ],
@@ -603,13 +1071,32 @@ export default {
         { text: '0%', value: 0 }
       ],
       WPFields: [
-        { key: 'actions', label: 'Action', thClass: 'bg-warning text-white text-center px40' },
-        { key: 'Workplan', label: 'Workplan', thClass: 'bg-warning text-white text-center px300' },
-        { key: 'PercentSupport', label: 'Percent Support', thClass: 'bg-warning text-white text-center px200' }
+        {
+          key: 'actions',
+          label: 'Action',
+          thClass: 'bg-warning text-white text-center px40'
+        },
+        {
+          key: 'Workplan',
+          label: 'Workplan',
+          thClass: 'bg-warning text-white text-center px300'
+        },
+        {
+          key: 'PercentSupport',
+          label: 'Percent Support',
+          thClass: 'bg-warning text-white text-center px200'
+        }
       ],
       pageSettings: { pageSize: 30 },
-      editSettings: { allowEditing: true, allowAdding: true, allowDeleting: false, mode: 'Dialog' },
-      sortSettings: { columns: [{ field: 'LastName', direction: 'Ascending' }] },
+      editSettings: {
+        allowEditing: true,
+        allowAdding: true,
+        allowDeleting: false,
+        mode: 'Dialog'
+      },
+      sortSettings: {
+        columns: [{ field: 'LastName', direction: 'Ascending' }]
+      },
       filterSettings: { type: 'Menu' },
       toolbar: ['Add', 'Edit', 'Print', 'Search', 'ExcelExport'],
       WPData: [
@@ -685,7 +1172,7 @@ export default {
     Personnel.dispatch('getDigest')
     Workplan.dispatch('getWorkplans').then(function() {
       Personnel.dispatch('getPersonnel').then(function() {
-        vm.$options.interval = setInterval(vm.waitForPeople, 1000)
+        vm.waitForPeople()
       })
     })
     if (this.mode === 'edit') {
@@ -713,7 +1200,6 @@ export default {
   methods: {
     waitForPeople: function() {
       if (this.personnel && this.personnel.length > 0) {
-        clearInterval(this.$options.interval)
         this.filteredpersonnel = this.personnel // set initial filter to all
         // load any saved filters
         this.loadfilters()
@@ -726,6 +1212,8 @@ export default {
             document.getElementById('PageTitle').innerHTML = ' -  Reports'
             break
         }
+      } else {
+        this.waitForPeople()
       }
     },
     getRef: function(text, idx) {
@@ -800,17 +1288,15 @@ export default {
           Id: this.rowData.Id
         }
         await Personnel.dispatch('editPerson', data).then(async () => {
-          if (this.WPData.length > 0) {
-            let managerEmails = []
-            for (var n = 0; n <= this.WPData.length; n++) {
-              let manager = await Workplan.dispatch('getManagerByWPNumber', this.WPData[n])
-              console.log(`Manager: ${JSON.stringify(manager)}`)
-              if (manager[0]) {
-                managerEmails.push(manager[0]['Manager']['EMail'])
-              }
+          let managerEmails = []
+          vm.user[0].WPData.length.foreach(async wp => {
+            let manager = await Workplan.dispatch('getManagerByWPNumber', wp)
+            console.log(`Manager: ${JSON.stringify(manager)}`)
+            if (manager[0]) {
+              managerEmails.push(manager[0]['Manager']['EMail'])
             }
-            data.WPManagerEmails = managerEmails
-          }
+          })
+          data.WPManagerEmails = managerEmails
           await Personnel.dispatch('editSubEmail', data, 'edit').then(() => {
             const notification = {
               type: 'info',
@@ -818,7 +1304,9 @@ export default {
               message: 'A Workplan Manager will review your submission.',
               push: true
             }
-            this.$store.dispatch('notification/add', notification, { root: true })
+            this.$store.dispatch('notification/add', notification, {
+              root: true
+            })
             vm.hideme('EditModal', 'refresh')
           })
         })
@@ -839,13 +1327,13 @@ export default {
         let results = await Personnel.dispatch('addSub', data)
         if (this.WPData.length > 0) {
           let managerEmails = []
-          for (var n = 0; n <= vm.WPData.length; n++) {
-            let manager = await Workplan.dispatch('getManagerByWPNumber', this.WPData[n])
+          vm.user[0].WPData.foreach(async wp => {
+            let manager = await Workplan.dispatch('getManagerByWPNumber', wp)
             console.log(`Manager: ${JSON.stringify(manager)}`)
             if (manager[0]) {
               managerEmails.push(manager[0]['Manager']['EMail'])
             }
-          }
+          })
           results.WPManagerEmails = managerEmails
         }
         await Personnel.dispatch('newSubEmail', results).then(() => {
@@ -1157,7 +1645,9 @@ export default {
                 message: err,
                 push: true
               }
-              this.$store.dispatch('notification/add', notification, { root: true })
+              this.$store.dispatch('notification/add', notification, {
+                root: true
+              })
             })
         } else {
           // versions don't match so let the user know
@@ -1188,7 +1678,7 @@ export default {
           break
         case 'default':
           Personnel.dispatch('getPersonnel').then(function() {
-            vm.$options.interval = setInterval(vm.waitForPeople, 1000)
+            vm.waitForPeople()
           })
           break
       }

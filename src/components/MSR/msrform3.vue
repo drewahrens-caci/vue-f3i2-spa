@@ -2423,7 +2423,7 @@ export default {
     let m = this.$moment().get('month')
     this.Month = months[m]
     this.Year = String(this.$moment().year())
-    this.headerText = 'Edit Data For MSR ' + this.msrdata.WorkplanTitle
+    this.headerText = 'Edit Data For MSR ' + this.msrdata.WorkplanNumber + ' ' + this.msrdata.WorkplanTitle
     let formbody = document.getElementById('Tabs')
     let h = this.rect.height - 100
     formbody.style.height = h + 'px'
@@ -2506,7 +2506,8 @@ export default {
             cancelTitle: 'NO',
             footerClass: 'p-2',
             hideHeaderClose: false,
-            centered: true
+            centered: true,
+            noCloseOnBackdrop: true
           })
           .then(value => {
             if (value == true) {
