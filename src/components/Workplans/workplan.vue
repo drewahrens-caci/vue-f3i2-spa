@@ -519,7 +519,7 @@ export default {
         p = Vue._.orderBy(
           p,
           function(o) {
-            return new moment(o[e]).format('YYYYMMDD')
+            return new vm.$moment(o[e]).format('YYYYMMDD')
           },
           'asc'
         )
@@ -544,7 +544,7 @@ export default {
         p = Vue._.orderBy(
           p,
           function(o) {
-            return new moment(o[e]).format('YYYYMMDD')
+            return new vm.$moment(o[e]).format('YYYYMMDD')
           },
           'desc'
         )
@@ -624,7 +624,7 @@ export default {
                   p = p.filter(search => search[vm.fields[i].FieldName] > vm.fields[i].FilterValue)
                 } else {
                   // date
-                  p = p.filter(search => moment(search[vm.fields[i].FieldName]).isAfter(moment(vm.fields[i].FilterValue)))
+                  p = p.filter(search => vm.$moment(search[vm.fields[i].FieldName]).isAfter(vm.$moment(vm.fields[i].FilterValue)))
                 }
                 break
 
@@ -634,13 +634,13 @@ export default {
                   p = p.filter(search => search[vm.fields[i].FieldName] < vm.fields[i].FilterValue)
                 } else {
                   // date
-                  p = p.filter(search => moment(vm.fields[i].FilterValue).isAfter(moment(search[vm.fields[i].FieldName])))
+                  p = p.filter(search => vm.$moment(vm.fields[i].FilterValue).isAfter(vm.$moment(search[vm.fields[i].FieldName])))
                 }
                 break
 
               case 'B':
                 // Between
-                p = p.filter(search => moment(search[vm.fields[i].FieldName]).isBetween(moment(vm.fields[i].FilterValue), moment(vm.fields[i].FilterValue2)))
+                p = p.filter(search => vm.$moment(search[vm.fields[i].FieldName]).isBetween(vm.$moment(vm.fields[i].FilterValue), vm.$moment(vm.fields[i].FilterValue2)))
                 break
             }
             if (vm.sortfield !== '') {
@@ -650,7 +650,7 @@ export default {
                 p = Vue._.orderBy(
                   p,
                   function(o) {
-                    return new moment(o[f]).format('YYYYMMDD')
+                    return new vm.$moment(o[f]).format('YYYYMMDD')
                   },
                   vm.sortdir
                 )
@@ -665,7 +665,6 @@ export default {
     },
     clearfilter: function(e) {
       var f = String(e.target.id).split('_')[1]
-      // console.log('CLEARING FILTER: ' + f)
       for (var i = 1; i < vm.fields.length; i++) {
         if (vm.fields[i].FieldName == f) {
           vm.fields[i].Predicate = 'S'

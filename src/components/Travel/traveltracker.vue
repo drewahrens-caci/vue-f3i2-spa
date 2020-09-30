@@ -985,7 +985,7 @@ export default {
         p = Vue._.orderBy(
           p,
           function(o) {
-            return new this.$moment(o[e]).format('YYYYMMDD')
+            return new vm.$moment(o[e]).format('YYYYMMDD')
           },
           'asc'
         )
@@ -1010,7 +1010,7 @@ export default {
         p = Vue._.orderBy(
           p,
           function(o) {
-            return new this.$moment(o[e]).format('YYYYMMDD')
+            return new vm.$moment(o[e]).format('YYYYMMDD')
           },
           'desc'
         )
@@ -1090,7 +1090,7 @@ export default {
                   p = p.filter(search => search[vm.fields[i].FieldName] > vm.fields[i].FilterValue)
                 } else {
                   // date
-                  p = p.filter(search => this.$moment(search[vm.fields[i].FieldName]).isAfter(this.$moment(vm.fields[i].FilterValue)))
+                  p = p.filter(search => vm.$moment(search[vm.fields[i].FieldName]).isAfter(vm.$moment(vm.fields[i].FilterValue)))
                 }
                 break
 
@@ -1100,13 +1100,13 @@ export default {
                   p = p.filter(search => search[vm.fields[i].FieldName] < vm.fields[i].FilterValue)
                 } else {
                   // date
-                  p = p.filter(search => this.$moment(vm.fields[i].FilterValue).isAfter(this.$moment(search[vm.fields[i].FieldName])))
+                  p = p.filter(search => vm.$moment(vm.fields[i].FilterValue).isAfter(vm.$moment(search[vm.fields[i].FieldName])))
                 }
                 break
 
               case 'B':
                 // Between
-                p = p.filter(search => this.$moment(search[vm.fields[i].FieldName]).isBetween(this.$moment(vm.fields[i].FilterValue), this.$moment(vm.fields[i].FilterValue2)))
+                p = p.filter(search => vm.$moment(search[vm.fields[i].FieldName]).isBetween(vm.$moment(vm.fields[i].FilterValue), vm.$moment(vm.fields[i].FilterValue2)))
                 break
             }
             if (vm.sortfield !== '') {
@@ -1116,7 +1116,7 @@ export default {
                 p = Vue._.orderBy(
                   p,
                   function(o) {
-                    return new this.$moment(o[f]).format('YYYYMMDD')
+                    return new vm.$moment(o[f]).format('YYYYMMDD')
                   },
                   vm.sortdir
                 )
