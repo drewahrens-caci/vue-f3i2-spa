@@ -1,5 +1,5 @@
 <template>
-  <b-container fluid class="p-0 flexcontainer" id="MSRForm" ref="MSRForm">
+  <b-container fluid class="contentHeight p-0" id="MainContainer">
     <b-toast id="form-toast" variant="warning" solid no-auto-hide>
       <template v-slot:toast-title>
         <div class="d-flex flex-grow-1 align-items-baseline">
@@ -9,2125 +9,1327 @@
       </template>
       <b-spinner style="width: 7rem; height: 7rem;" variant="success" label="Waiting Spinner"></b-spinner>
     </b-toast>
-    <b-row class="buttonrow">
-      <b-col cols="12" class="p-0">
-        <b-row class="m-1" v-if="tabIndex == 0">
-          <b-button :disabled="isEditing" class="formbutton" id="btn_Funding" ref="btn_Funding" variant="outline-danger" @click="handleit('edit', 'Funding', 'FundingForm')">Add/Edit Funding</b-button>
-          <b-button :disabled="isEditing" class="formbutton" id="btn_Staffing" ref="btn_Staffing" variant="outline-danger" @click="handleit('edit', 'Staffing', 'StaffingForm')">Add/Edit Engineering Effort/Staffing</b-button>
-          <b-button :disabled="isEditing" class="formbutton" id="btn_CostReport" ref="btn_CostReport" variant="outline-danger" @click="handleit('edit', 'CostReport', 'CostReportForm')">Add/Edit Cost Report</b-button>
-        </b-row>
-        <b-row class="m-1" v-if="tabIndex == 1">
-          <b-button :disabled="isEditing" class="formbutton" id="btn_TravelAccomplished" ref="btn_TravelAccomplished" variant="outline-danger" @click="handleit('edit', 'TravelAccomplished', 'TravelAccomplishedForm')">Add/Edit Travel Accomplished</b-button>
-          <b-button :disabled="isEditing" class="formbutton" id="btn_TravelPlanned" ref="btn_TravelPlanned" variant="outline-danger" @click="handleit('edit', 'TravelPlanned', 'TravelPlannedForm')">Add/Edit Travel Planned</b-button>
-          <b-button :disabled="isEditing" class="formbutton" id="btn_TravelCosts" ref="btn_TravelCosts" variant="outline-danger" @click="handleit('edit', 'TravelCosts', 'TravelCostsForm')">Add/Edit Travel Costs</b-button>
-          <b-button :disabled="isEditing" class="formbutton" id="btn_ODCAccomplished" ref="btn_ODCAccomplished" variant="outline-danger" @click="handleit('edit', 'ODCAccomplished', 'ODCAccomplishedForm')">Add/Edit ODC Accomplished</b-button>
-          <b-button :disabled="isEditing" class="formbutton" id="btn_ODCPlanned" ref="btn_ODCPlanned" variant="outline-danger" @click="handleit('edit', 'ODCPlanned', 'ODCPlannedForm')">Add/Edit ODC Planned</b-button>
-          <b-button :disabled="isEditing" class="formbutton" id="btn_ODCCosts" ref="btn_ODCCosts" variant="outline-danger" @click="handleit('edit', 'ODCCosts', 'ODCCostsForm')">Add/Edit ODC Costs</b-button>
-        </b-row>
-        <b-row class="m-1" v-if="tabIndex == 2">
-          <div class="m-1" v-if="isWPManager || isPM">
-            <b-dropdown :disabled="isEditing" text="Edit Accomplishments" v-if="Accomplishments.length > 0" split split-variant="outline-danger" variant="danger">
-              <b-dropdown-item v-for="accomplishment in Accomplishments" :key="accomplishment" @click="handleit('editaccomplishment', accomplishment.Company, accomplishment.index)">Edit {{ accomplishment.Company }} Accomplishments</b-dropdown-item>
-            </b-dropdown>
-          </div>
-          <div class="m-1" v-if="isSubcontractor && Accomplishments.length > 0">
-            <div v-for="accomplishment in Accomplishments" :key="accomplishment">
-              <b-button :disabled="isEditing" v-if="accomplishment.Company == Company" class="formbutton" id="btn_Accomplishments" ref="btn_Accomplishments" variant="outline-danger" @click="handleit('editaccomplishment', accomplishment.Company, accomplishment.index)">Edit Accomplishments</b-button>
-            </div>
-          </div>
-          <div class="m-1" v-else-if="isSubcontractor && Accomplishments.length <= 0">
-            <b-button :disabled="isEditing" class="formbutton" id="btn_Accomplishments" ref="btn_Accomplishments" variant="outline-danger" @click="handleit('addaccomplishment', 'Accomplishments', 'AccomplishmentsForm')">Add Accomplishments</b-button>
-          </div>
-        </b-row>
-        <b-row class="m-1" v-if="tabIndex == 3">
-          <div class="m-1" v-if="isWPManager || isPM">
-            <b-dropdown :disabled="isEditing" text="Edit Plans" v-if="Plans.length > 0" split split-variant="outline-danger" variant="danger">
-              <b-dropdown-item v-for="plan in Plans" :key="plan" @click="handleit('editplan', plan.Company, plan.index)">Edit {{ plan.Company }} Plans</b-dropdown-item>
-            </b-dropdown>
-          </div>
-          <div class="m-1" v-if="isSubcontractor && Plans.length > 0">
-            <div v-for="plan in Plans" :key="plan">
-              <b-button :disabled="isEditing" v-if="plan.Company == Company" class="formbutton" id="btn_Plans" ref="btn_Plans" variant="outline-danger" @click="handleit('editplan', plan.Company, plan.index)">Edit Plans</b-button>
-            </div>
-          </div>
-          <div class="m-1" v-else-if="isSubcontractor && Plans.length <= 0">
-            <b-button :disabled="isEditing" class="formbutton" id="btn_Plans" ref="btn_Plans" variant="outline-danger" @click="handleit('addplan', 'Plans', 'PlansForm')">Add Plans</b-button>
-          </div>
-        </b-row>
-        <b-row class="m-1" v-if="tabIndex == 4">
-          <div class="m-1" v-if="isWPManager || isPM">
-            <b-dropdown :disabled="isEditing" text="Edit Assumptions" v-if="Assumptions.length > 0" split split-variant="outline-danger" variant="danger">
-              <b-dropdown-item v-for="assumption in Assumptions" :key="assumption" @click="handleit('editassumption', assumption.Company, assumption.index)">Edit {{ assumption.Company }} Assumptions</b-dropdown-item>
-            </b-dropdown>
-          </div>
-          <div class="m-1" v-if="isSubcontractor && Assumptions.length > 0">
-            <div v-for="assumption in Assumptions" :key="assumption">
-              <b-button :disabled="isEditing" v-if="assumption.Company == Company" class="formbutton" id="btn_Assumptions" ref="btn_Assumptions" variant="outline-danger" @click="handleit('editassumption', assumption.Company, assumption.index)">Edit Assumptions</b-button>
-            </div>
-          </div>
-          <div class="m-1" v-else-if="isSubcontractor && Assumptions.length <= 0">
-            <b-button :disabled="isEditing" class="formbutton" id="btn_Assumptions" ref="btn_Assumptions" variant="outline-danger" @click="handleit('addassumption', 'Assumptions', 'AssumptionsForm')">Add Assumptions</b-button>
-          </div>
-          <div class="m-1" v-if="isWPManager || isPM">
-            <b-dropdown :disabled="isEditing" text="Edit Risks" v-if="Risks.length > 0" split split-variant="outline-danger" variant="danger">
-              <b-dropdown-item v-for="risk in Risks" :key="risk" @click="handleit('editrisk', risk.Company, risk.index)">Edit {{ risk.Company }} Risks</b-dropdown-item>
-            </b-dropdown>
-          </div>
-          <div class="m-1" v-if="isSubcontractor && Risks.length > 0">
-            <div v-for="risk in Risks" :key="risk">
-              <b-button :disabled="isEditing" v-if="risk.Company == Company" class="formbutton" id="btn_Risks" ref="btn_Risks" variant="outline-danger" @click="handleit('editrisk', risk.Company, risk.index)">Edit Risks</b-button>
-            </div>
-          </div>
-          <div class="m-1" v-else-if="isSubcontractor && Risks.length <= 0">
-            <b-button :disabled="isEditing" class="formbutton" id="btn_Risks" ref="btn_Risks" variant="outline-danger" @click="handleit('addrisk', 'Risks', 'RisksForm')">Add Risks</b-button>
-          </div>
-          <div class="m-1" v-if="isWPManager || isPM">
-            <b-dropdown :disabled="isEditing" text="Edit Opportunities" v-if="Opportunities.length > 0" split split-variant="outline-danger" variant="danger">
-              <b-dropdown-item v-for="opportunity in Opportunities" :key="opportunity" @click="handleit('editopportunity', opportunity.Company, opportunity.index)">Edit {{ opportunity.Company }} Opportunities</b-dropdown-item>
-            </b-dropdown>
-          </div>
-          <div class="m-1" v-if="isSubcontractor && Opportunities.length > 0">
-            <div v-for="opportunity in Opportunities" :key="opportunity">
-              <b-button :disabled="isEditing" v-if="opportunity.Company == Company" class="formbutton" id="btn_Opportunities" ref="btn_Opportunities" variant="outline-danger" @click="handleit('editopportunity', opportunity.Company, opportunity.index)">Edit Opportunities</b-button>
-            </div>
-          </div>
-          <div class="m-1" v-else-if="isSubcontractor && Opportunities.length <= 0">
-            <b-button :disabled="isEditing" class="formbutton" id="btn_Opportunities" ref="btn_Opportunities" variant="outline-danger" @click="handleit('addopportunity', 'Opportunities', 'OpportunitiesForm')">Add Opportunities</b-button>
-          </div>
-        </b-row>
-        <b-row class="m-1" v-if="tabIndex == 5">
-          <div class="m-1" v-if="isWPManager || isPM">
-            <b-dropdown :disabled="isEditing" text="Edit Deliverables" v-if="Deliverables.length > 0" split split-variant="outline-danger" variant="danger">
-              <b-dropdown-item v-for="deliverable in Deliverables" :key="deliverable" @click="handleit('editdeliverable', deliverable.Company, deliverable.index)">Edit {{ deliverable.Company }} Deliverables</b-dropdown-item>
-            </b-dropdown>
-          </div>
-          <div class="m-1" v-if="isSubcontractor && Deliverables.length > 0">
-            <div v-for="deliverable in Deliverables" :key="deliverable">
-              <b-button :disabled="isEditing" v-if="deliverable.Company == Company" class="formbutton" id="btn_Deliverables" ref="btn_Deliverables" variant="outline-danger" @click="handleit('editdeliverable', deliverable.Company, deliverable.index)">Edit Deliverables</b-button>
-            </div>
-          </div>
-          <div class="m-1" v-else-if="isSubcontractor && Deliverables.length <= 0">
-            <b-button :disabled="isEditing" class="formbutton" id="btn_Deliverables" ref="btn_Deliverables" variant="outline-danger" @click="handleit('adddeliverable', 'Deliverables', 'DeliverablesForm')">Add Deliverables</b-button>
-          </div>
-        </b-row>
-        <b-row class="m-1" v-if="tabIndex == 6">
-          <b-button :disabled="isEditing" class="formbutton" id="btn_Distribution" ref="btn_Distribution" variant="outline-danger" @click="handleit('edit', 'Distribution', 'DistributionForm')">Add/Edit Distribution</b-button>
-        </b-row>
-      </b-col>
-    </b-row>
-    <b-row id="Tabs" class="tabrow">
-      <b-card no-body>
-        <b-tabs ref="dashboardtabs" class="tabArea" card v-model="tabIndex" @activate-tab="onTabSelected">
-          <b-tab :disabled="isSubcontractor" class="mtab Section1" active>
-            <template slot="title">
-              <font-awesome-icon fas icon="search-dollar" class="icon"></font-awesome-icon>
-              Funding and Staffing Summary
-            </template>
-            <b-row v-if="!isSubcontractor">
-              <b-col cols="12">
-                <div id="Section1" class="rtesection">
-                  <h1>
-                    1.0 Funding and Staffing Summary
-                  </h1>
-                  <br />
-                  <h2>
-                    1.1 Funding
-                  </h2>
-                  <br />
-                  <b-form v-if="FundingForm">
-                    <b-row>
-                      <ejs-richtexteditor ref="rte_Funding" id="rte_Funding" height="600" :fontFamily="fontFamily" :cssClass="cssClass" v-model="Funding" :pasteCleanupSettings="pasteCleanupSettings" :toolbarSettings="toolbarSettings"></ejs-richtexteditor>
-                    </b-row>
-                    <b-row>
-                      <b-button id="btn_Clear" ref="btn_Clear" class="formbutton" variant="warning" @click="handleit('clear', '', '')">Clear Contents</b-button>
-                      <b-button id="btn_SaveFunding" ref="btn_SaveFunding" class="formbutton" variant="success" @click="handleit('save', 'Funding', 'FundingForm')">Save Funding</b-button>
-                      <b-button id="btn_CancelFunding" ref="btn_CancelFunding" class="formbutton" variant="danger" @click="handleit('cancel', 'Funding', 'FundingForm')">Cancel</b-button>
-                    </b-row>
-                  </b-form>
-                  <div v-else class="e-rte-content" id="FundingHtml" v-html="Funding"></div>
-                  <br />
-                  <h2>
-                    1.2 Engineering Effort/Staffing
-                  </h2>
-                  <br />
-                  <b-form v-if="StaffingForm">
-                    <b-row>
-                      <ejs-richtexteditor ref="rte_Staffing" id="rte_Staffing" height="600" :fontFamily="fontFamily" :cssClass="cssClass" v-model="Staffing" @change="onRTEChanged" :pasteCleanupSettings="pasteCleanupSettings" :toolbarSettings="toolbarSettings"></ejs-richtexteditor>
-                    </b-row>
-                    <b-row id="StaffingAnchor">
-                      <b-button id="btn_SaveStaffing" ref="btn_SaveStaffing" class="formbutton" variant="success" @click="handleit('save', 'Staffing', 'StaffingForm')">Save Staffing</b-button>
-                      <b-button id="btn_CancelStaffing" ref="btn_CancelStaffing" class="formbutton" variant="danger" @click="handleit('cancel', 'Staffing', 'StaffingForm')">Cancel</b-button>
-                    </b-row>
-                  </b-form>
-                  <div v-else id="StaffingHtml" v-html="Staffing"></div>
-                  <br />
-                  <h2>
-                    1.3 Cost Report
-                  </h2>
-                  <br />
-                  <b-form v-if="CostReportForm">
-                    <b-row>
-                      <ejs-richtexteditor ref="rte_CostReport" id="rte_CostReport" height="600" :fontFamily="fontFamily" :cssClass="cssClass" v-model="CostReport" @change="onRTEChanged" :pasteCleanupSettings="pasteCleanupSettings" :toolbarSettings="toolbarSettings"></ejs-richtexteditor>
-                    </b-row>
-                    <b-row id="CostReportAnchor">
-                      <b-button id="btn_Clear" ref="btn_Clear" class="formbutton" variant="warning" @click="handleit('clear', '', '')">Clear Contents</b-button>
-                      <b-button id="btn_SaveCostReport" ref="btn_SaveCostReport" class="formbutton" variant="success" @click="handleit('save', 'CostReport', 'CostReportForm')">Save CostReport</b-button>
-                      <b-button id="btn_CancelCostReport" ref="btn_CancelCostReport" class="formbutton" variant="danger" @click="handleit('cancel', 'CostReport', 'CostReportForm')">Cancel</b-button>
-                    </b-row>
-                  </b-form>
-                  <div v-else id="CostReportHtml" v-html="CostReport"></div>
-                </div>
-              </b-col>
-            </b-row>
-          </b-tab>
-          <b-tab :disabled="isSubcontractor" class="mtab Section2">
-            <template slot="title">
-              <font-awesome-icon fas icon="bus-alt" class="icon"></font-awesome-icon>
-              Travel &amp; ODC
-            </template>
-            <b-row v-if="!isSubcontractor">
-              <b-col cols="12">
-                <div id="Section2" class="rtesection">
-                  <h1>
-                    2.0 Travel
-                  </h1>
-                  <br />
-                  <h2>
-                    2.1 Travel
-                  </h2>
-                  <br />
-                  <h3>
-                    2.1.1 Travel Accomplished
-                  </h3>
-                  <br />
-                  <b-form v-if="TravelAccomplishedForm">
-                    <b-row>
-                      <ejs-richtexteditor ref="rte_TravelAccomplished" id="rte_TravelAccomplished" height="600" :fontFamily="fontFamily" :cssClass="cssClass" v-model="TravelAccomplished" :pasteCleanupSettings="pasteCleanupSettings" :toolbarSettings="toolbarSettings"></ejs-richtexteditor>
-                    </b-row>
-                    <b-row id="TravelAccomplishedAnchor">
-                      <b-button id="btn_Clear" ref="btn_Clear" class="formbutton" variant="warning" @click="handleit('clear', '', '')">Clear Contents</b-button>
-                      <b-button id="btn_SaveTravelAccomplished" ref="btn_SaveTravelAccomplished" class="formbutton" variant="success" @click="handleit('save', 'TravelAccomplished', 'TravelAccomplishedForm')">Save TravelAccomplished</b-button>
-                      <b-button id="btn_CancelTravelAccomplished" ref="btn_CancelTravelAccomplished" class="formbutton" variant="danger" @click="handleit('cancel', 'TravelAccomplished', 'TravelAccomplishedForm')">Cancel</b-button>
-                    </b-row>
-                  </b-form>
-                  <div v-else id="TravelAccomplishedHtml" v-html="TravelAccomplished"></div>
-                  <br />
-                  <h3>
-                    2.1.2 Travel Planned
-                  </h3>
-                  <br />
-                  <b-form v-if="TravelPlannedForm">
-                    <b-row>
-                      <ejs-richtexteditor ref="rte_TravelPlanned" id="rte_TravelPlanned" height="600" :fontFamily="fontFamily" :cssClass="cssClass" v-model="TravelPlanned" :pasteCleanupSettings="pasteCleanupSettings" :toolbarSettings="toolbarSettings"></ejs-richtexteditor>
-                    </b-row>
-                    <b-row id="TravelPlannedAnchor">
-                      <b-button id="btn_Clear" ref="btn_Clear" class="formbutton" variant="warning" @click="handleit('clear', '', '')">Clear Contents</b-button>
-                      <b-button id="btn_SaveTravelPlanned" ref="btn_SaveTravelPlanned" class="formbutton" variant="success" @click="handleit('save', 'TravelPlanned', 'TravelPlannedForm')">Save TravelPlanned</b-button>
-                      <b-button id="btn_CancelTravelPlanned" ref="btn_CancelTravelPlanned" class="formbutton" variant="danger" @click="handleit('cancel', 'TravelPlanned', 'TravelPlannedForm')">Cancel</b-button>
-                    </b-row>
-                  </b-form>
-                  <div v-else id="TravelPlannedHtml" v-html="TravelPlanned"></div>
-                  <br />
-                  <h3>
-                    2.1.3 Travel Costs To Date
-                  </h3>
-                  <br />
-                  <b-form v-if="TravelCostsForm">
-                    <b-row>
-                      <ejs-richtexteditor ref="rte_TravelCosts" id="rte_TravelCosts" height="600" :fontFamily="fontFamily" :cssClass="cssClass" v-model="TravelCosts" @change="onRTEChanged" :pasteCleanupSettings="pasteCleanupSettings" :toolbarSettings="toolbarSettings"></ejs-richtexteditor>
-                    </b-row>
-                    <b-row id="TravelCostsAnchor">
-                      <b-button id="btn_Clear" ref="btn_Clear" class="formbutton" variant="warning" @click="handleit('clear', '', '')">Clear Contents</b-button>
-                      <b-button id="btn_SaveTravelCosts" ref="btn_SaveTravelCosts" class="formbutton" variant="success" @click="handleit('save', 'TravelCosts', 'TravelCostsForm')">Save TravelCosts</b-button>
-                      <b-button id="btn_CancelTravelCosts" ref="btn_CancelTravelCosts" class="formbutton" variant="danger" @click="handleit('cancel', 'TravelCosts', 'TravelCostsForm')">Cancel</b-button>
-                    </b-row>
-                  </b-form>
-                  <div v-else id="TravelCostsHtml" v-html="TravelCosts"></div>
-                  <h2>
-                    2.2 ODCs
-                  </h2>
-                  <br />
-                  <h3>
-                    2.2.1 ODCs Accomplished
-                  </h3>
-                  <br />
-                  <b-form v-if="ODCAccomplishedForm">
-                    <b-row>
-                      <ejs-richtexteditor ref="rte_ODCAccomplished" id="rte_ODCAccomplished" height="600" :fontFamily="fontFamily" :cssClass="cssClass" v-model="ODCAccomplished" :pasteCleanupSettings="pasteCleanupSettings" :toolbarSettings="toolbarSettings"></ejs-richtexteditor>
-                    </b-row>
-                    <b-row id="ODCAccomplishedAnchor">
-                      <b-button id="btn_Clear" ref="btn_Clear" class="formbutton" variant="warning" @click="handleit('clear', '', '')">Clear Contents</b-button>
-                      <b-button id="btn_SaveODCAccomplished" ref="btn_SaveODCAccomplished" class="formbutton" variant="success" @click="handleit('save', 'ODCAccomplished', 'ODCAccomplishedForm')">Save ODCAccomplished</b-button>
-                      <b-button id="btn_CancelODCAccomplished" ref="btn_CancelODCAccomplished" class="formbutton" variant="danger" @click="handleit('cancel', 'ODCAccomplished', 'ODCAccomplishedForm')">Cancel</b-button>
-                    </b-row>
-                  </b-form>
-                  <div v-else id="ODCAccomplishedHtml" v-html="ODCAccomplished"></div>
-                  <br />
-                  <h3>
-                    2.2.2 ODCs Planned
-                  </h3>
-                  <br />
-                  <b-form v-if="ODCPlannedForm">
-                    <b-row>
-                      <ejs-richtexteditor ref="rte_ODCPlanned" id="rte_ODCPlanned" height="600" :fontFamily="fontFamily" :cssClass="cssClass" v-model="ODCPlanned" :pasteCleanupSettings="pasteCleanupSettings" :toolbarSettings="toolbarSettings"></ejs-richtexteditor>
-                    </b-row>
-                    <b-row id="ODCPlannedAnchor">
-                      <b-button id="btn_Clear" ref="btn_Clear" class="formbutton" variant="warning" @click="handleit('clear', '', '')">Clear Contents</b-button>
-                      <b-button id="btn_SaveODCPlanned" ref="btn_SaveODCPlanned" class="formbutton" variant="success" @click="handleit('save', 'ODCPlanned', 'ODCPlannedForm')">Save ODCPlanned</b-button>
-                      <b-button id="btn_CancelODCPlanned" ref="btn_CancelODCPlanned" class="formbutton" variant="danger" @click="handleit('cancel', 'ODCPlanned', 'ODCPlannedForm')">Cancel</b-button>
-                    </b-row>
-                  </b-form>
-                  <div v-else id="ODCPlannedHtml" v-html="ODCPlanned"></div>
-                  <br />
-                  <h3>
-                    2.2.3 ODC Costs To Date
-                  </h3>
-                  <br />
-                  <b-form v-if="ODCCostsForm">
-                    <b-row>
-                      <ejs-richtexteditor ref="rte_ODCCosts" id="rte_ODCCosts" height="600" :fontFamily="fontFamily" :cssClass="cssClass" v-model="ODCCosts" @change="onRTEChanged" :pasteCleanupSettings="pasteCleanupSettings" :toolbarSettings="toolbarSettings"></ejs-richtexteditor>
-                    </b-row>
-                    <b-row id="ODCCostsAnchor">
-                      <b-button id="btn_Clear" ref="btn_Clear" class="formbutton" variant="warning" @click="handleit('clear', '', '')">Clear Contents</b-button>
-                      <b-button id="btn_SaveODCCosts" ref="btn_SaveODCCosts" class="formbutton" variant="success" @click="handleit('save', 'ODCCosts', 'ODCCostsForm')">Save ODCCosts</b-button>
-                      <b-button id="btn_CancelODCCosts" ref="btn_CancelODCCosts" class="formbutton" variant="danger" @click="handleit('cancel', 'ODCCosts', 'ODCCostsForm')">Cancel</b-button>
-                    </b-row>
-                  </b-form>
-                  <div v-else id="ODCCostsHtml" v-html="ODCCosts"></div>
-                </div>
-              </b-col>
-            </b-row>
-          </b-tab>
-          <b-tab class="mtab Section3">
-            <template slot="title">
-              <font-awesome-icon fas icon="tasks" class="icon"></font-awesome-icon>
-              Accomplishments
-            </template>
-            <div class="row">
-              <b-col cols="12">
-                <div id="Section3Main" class="rtesection">
-                  <h1>
-                    3.0 Accomplishments
-                  </h1>
-                  <br />
-                  <b-form v-if="AccomplishmentsForm">
-                    <b-row>
-                      <ejs-richtexteditor ref="rte_Accomplishments" id="rte_Accomplishments" height="600" :fontFamily="fontFamily" :cssClass="cssClass" v-model="SelectedAccomplishment" :pasteCleanupSettings="pasteCleanupSettings" :toolbarSettings="toolbarSettings"></ejs-richtexteditor>
-                    </b-row>
-                    <b-row id="AccomplishmentsAnchor">
-                      <b-button id="btn_Clear" ref="btn_Clear" class="formbutton" variant="warning" @click="handleit('clearaccomplishment', '', '')">Clear Contents</b-button>
-                      <b-button id="btn_PrivateAccomplishment" ref="btn_PrivateAccomplishment" class="formbutton" variant="danger" @click="handleit('privateaccomplishment', '', '')">Make Private</b-button>
-                      <b-button id="btn_SaveAccomplishments" ref="btn_SaveAccomplishments" class="formbutton" variant="success" @click="handleit('saveaccomplishment', '', '')">Save Accomplishment</b-button>
-                      <b-button id="btn_PublishAccomplishment" ref="btn_PublishAccomplishment" class="formbutton" variant="success" @click="handleit('publishaccomplishment', '', '')">Publish Accomplishment</b-button>
-                      <b-button id="btn_CancelAccomplishments" ref="btn_CancelAccomplishments" class="formbutton" variant="danger" @click="handleit('cancelaccomplishment', '', '')">Cancel</b-button>
-                    </b-row>
-                  </b-form>
-                  <div v-else id="Accomplishments">
-                    <div v-for="accomplishment in Accomplishments" :key="accomplishment" class="text-left mb-2">
-                      <div v-if="accomplishment.Private == 'Yes'">
-                        <!-- PRIVATE -->
-                        <div v-if="accomplishment.Published == 'Yes'">
-                          <!-- PRIVATE AND PUBLISHED -->
-                          <div v-if="isSubcontractor">
-                            <div v-if="accomplishment.Company == Company">
-                              <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
-                              <b-card border-variant="success" text-variant="dark">
-                                <template v-slot:header>
-                                  <h3 class="mb-0">
-                                    <span class="ml-0">{{ accomplishment.Company }}</span>
-                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                    <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
-                                  </h3>
-                                </template>
-                                <b-card-body v-html="accomplishment.html"></b-card-body>
-                              </b-card>
-                            </div>
-                          </div>
-                          <div v-else>
-                            <b-card border-variant="success" text-variant="dark">
-                              <template v-slot:header>
-                                <h3 class="mb-0">
-                                  <span class="ml-0">{{ accomplishment.Company }}</span>
-                                  <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                  <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
-                                </h3>
-                              </template>
-                              <b-card-body v-html="accomplishment.html"></b-card-body>
-                            </b-card>
-                          </div>
-                        </div>
-                        <!-- PRIVATE BUT NOT PUBLISHED (DENOTED BY 'WARNING COLOR) -->
-                        <div v-else>
-                          <div v-if="isSubcontractor">
-                            <div v-if="accomplishment.Company == Company">
-                              <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
-                              <b-card border-variant="warning" text-variant="dark">
-                                <template v-slot:header>
-                                  <h3 class="mb-0">
-                                    <span class="ml-0">{{ accomplishment.Company }}</span>
-                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                  </h3>
-                                </template>
-                                <b-card-body v-html="accomplishment.html"></b-card-body>
-                              </b-card>
-                            </div>
-                          </div>
-                          <div v-else-if="isWPManager">
-                            <!-- Workplan Manager ABLE TO SEE ITEM. -->
-                            <b-card border-variant="warning" text-variant="dark">
-                              <template v-slot:header>
-                                <h3 class="mb-0">
-                                  <span class="ml-0">{{ accomplishment.Company }}</span>
-                                  <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                  <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                </h3>
-                              </template>
-                              <b-card-body v-html="accomplishment.html"></b-card-body>
-                            </b-card>
-                          </div>
-                        </div>
-                      </div>
-                      <div v-else>
-                        <!-- NOT PRIVATE -->
-                        <div v-if="accomplishment.Published == 'Yes'">
-                          <!-- NOT PRIVATE AND PUBLISHED -->
-                          <b-card border-variant="success" text-variant="dark">
-                            <template v-slot:header>
-                              <h3 class="mb-0">
-                                <span class="ml-0">{{ accomplishment.Company }}</span>
-                                <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
-                              </h3>
-                            </template>
-                            <b-card-body v-html="accomplishment.html"></b-card-body>
-                          </b-card>
-                        </div>
-                        <div v-else>
-                          <!-- NOT PRIVATE AND NOT PUBLISHED -->
-                          <div v-if="isSubcontractor">
-                            <div v-if="accomplishment.Company == Company">
-                              <b-card border-variant="warning" text-variant="dark">
-                                <template v-slot:header>
-                                  <h3 class="mb-0">
-                                    <span class="ml-0">{{ accomplishment.Company }}</span>
-                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                  </h3>
-                                </template>
-                                <b-card-body v-html="accomplishment.html"></b-card-body>
-                              </b-card>
-                            </div>
-                          </div>
-                          <div v-else-if="isWPManager">
-                            <!-- Workplan Manager ABLE TO SEE ITEM. -->
-                            <b-card border-variant="warning" text-variant="dark">
-                              <template v-slot:header>
-                                <h3 class="mb-0">
-                                  <span class="ml-0">{{ accomplishment.Company }}</span>
-                                  <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                </h3>
-                              </template>
-                              <b-card-body v-html="accomplishment.html"></b-card-body>
-                            </b-card>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </b-col>
-            </div>
-          </b-tab>
-          <b-tab class="mtab Section4">
-            <template slot="title">
-              <font-awesome-icon fas icon="ruler-combined" class="icon"></font-awesome-icon>
-              Plans
-            </template>
-            <div class="row">
-              <b-col cols="12">
-                <div id="Section4Main" class="rtesection">
-                  <h1>
-                    4.0 Plans
-                  </h1>
-                  <br />
-                  <b-form v-if="PlansForm">
-                    <b-row>
-                      <ejs-richtexteditor ref="rte_Plans" id="rte_Plans" height="600" :fontFamily="fontFamily" :cssClass="cssClass" v-model="SelectedPlan" :pasteCleanupSettings="pasteCleanupSettings" :toolbarSettings="toolbarSettings"></ejs-richtexteditor>
-                    </b-row>
-                    <b-row id="PlansAnchor">
-                      <b-button id="btn_Clear" ref="btn_Clear" class="formbutton" variant="warning" @click="handleit('clearplan', '', '')">Clear Contents</b-button>
-                      <b-button id="btn_PrivatePlan" ref="btn_PrivatePlan" class="formbutton" variant="danger" @click="handleit('privateplan', '', '')">Make Private</b-button>
-                      <b-button id="btn_SavePlans" ref="btn_SavePlans" class="formbutton" variant="success" @click="handleit('saveplan', '', '')">Save Plan</b-button>
-                      <b-button id="btn_PublishPlan" ref="btn_PublishPlan" class="formbutton" variant="success" @click="handleit('publishplan', '', '')">Publish Plan</b-button>
-                      <b-button id="btn_CancelPlans" ref="btn_CancelPlans" class="formbutton" variant="danger" @click="handleit('cancelplan', '', '')">Cancel</b-button>
-                    </b-row>
-                  </b-form>
-                  <div v-else id="Plans">
-                    <div v-for="plan in Plans" :key="plan" class="text-left mb-2">
-                      <div v-if="plan.Private == 'Yes'">
-                        <!-- PRIVATE -->
-                        <div v-if="plan.Published == 'Yes'">
-                          <!-- PRIVATE AND PUBLISHED -->
-                          <div v-if="isSubcontractor">
-                            <div v-if="plan.Company == Company">
-                              <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
-                              <b-card border-variant="success" text-variant="dark">
-                                <template v-slot:header>
-                                  <h3 class="mb-0">
-                                    <span class="ml-0">{{ plan.Company }}</span>
-                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                    <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
-                                  </h3>
-                                </template>
-                                <b-card-body v-html="plan.html"></b-card-body>
-                              </b-card>
-                            </div>
-                          </div>
-                          <div v-else>
-                            <b-card border-variant="success" text-variant="dark">
-                              <template v-slot:header>
-                                <h3 class="mb-0">
-                                  <span class="ml-0">{{ plan.Company }}</span>
-                                  <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                  <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
-                                </h3>
-                              </template>
-                              <b-card-body v-html="plan.html"></b-card-body>
-                            </b-card>
-                          </div>
-                        </div>
-                        <!-- PRIVATE BUT NOT PUBLISHED (DENOTED BY 'WARNING COLOR) -->
-                        <div v-else>
-                          <div v-if="isSubcontractor">
-                            <div v-if="plan.Company == Company">
-                              <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
-                              <b-card border-variant="warning" text-variant="dark">
-                                <template v-slot:header>
-                                  <h3 class="mb-0">
-                                    <span class="ml-0">{{ plan.Company }}</span>
-                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                  </h3>
-                                </template>
-                                <b-card-body v-html="plan.html"></b-card-body>
-                              </b-card>
-                            </div>
-                          </div>
-                          <div v-else-if="isWPManager">
-                            <!-- OTHER USERS ABLE TO SEE ITEM. -->
-                            <b-card border-variant="warning" text-variant="dark">
-                              <template v-slot:header>
-                                <h3 class="mb-0">
-                                  <span class="ml-0">{{ plan.Company }}</span>
-                                  <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                  <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                </h3>
-                              </template>
-                              <b-card-body v-html="plan.html"></b-card-body>
-                            </b-card>
-                          </div>
-                        </div>
-                      </div>
-                      <div v-else>
-                        <!-- NOT PRIVATE -->
-                        <div v-if="plan.Published == 'Yes'">
-                          <!-- NOT PRIVATE AND PUBLISHED -->
-                          <b-card border-variant="success" text-variant="dark">
-                            <template v-slot:header>
-                              <h3 class="mb-0">
-                                <span class="ml-0">{{ plan.Company }}</span>
-                                <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
-                              </h3>
-                            </template>
-                            <b-card-body v-html="plan.html"></b-card-body>
-                          </b-card>
-                        </div>
-                        <div v-else>
-                          <!-- NOT PRIVATE AND NOT PUBLISHED -->
-                          <div v-if="isSubcontractor">
-                            <div v-if="plan.Company == Company">
-                              <b-card border-variant="warning" text-variant="dark">
-                                <template v-slot:header>
-                                  <h3 class="mb-0">
-                                    <span class="ml-0">{{ plan.Company }}</span>
-                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                  </h3>
-                                </template>
-                                <b-card-body v-html="plan.html"></b-card-body>
-                              </b-card>
-                            </div>
-                          </div>
-                          <div v-else-if="isWPManager">
-                            <b-card border-variant="warning" text-variant="dark">
-                              <template v-slot:header>
-                                <h3 class="mb-0">
-                                  <span class="ml-0">{{ plan.Company }}</span>
-                                  <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                </h3>
-                              </template>
-                              <b-card-body v-html="plan.html"></b-card-body>
-                            </b-card>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </b-col>
-            </div>
-          </b-tab>
-          <b-tab class="mtab Section5">
-            <template slot="title">
-              <font-awesome-icon fas icon="microscope" class="icon"></font-awesome-icon>
-              Assumptions, Risks, Opportunities
-            </template>
-            <b-row>
-              <b-col cols="12">
-                <div id="Section5Main" class="rtesection">
-                  <h1>
-                    5.0 Assumptions / Risks / Opportunities
-                  </h1>
-                  <br />
-                  <h2>
-                    Assumptions and Dependencies
-                  </h2>
-                  <br />
-                  <b-form v-if="AssumptionsForm">
-                    <b-row>
-                      <ejs-richtexteditor ref="rte_Assumptions" id="rte_Assumptions" height="600" :fontFamily="fontFamily" :cssClass="cssClass" v-model="SelectedAssumption" :pasteCleanupSettings="pasteCleanupSettings" :toolbarSettings="toolbarSettings"></ejs-richtexteditor>
-                    </b-row>
-                    <b-row id="AssumptionsAnchor">
-                      <b-button id="btn_Clear" ref="btn_Clear" class="formbutton" variant="warning" @click="handleit('clearassumption', '', '')">Clear Contents</b-button>
-                      <b-button id="btn_PrivateAssumption" ref="btn_PrivateAssumption" class="formbutton" variant="danger" @click="handleit('privateassumption', '', '')">Make Private</b-button>
-                      <b-button id="btn_SaveAssumptions" ref="btn_SaveAssumptions" class="formbutton" variant="success" @click="handleit('saveassumption', '', '')">Save Assumption</b-button>
-                      <b-button id="btn_PublishAssumption" ref="btn_PublishAssumption" class="formbutton" variant="success" @click="handleit('publishassumption', '', '')">Publish Assumption</b-button>
-                      <b-button id="btn_CancelAssumptions" ref="btn_CancelAssumptions" class="formbutton" variant="danger" @click="handleit('cancelassumption', '', '')">Cancel</b-button>
-                    </b-row>
-                  </b-form>
-                  <div v-else id="Assumptions">
-                    <div v-for="assumption in Assumptions" :key="assumption" class="text-left mb-2">
-                      <div v-if="assumption.Private == 'Yes'">
-                        <!-- PRIVATE -->
-                        <div v-if="assumption.Published == 'Yes'">
-                          <!-- PRIVATE AND PUBLISHED -->
-                          <div v-if="isSubcontractor">
-                            <div v-if="assumption.Company == Company">
-                              <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
-                              <b-card border-variant="success" text-variant="dark">
-                                <template v-slot:header>
-                                  <h3 class="mb-0">
-                                    <span class="ml-0">{{ assumption.Company }}</span>
-                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                    <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
-                                  </h3>
-                                </template>
-                                <b-card-body v-html="assumption.html"></b-card-body>
-                              </b-card>
-                            </div>
-                          </div>
-                          <div v-else>
-                            <b-card border-variant="success" text-variant="dark">
-                              <template v-slot:header>
-                                <h3 class="mb-0">
-                                  <span class="ml-0">{{ assumption.Company }}</span>
-                                  <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                  <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
-                                </h3>
-                              </template>
-                              <b-card-body v-html="assumption.html"></b-card-body>
-                            </b-card>
-                          </div>
-                        </div>
-                        <!-- PRIVATE BUT NOT PUBLISHED (DENOTED BY 'WARNING COLOR) -->
-                        <div v-else>
-                          <div v-if="isSubcontractor">
-                            <div v-if="assumption.Company == Company">
-                              <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
-                              <b-card border-variant="warning" text-variant="dark">
-                                <template v-slot:header>
-                                  <h3 class="mb-0">
-                                    <span class="ml-0">{{ assumption.Company }}</span>
-                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                  </h3>
-                                </template>
-                                <b-card-body v-html="assumption.html"></b-card-body>
-                              </b-card>
-                            </div>
-                          </div>
-                          <div v-else-if="isWPManager">
-                            <!-- OTHER USERS ABLE TO SEE ITEM. -->
-                            <b-card border-variant="warning" text-variant="dark">
-                              <template v-slot:header>
-                                <h3 class="mb-0">
-                                  <span class="ml-0">{{ assumption.Company }}</span>
-                                  <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                  <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                </h3>
-                              </template>
-                              <b-card-body v-html="assumption.html"></b-card-body>
-                            </b-card>
-                          </div>
-                        </div>
-                      </div>
-                      <div v-else>
-                        <!-- NOT PRIVATE -->
-                        <div v-if="assumption.Published == 'Yes'">
-                          <!-- NOT PRIVATE AND PUBLISHED -->
-                          <b-card border-variant="success" text-variant="dark">
-                            <template v-slot:header>
-                              <h3 class="mb-0">
-                                <span class="ml-0">{{ assumption.Company }}</span>
-                                <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
-                              </h3>
-                            </template>
-                            <b-card-body v-html="assumption.html"></b-card-body>
-                          </b-card>
-                        </div>
-                        <div v-else>
-                          <!-- NOT PRIVATE AND NOT PUBLISHED -->
-                          <div v-if="isSubcontractor">
-                            <div v-if="assumption.Company == Company">
-                              <b-card border-variant="warning" text-variant="dark">
-                                <template v-slot:header>
-                                  <h3 class="mb-0">
-                                    <span class="ml-0">{{ assumption.Company }}</span>
-                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                  </h3>
-                                </template>
-                                <b-card-body v-html="assumption.html"></b-card-body>
-                              </b-card>
-                            </div>
-                          </div>
-                          <div v-else-if="isWPManager">
-                            <b-card border-variant="warning" text-variant="dark">
-                              <template v-slot:header>
-                                <h3 class="mb-0">
-                                  <span class="ml-0">{{ assumption.Company }}</span>
-                                  <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                </h3>
-                              </template>
-                              <b-card-body v-html="assumption.html"></b-card-body>
-                            </b-card>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <br />
-                  <h2>
-                    Risks and Mitigation
-                  </h2>
-                  <br />
-                  <b-form v-if="RisksForm">
-                    <b-row>
-                      <ejs-richtexteditor ref="rte_Risks" id="rte_Risks" height="600" class="rtesection" v-model="SelectedRisk" :pasteCleanupSettings="pasteCleanupSettings" :toolbarSettings="toolbarSettings"></ejs-richtexteditor>
-                    </b-row>
-                    <b-row id="RisksAnchor">
-                      <b-button id="btn_Clear" ref="btn_Clear" class="formbutton" variant="warning" @click="handleit('clearrisk', '', '')">Clear Contents</b-button>
-                      <b-button id="btn_PrivateRisk" ref="btn_PrivateRisk" class="formbutton" variant="danger" @click="handleit('privaterisk', '', '')">Make Private</b-button>
-                      <b-button id="btn_SaveRisks" ref="btn_SaveRisks" class="formbutton" variant="success" @click="handleit('saverisk', '', '')">Save Risk</b-button>
-                      <b-button id="btn_PublishRisk" ref="btn_PublishRisk" class="formbutton" variant="success" @click="handleit('publishrisk', '', '')">Publish Risk</b-button>
-                      <b-button id="btn_CancelRisks" ref="btn_CancelRisks" class="formbutton" variant="danger" @click="handleit('cancelrisk', '', '')">Cancel</b-button>
-                    </b-row>
-                  </b-form>
-                  <div v-else id="Risks">
-                    <div v-for="risk in Risks" :key="risk" class="text-left mb-2">
-                      <div v-if="risk.Private == 'Yes'">
-                        <!-- PRIVATE -->
-                        <div v-if="risk.Published == 'Yes'">
-                          <!-- PRIVATE AND PUBLISHED -->
-                          <div v-if="isSubcontractor">
-                            <div v-if="risk.Company == Company">
-                              <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
-                              <b-card border-variant="success" text-variant="dark">
-                                <template v-slot:header>
-                                  <h3 class="mb-0">
-                                    <span class="ml-0">{{ risk.Company }}</span>
-                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                    <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
-                                  </h3>
-                                </template>
-                                <b-card-body v-html="risk.html"></b-card-body>
-                              </b-card>
-                            </div>
-                          </div>
-                          <div v-else>
-                            <b-card border-variant="success" text-variant="dark">
-                              <template v-slot:header>
-                                <h3 class="mb-0">
-                                  <span class="ml-0">{{ risk.Company }}</span>
-                                  <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                  <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
-                                </h3>
-                              </template>
-                              <b-card-body v-html="risk.html"></b-card-body>
-                            </b-card>
-                          </div>
-                        </div>
-                        <!-- PRIVATE BUT NOT PUBLISHED (DENOTED BY 'WARNING COLOR) -->
-                        <div v-else>
-                          <div v-if="isSubcontractor">
-                            <div v-if="risk.Company == Company">
-                              <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
-                              <b-card border-variant="warning" text-variant="dark">
-                                <template v-slot:header>
-                                  <h3 class="mb-0">
-                                    <span class="ml-0">{{ risk.Company }}</span>
-                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                  </h3>
-                                </template>
-                                <b-card-body v-html="risk.html"></b-card-body>
-                              </b-card>
-                            </div>
-                          </div>
-                          <div v-else-if="isWPManager">
-                            <!-- OTHER USERS ABLE TO SEE ITEM. -->
-                            <b-card border-variant="warning" text-variant="dark">
-                              <template v-slot:header>
-                                <h3 class="mb-0">
-                                  <span class="ml-0">{{ risk.Company }}</span>
-                                  <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                  <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                </h3>
-                              </template>
-                              <b-card-body v-html="risk.html"></b-card-body>
-                            </b-card>
-                          </div>
-                        </div>
-                      </div>
-                      <div v-else>
-                        <!-- NOT PRIVATE -->
-                        <div v-if="risk.Published == 'Yes'">
-                          <!-- NOT PRIVATE AND PUBLISHED -->
-                          <b-card border-variant="success" text-variant="dark">
-                            <template v-slot:header>
-                              <h3 class="mb-0">
-                                <span class="ml-0">{{ risk.Company }}</span>
-                                <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
-                              </h3>
-                            </template>
-                            <b-card-body v-html="risk.html"></b-card-body>
-                          </b-card>
-                        </div>
-                        <div v-else>
-                          <!-- NOT PRIVATE AND NOT PUBLISHED -->
-                          <div v-if="isSubcontractor">
-                            <div v-if="risk.Company == Company">
-                              <b-card border-variant="warning" text-variant="dark">
-                                <template v-slot:header>
-                                  <h3 class="mb-0">
-                                    <span class="ml-0">{{ risk.Company }}</span>
-                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                  </h3>
-                                </template>
-                                <b-card-body v-html="risk.html"></b-card-body>
-                              </b-card>
-                            </div>
-                          </div>
-                          <div v-else-if="isWPManager">
-                            <b-card border-variant="warning" text-variant="dark">
-                              <template v-slot:header>
-                                <h3 class="mb-0">
-                                  <span class="ml-0">{{ risk.Company }}</span>
-                                  <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                </h3>
-                              </template>
-                              <b-card-body v-html="risk.html"></b-card-body>
-                            </b-card>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <br />
-                  <h2>
-                    Opportunities
-                  </h2>
-                  <br />
-                  <b-form v-if="OpportunitiesForm">
-                    <b-row>
-                      <ejs-richtexteditor ref="rte_Opportunities" id="rte_Opportunities" height="600" class="rtesection" v-model="SelectedOpportunity" :pasteCleanupSettings="pasteCleanupSettings" :toolbarSettings="toolbarSettings"></ejs-richtexteditor>
-                    </b-row>
-                    <b-row id="OpportunitiesAnchor">
-                      <b-button id="btn_Clear" ref="btn_Clear" class="formbutton" variant="warning" @click="handleit('clearopportunity', '', '')">Clear Contents</b-button>
-                      <b-button id="btn_PrivateOpportunity" ref="btn_PrivateOpportunity" class="formbutton" variant="danger" @click="handleit('privateopportunity', '', '')">Make Private</b-button>
-                      <b-button id="btn_SaveOpportunity" ref="btn_SaveOpportunity" class="formbutton" variant="success" @click="handleit('saveopportunity', '', '')">Save Opportunity</b-button>
-                      <b-button id="btn_PublishOpportunity" ref="btn_PublishOpportunity" class="formbutton" variant="success" @click="handleit('publishopportunity', '', '')">Publish Opportunity</b-button>
-                      <b-button id="btn_CancelOpportunity" ref="btn_CancelOpportunity" class="formbutton" variant="danger" @click="handleit('cancelopportunity', '', '')">Cancel</b-button>
-                    </b-row>
-                  </b-form>
-                  <div v-else id="Opportunities">
-                    <div v-for="opportunity in Opportunities" :key="opportunity" class="text-left mb-2">
-                      <div v-if="opportunity.Private == 'Yes'">
-                        <!-- PRIVATE -->
-                        <div v-if="opportunity.Published == 'Yes'">
-                          <!-- PRIVATE AND PUBLISHED -->
-                          <div v-if="isSubcontractor">
-                            <div v-if="opportunity.Company == Company">
-                              <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
-                              <b-card border-variant="success" text-variant="dark">
-                                <template v-slot:header>
-                                  <h3 class="mb-0">
-                                    <span class="ml-0">{{ opportunity.Company }}</span>
-                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                    <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
-                                  </h3>
-                                </template>
-                                <b-card-body v-html="opportunity.html"></b-card-body>
-                              </b-card>
-                            </div>
-                          </div>
-                          <div v-else>
-                            <b-card border-variant="success" text-variant="dark">
-                              <template v-slot:header>
-                                <h3 class="mb-0">
-                                  <span class="ml-0">{{ opportunity.Company }}</span>
-                                  <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                  <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
-                                </h3>
-                              </template>
-                              <b-card-body v-html="opportunity.html"></b-card-body>
-                            </b-card>
-                          </div>
-                        </div>
-                        <!-- PRIVATE BUT NOT PUBLISHED (DENOTED BY 'WARNING COLOR) -->
-                        <div v-else>
-                          <div v-if="isSubcontractor">
-                            <div v-if="opportunity.Company == Company">
-                              <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
-                              <b-card border-variant="warning" text-variant="dark">
-                                <template v-slot:header>
-                                  <h3 class="mb-0">
-                                    <span class="ml-0">{{ opportunity.Company }}</span>
-                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                  </h3>
-                                </template>
-                                <b-card-body v-html="opportunity.html"></b-card-body>
-                              </b-card>
-                            </div>
-                          </div>
-                          <div v-else-if="isWPManager">
-                            <!-- OTHER USERS ABLE TO SEE ITEM. -->
-                            <b-card border-variant="warning" text-variant="dark">
-                              <template v-slot:header>
-                                <h3 class="mb-0">
-                                  <span class="ml-0">{{ opportunity.Company }}</span>
-                                  <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                  <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                </h3>
-                              </template>
-                              <b-card-body v-html="opportunity.html"></b-card-body>
-                            </b-card>
-                          </div>
-                        </div>
-                      </div>
-                      <div v-else>
-                        <!-- NOT PRIVATE -->
-                        <div v-if="opportunity.Published == 'Yes'">
-                          <!-- NOT PRIVATE AND PUBLISHED -->
-                          <b-card border-variant="success" text-variant="dark">
-                            <template v-slot:header>
-                              <h3 class="mb-0">
-                                <span class="ml-0">{{ opportunity.Company }}</span>
-                                <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
-                              </h3>
-                            </template>
-                            <b-card-body v-html="opportunity.html"></b-card-body>
-                          </b-card>
-                        </div>
-                        <div v-else>
-                          <!-- NOT PRIVATE AND NOT PUBLISHED -->
-                          <div v-if="isSubcontractor">
-                            <div v-if="opportunity.Company == Company">
-                              <b-card border-variant="warning" text-variant="dark">
-                                <template v-slot:header>
-                                  <h3 class="mb-0">
-                                    <span class="ml-0">{{ opportunity.Company }}</span>
-                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                  </h3>
-                                </template>
-                                <b-card-body v-html="opportunity.html"></b-card-body>
-                              </b-card>
-                            </div>
-                          </div>
-                          <div v-else-if="isWPManager">
-                            <b-card border-variant="warning" text-variant="dark">
-                              <template v-slot:header>
-                                <h3 class="mb-0">
-                                  <span class="ml-0">{{ opportunity.Company }}</span>
-                                  <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                </h3>
-                              </template>
-                              <b-card-body v-html="opportunity.html"></b-card-body>
-                            </b-card>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </b-col>
-            </b-row>
-          </b-tab>
-          <b-tab class="mtab Section6">
-            <template slot="title">
-              <font-awesome-icon fas icon="truck" class="icon"></font-awesome-icon>
-              Deliverables
-            </template>
-            <b-row>
-              <b-col cols="12">
-                <div id="Section6Main" class="rtesection">
-                  <h1>
-                    6.0 Deliverables
-                  </h1>
-                  <br />
-                  <b-form v-if="DeliverablesForm">
-                    <b-row>
-                      <ejs-richtexteditor ref="rte_Deliverables" id="rte_Deliverables" height="600" :fontFamily="fontFamily" :cssClass="cssClass" v-model="SelectedDeliverable" :pasteCleanupSettings="pasteCleanupSettings" :toolbarSettings="toolbarSettings"></ejs-richtexteditor>
-                    </b-row>
-                    <b-row id="DeliverablesAnchor">
-                      <b-button id="btn_Clear" ref="btn_Clear" class="formbutton" variant="warning" @click="handleit('cleardeliverable', '', '')">Clear Contents</b-button>
-                      <b-button id="btn_PrivateDeliverable" ref="btn_PrivateDeliverable" class="formbutton" variant="danger" @click="handleit('privatedeliverable', '', '')">Make Private</b-button>
-                      <b-button id="btn_SaveDeliverables" ref="btn_SaveDeliverables" class="formbutton" variant="success" @click="handleit('savedeliverable', '', '')">Save Deliverable</b-button>
-                      <b-button id="btn_PublishDeliverable" ref="btn_PublishDeliverable" class="formbutton" variant="success" @click="handleit('publishdeliverable', '', '')">Publish Deliverable</b-button>
-                      <b-button id="btn_CancelDeliverables" ref="btn_CancelDeliverables" class="formbutton" variant="danger" @click="handleit('canceldeliverable', '', '')">Cancel</b-button>
-                    </b-row>
-                  </b-form>
-                  <div v-else id="Deliverables">
-                    <div v-for="deliverable in Deliverables" :key="deliverable" class="text-left mb-2">
-                      <div v-if="deliverable.Private == 'Yes'">
-                        <!-- PRIVATE -->
-                        <div v-if="deliverable.Published == 'Yes'">
-                          <!-- PRIVATE AND PUBLISHED -->
-                          <div v-if="isSubcontractor">
-                            <div v-if="deliverable.Company == Company">
-                              <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
-                              <b-card border-variant="success" text-variant="dark">
-                                <template v-slot:header>
-                                  <h3 class="mb-0">
-                                    <span class="ml-0">{{ deliverable.Company }}</span>
-                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                    <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
-                                  </h3>
-                                </template>
-                                <b-card-body v-html="deliverable.html"></b-card-body>
-                              </b-card>
-                            </div>
-                          </div>
-                          <div v-else>
-                            <b-card border-variant="success" text-variant="dark">
-                              <template v-slot:header>
-                                <h3 class="mb-0">
-                                  <span class="ml-0">{{ deliverable.Company }}</span>
-                                  <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                  <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
-                                </h3>
-                              </template>
-                              <b-card-body v-html="deliverable.html"></b-card-body>
-                            </b-card>
-                          </div>
-                        </div>
-                        <!-- PRIVATE BUT NOT PUBLISHED (DENOTED BY 'WARNING COLOR) -->
-                        <div v-else>
-                          <div v-if="isSubcontractor">
-                            <div v-if="deliverable.Company == Company">
-                              <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
-                              <b-card border-variant="warning" text-variant="dark">
-                                <template v-slot:header>
-                                  <h3 class="mb-0">
-                                    <span class="ml-0">{{ deliverable.Company }}</span>
-                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                  </h3>
-                                </template>
-                                <b-card-body v-html="deliverable.html"></b-card-body>
-                              </b-card>
-                            </div>
-                          </div>
-                          <div v-else-if="isWPManager">
-                            <!-- OTHER USERS ABLE TO SEE ITEM. -->
-                            <b-card border-variant="warning" text-variant="dark">
-                              <template v-slot:header>
-                                <h3 class="mb-0">
-                                  <span class="ml-0">{{ deliverable.Company }}</span>
-                                  <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                  <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                </h3>
-                              </template>
-                              <b-card-body v-html="deliverable.html"></b-card-body>
-                            </b-card>
-                          </div>
-                        </div>
-                      </div>
-                      <div v-else>
-                        <!-- NOT PRIVATE -->
-                        <div v-if="deliverable.Published == 'Yes'">
-                          <!-- NOT PRIVATE AND PUBLISHED -->
-                          <b-card border-variant="success" text-variant="dark">
-                            <template v-slot:header>
-                              <h3 class="mb-0">
-                                <span class="ml-0">{{ deliverable.Company }}</span>
-                                <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
-                              </h3>
-                            </template>
-                            <b-card-body v-html="deliverable.html"></b-card-body>
-                          </b-card>
-                        </div>
-                        <div v-else>
-                          <!-- NOT PRIVATE AND NOT PUBLISHED -->
-                          <div v-if="isSubcontractor">
-                            <div v-if="deliverable.Company == Company">
-                              <b-card border-variant="warning" text-variant="dark">
-                                <template v-slot:header>
-                                  <h3 class="mb-0">
-                                    <span class="ml-0">{{ deliverable.Company }}</span>
-                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                  </h3>
-                                </template>
-                                <b-card-body v-html="deliverable.html"></b-card-body>
-                              </b-card>
-                            </div>
-                          </div>
-                          <div v-else-if="isWPManager">
-                            <b-card border-variant="warning" text-variant="dark">
-                              <template v-slot:header>
-                                <h3 class="mb-0">
-                                  <span class="ml-0">{{ deliverable.Company }}</span>
-                                  <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                </h3>
-                              </template>
-                              <b-card-body v-html="deliverable.html"></b-card-body>
-                            </b-card>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </b-col>
-            </b-row>
-          </b-tab>
-          <b-tab class="mtab Section7">
-            <template slot="title">
-              <font-awesome-icon fas icon="thumbs-up" class="icon"></font-awesome-icon>
-              Distribution
-            </template>
-            <div class="row">
-              <b-col cols="12">
-                <div id="Section7Main" class="rtesection">
-                  <h1>
-                    7.0 Distribution
-                  </h1>
-                  <br />
-                  <b-form v-if="DistributionForm">
-                    <b-row>
-                      <ejs-richtexteditor ref="rte_Distribution" id="rte_Distribution" height="600" :fontFamily="fontFamily" :cssClass="cssClass" v-model="Distribution" :pasteCleanupSettings="pasteCleanupSettings" :toolbarSettings="toolbarSettings"></ejs-richtexteditor>
-                    </b-row>
-                    <b-row id="DistributionAnchor">
-                      <b-button id="btn_Clear" ref="btn_Clear" class="formbutton" variant="warning" @click="handleit('clear', '', '')">Clear Contents</b-button>
-                      <b-button id="btn_SaveDistribution" ref="btn_SaveDistribution" class="formbutton" variant="success" @click="handleit('save', 'Distribution', 'DistributionForm')">Save Distribution</b-button>
-                      <b-button id="btn_CancelDistribution" ref="btn_CancelDistribution" class="formbutton" variant="danger" @click="handleit('cancel', 'Distribution', 'DistributionForm')">Cancel</b-button>
-                    </b-row>
-                  </b-form>
-                  <div v-else id="Distribution" v-html="Distribution"></div>
-                </div>
-              </b-col>
-            </div>
-          </b-tab>
-          <b-tab class="mtab Summary">
-            <template slot="title">
-              <font-awesome-icon fas icon="traffic-light" class="icon"></font-awesome-icon>
-              Summary
-            </template>
-            <b-row v-if="!isSubcontractor">
-              <b-col cols="12">
-                <div id="Section1" class="rtesection">
-                  <h1>
-                    1.0 Funding and Staffing Summary
-                  </h1>
-                  <br />
-                  <h2>
-                    1.1 Funding
-                  </h2>
-                  <br />
-                  <div id="FundingHtml" v-html="Funding"></div>
-                  <br />
-                  <h2>
-                    1.2 Engineering Effort/Staffing
-                  </h2>
-                  <br />
-                  <div id="StaffingHtml" v-html="Staffing"></div>
-                  <br />
-                  <h2>
-                    1.3 Cost Report
-                  </h2>
-                  <br />
-                  <div id="CostReportHtml" v-html="CostReport"></div>
-                </div>
-              </b-col>
-            </b-row>
-            <b-row v-if="!isSubcontractor">
-              <b-col cols="12">
-                <div id="Section2" class="rtesection">
-                  <h1>
-                    2.0 Travel
-                  </h1>
-                  <br />
-                  <h2>
-                    2.1 Travel
-                  </h2>
-                  <br />
-                  <h3>
-                    2.1.1 Travel Accomplished
-                  </h3>
-                  <br />
-                  <div id="TravelAccomplishedHtml" v-html="TravelAccomplished"></div>
-                  <br />
-                  <h3>
-                    2.1.2 Travel Planned
-                  </h3>
-                  <br />
-                  <div id="TravelPlannedHtml" v-html="TravelPlanned"></div>
-                  <br />
-                  <h3>
-                    2.1.3 Travel Costs To Date
-                  </h3>
-                  <br />
-                  <div id="TravelCostsHtml" v-html="TravelCosts"></div>
-                  <h2>
-                    2.2 ODCs
-                  </h2>
-                  <br />
-                  <h3>
-                    2.2.1 ODCs Accomplished
-                  </h3>
-                  <br />
-                  <div id="ODCAccomplishedHtml" v-html="ODCAccomplished"></div>
-                  <br />
-                  <h3>
-                    2.2.2 ODCs Planned
-                  </h3>
-                  <br />
-                  <div id="ODCPlannedHtml" v-html="ODCPlanned"></div>
-                  <br />
-                  <h3>
-                    2.2.3 ODC Costs To Date
-                  </h3>
-                  <br />
-                  <div id="ODCCostsHtml" v-html="ODCCosts"></div>
-                </div>
-              </b-col>
-            </b-row>
-            <b-row>
-              <b-col cols="12">
-                <div id="Section3Main" class="rtesection">
-                  <h1>
-                    3.0 Accomplishments
-                  </h1>
-                  <br />
-                  <div id="Accomplishments">
-                    <div v-for="accomplishment in Accomplishments" :key="accomplishment" class="text-left mb-2">
-                      <div v-if="accomplishment.Private == 'Yes'">
-                        <!-- PRIVATE -->
-                        <div v-if="accomplishment.Published == 'Yes'">
-                          <!-- PRIVATE AND PUBLISHED -->
-                          <div v-if="isSubcontractor">
-                            <div v-if="accomplishment.Company == Company">
-                              <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
-                              <b-card border-variant="success" text-variant="dark">
-                                <template v-slot:header>
-                                  <h3 class="mb-0">
-                                    <span class="ml-0">{{ accomplishment.Company }}</span>
-                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                    <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
-                                  </h3>
-                                </template>
-                                <b-card-body v-html="accomplishment.html"></b-card-body>
-                              </b-card>
-                            </div>
-                          </div>
-                          <div v-else>
-                            <b-card border-variant="success" text-variant="dark">
-                              <template v-slot:header>
-                                <h3 class="mb-0">
-                                  <span class="ml-0">{{ accomplishment.Company }}</span>
-                                  <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                  <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
-                                </h3>
-                              </template>
-                              <b-card-body v-html="accomplishment.html"></b-card-body>
-                            </b-card>
-                          </div>
-                        </div>
-                        <!-- PRIVATE BUT NOT PUBLISHED (DENOTED BY 'WARNING COLOR) -->
-                        <div v-else>
-                          <div v-if="isSubcontractor">
-                            <div v-if="accomplishment.Company == Company">
-                              <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
-                              <b-card border-variant="warning" text-variant="dark">
-                                <template v-slot:header>
-                                  <h3 class="mb-0">
-                                    <span class="ml-0">{{ accomplishment.Company }}</span>
-                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                  </h3>
-                                </template>
-                                <b-card-body v-html="accomplishment.html"></b-card-body>
-                              </b-card>
-                            </div>
-                          </div>
-                          <div v-else-if="isWPManager">
-                            <!-- OTHER USERS ABLE TO SEE ITEM. -->
-                            <b-card border-variant="warning" text-variant="dark">
-                              <template v-slot:header>
-                                <h3 class="mb-0">
-                                  <span class="ml-0">{{ accomplishment.Company }}</span>
-                                  <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                  <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                </h3>
-                              </template>
-                              <b-card-body v-html="accomplishment.html"></b-card-body>
-                            </b-card>
-                          </div>
-                        </div>
-                      </div>
-                      <div v-else>
-                        <!-- NOT PRIVATE -->
-                        <div v-if="accomplishment.Published == 'Yes'">
-                          <!-- NOT PRIVATE AND PUBLISHED -->
-                          <b-card border-variant="success" text-variant="dark">
-                            <template v-slot:header>
-                              <h3 class="mb-0">
-                                <span class="ml-0">{{ accomplishment.Company }}</span>
-                                <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
-                              </h3>
-                            </template>
-                            <b-card-body v-html="accomplishment.html"></b-card-body>
-                          </b-card>
-                        </div>
-                        <div v-else>
-                          <!-- NOT PRIVATE AND NOT PUBLISHED -->
-                          <div v-if="isSubcontractor">
-                            <div v-if="accomplishment.Company == Company">
-                              <b-card border-variant="warning" text-variant="dark">
-                                <template v-slot:header>
-                                  <h3 class="mb-0">
-                                    <span class="ml-0">{{ accomplishment.Company }}</span>
-                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                  </h3>
-                                </template>
-                                <b-card-body v-html="accomplishment.html"></b-card-body>
-                              </b-card>
-                            </div>
-                          </div>
-                          <div v-else-if="isWPManager">
-                            <b-card border-variant="warning" text-variant="dark">
-                              <template v-slot:header>
-                                <h3 class="mb-0">
-                                  <span class="ml-0">{{ accomplishment.Company }}</span>
-                                  <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                </h3>
-                              </template>
-                              <b-card-body v-html="accomplishment.html"></b-card-body>
-                            </b-card>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </b-col>
-            </b-row>
-            <b-row>
-              <b-col cols="12">
-                <div id="Section4Main" class="rtesection">
-                  <h1>
-                    4.0 Plans
-                  </h1>
-                  <br />
-                  <div id="Plans">
-                    <div v-for="plan in Plans" :key="plan" class="text-left mb-2">
-                      <div v-if="plan.Private == 'Yes'">
-                        <!-- PRIVATE -->
-                        <div v-if="plan.Published == 'Yes'">
-                          <!-- PRIVATE AND PUBLISHED -->
-                          <div v-if="isSubcontractor">
-                            <div v-if="plan.Company == Company">
-                              <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
-                              <b-card border-variant="success" text-variant="dark">
-                                <template v-slot:header>
-                                  <h3 class="mb-0">
-                                    <span class="ml-0">{{ plan.Company }}</span>
-                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                    <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
-                                  </h3>
-                                </template>
-                                <b-card-body v-html="plan.html"></b-card-body>
-                              </b-card>
-                            </div>
-                          </div>
-                          <div v-else>
-                            <b-card border-variant="success" text-variant="dark">
-                              <template v-slot:header>
-                                <h3 class="mb-0">
-                                  <span class="ml-0">{{ plan.Company }}</span>
-                                  <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                  <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
-                                </h3>
-                              </template>
-                              <b-card-body v-html="plan.html"></b-card-body>
-                            </b-card>
-                          </div>
-                        </div>
-                        <!-- PRIVATE BUT NOT PUBLISHED (DENOTED BY 'WARNING COLOR) -->
-                        <div v-else>
-                          <div v-if="isSubcontractor">
-                            <div v-if="plan.Company == Company">
-                              <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
-                              <b-card border-variant="warning" text-variant="dark">
-                                <template v-slot:header>
-                                  <h3 class="mb-0">
-                                    <span class="ml-0">{{ plan.Company }}</span>
-                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                  </h3>
-                                </template>
-                                <b-card-body v-html="plan.html"></b-card-body>
-                              </b-card>
-                            </div>
-                          </div>
-                          <div v-else-if="isWPManager">
-                            <!-- OTHER USERS ABLE TO SEE ITEM. -->
-                            <b-card border-variant="warning" text-variant="dark">
-                              <template v-slot:header>
-                                <h3 class="mb-0">
-                                  <span class="ml-0">{{ plan.Company }}</span>
-                                  <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                  <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                </h3>
-                              </template>
-                              <b-card-body v-html="plan.html"></b-card-body>
-                            </b-card>
-                          </div>
-                        </div>
-                      </div>
-                      <div v-else>
-                        <!-- NOT PRIVATE -->
-                        <div v-if="plan.Published == 'Yes'">
-                          <!-- NOT PRIVATE AND PUBLISHED -->
-                          <b-card border-variant="success" text-variant="dark">
-                            <template v-slot:header>
-                              <h3 class="mb-0">
-                                <span class="ml-0">{{ plan.Company }}</span>
-                                <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
-                              </h3>
-                            </template>
-                            <b-card-body v-html="plan.html"></b-card-body>
-                          </b-card>
-                        </div>
-                        <div v-else>
-                          <!-- NOT PRIVATE AND NOT PUBLISHED -->
-                          <div v-if="isSubcontractor">
-                            <div v-if="plan.Company == Company">
-                              <b-card border-variant="warning" text-variant="dark">
-                                <template v-slot:header>
-                                  <h3 class="mb-0">
-                                    <span class="ml-0">{{ plan.Company }}</span>
-                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                  </h3>
-                                </template>
-                                <b-card-body v-html="plan.html"></b-card-body>
-                              </b-card>
-                            </div>
-                          </div>
-                          <div v-else-if="isWPManager">
-                            <b-card border-variant="warning" text-variant="dark">
-                              <template v-slot:header>
-                                <h3 class="mb-0">
-                                  <span class="ml-0">{{ plan.Company }}</span>
-                                  <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                </h3>
-                              </template>
-                              <b-card-body v-html="plan.html"></b-card-body>
-                            </b-card>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </b-col>
-            </b-row>
-            <b-row>
-              <b-col cols="12">
-                <div id="Section5Main" class="rtesection">
-                  <h1>
-                    5.0 Assumptions / Risks / Opportunities
-                  </h1>
-                  <br />
-                  <h2>
-                    Assumptions and Dependencies
-                  </h2>
-                  <br />
-                  <div id="Assumptions">
-                    <div v-for="assumption in Assumptions" :key="assumption" class="text-left mb-2">
-                      <div v-if="assumption.Private == 'Yes'">
-                        <!-- PRIVATE -->
-                        <div v-if="assumption.Published == 'Yes'">
-                          <!-- PRIVATE AND PUBLISHED -->
-                          <div v-if="isSubcontractor">
-                            <div v-if="assumption.Company == Company">
-                              <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
-                              <b-card border-variant="success" text-variant="dark">
-                                <template v-slot:header>
-                                  <h3 class="mb-0">
-                                    <span class="ml-0">{{ assumption.Company }}</span>
-                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                    <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
-                                  </h3>
-                                </template>
-                                <b-card-body v-html="assumption.html"></b-card-body>
-                              </b-card>
-                            </div>
-                          </div>
-                          <div v-else>
-                            <b-card border-variant="success" text-variant="dark">
-                              <template v-slot:header>
-                                <h3 class="mb-0">
-                                  <span class="ml-0">{{ assumption.Company }}</span>
-                                  <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                  <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
-                                </h3>
-                              </template>
-                              <b-card-body v-html="assumption.html"></b-card-body>
-                            </b-card>
-                          </div>
-                        </div>
-                        <!-- PRIVATE BUT NOT PUBLISHED (DENOTED BY 'WARNING COLOR) -->
-                        <div v-else>
-                          <div v-if="isSubcontractor">
-                            <div v-if="assumption.Company == Company">
-                              <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
-                              <b-card border-variant="warning" text-variant="dark">
-                                <template v-slot:header>
-                                  <h3 class="mb-0">
-                                    <span class="ml-0">{{ assumption.Company }}</span>
-                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                  </h3>
-                                </template>
-                                <b-card-body v-html="assumption.html"></b-card-body>
-                              </b-card>
-                            </div>
-                          </div>
-                          <div v-else-if="isWPManager">
-                            <!-- OTHER USERS ABLE TO SEE ITEM. -->
-                            <b-card border-variant="warning" text-variant="dark">
-                              <template v-slot:header>
-                                <h3 class="mb-0">
-                                  <span class="ml-0">{{ assumption.Company }}</span>
-                                  <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                  <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                </h3>
-                              </template>
-                              <b-card-body v-html="assumption.html"></b-card-body>
-                            </b-card>
-                          </div>
-                        </div>
-                      </div>
-                      <div v-else>
-                        <!-- NOT PRIVATE -->
-                        <div v-if="assumption.Published == 'Yes'">
-                          <!-- NOT PRIVATE AND PUBLISHED -->
-                          <b-card border-variant="success" text-variant="dark">
-                            <template v-slot:header>
-                              <h3 class="mb-0">
-                                <span class="ml-0">{{ assumption.Company }}</span>
-                                <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
-                              </h3>
-                            </template>
-                            <b-card-body v-html="assumption.html"></b-card-body>
-                          </b-card>
-                        </div>
-                        <div v-else>
-                          <!-- NOT PRIVATE AND NOT PUBLISHED -->
-                          <div v-if="isSubcontractor">
-                            <div v-if="assumption.Company == Company">
-                              <b-card border-variant="warning" text-variant="dark">
-                                <template v-slot:header>
-                                  <h3 class="mb-0">
-                                    <span class="ml-0">{{ assumption.Company }}</span>
-                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                  </h3>
-                                </template>
-                                <b-card-body v-html="assumption.html"></b-card-body>
-                              </b-card>
-                            </div>
-                          </div>
-                          <div v-else-if="isWPManager">
-                            <b-card border-variant="warning" text-variant="dark">
-                              <template v-slot:header>
-                                <h3 class="mb-0">
-                                  <span class="ml-0">{{ assumption.Company }}</span>
-                                  <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                </h3>
-                              </template>
-                              <b-card-body v-html="assumption.html"></b-card-body>
-                            </b-card>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <br />
-                  <h2>
-                    Risks and Mitigation
-                  </h2>
-                  <br />
-                  <div id="Risks">
-                    <div v-for="risk in Risks" :key="risk" class="text-left mb-2">
-                      <div v-if="risk.Private == 'Yes'">
-                        <!-- PRIVATE -->
-                        <div v-if="risk.Published == 'Yes'">
-                          <!-- PRIVATE AND PUBLISHED -->
-                          <div v-if="isSubcontractor">
-                            <div v-if="risk.Company == Company">
-                              <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
-                              <b-card border-variant="success" text-variant="dark">
-                                <template v-slot:header>
-                                  <h3 class="mb-0">
-                                    <span class="ml-0">{{ risk.Company }}</span>
-                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                    <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
-                                  </h3>
-                                </template>
-                                <b-card-body v-html="risk.html"></b-card-body>
-                              </b-card>
-                            </div>
-                          </div>
-                          <div v-else>
-                            <b-card border-variant="success" text-variant="dark">
-                              <template v-slot:header>
-                                <h3 class="mb-0">
-                                  <span class="ml-0">{{ risk.Company }}</span>
-                                  <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                  <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
-                                </h3>
-                              </template>
-                              <b-card-body v-html="risk.html"></b-card-body>
-                            </b-card>
-                          </div>
-                        </div>
-                        <!-- PRIVATE BUT NOT PUBLISHED (DENOTED BY 'WARNING COLOR) -->
-                        <div v-else>
-                          <div v-if="isSubcontractor">
-                            <div v-if="risk.Company == Company">
-                              <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
-                              <b-card border-variant="warning" text-variant="dark">
-                                <template v-slot:header>
-                                  <h3 class="mb-0">
-                                    <span class="ml-0">{{ risk.Company }}</span>
-                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                  </h3>
-                                </template>
-                                <b-card-body v-html="risk.html"></b-card-body>
-                              </b-card>
-                            </div>
-                          </div>
-                          <div v-else-if="isWPManager">
-                            <!-- OTHER USERS ABLE TO SEE ITEM. -->
-                            <b-card border-variant="warning" text-variant="dark">
-                              <template v-slot:header>
-                                <h3 class="mb-0">
-                                  <span class="ml-0">{{ risk.Company }}</span>
-                                  <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                  <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                </h3>
-                              </template>
-                              <b-card-body v-html="risk.html"></b-card-body>
-                            </b-card>
-                          </div>
-                        </div>
-                      </div>
-                      <div v-else>
-                        <!-- NOT PRIVATE -->
-                        <div v-if="risk.Published == 'Yes'">
-                          <!-- NOT PRIVATE AND PUBLISHED -->
-                          <b-card border-variant="success" text-variant="dark">
-                            <template v-slot:header>
-                              <h3 class="mb-0">
-                                <span class="ml-0">{{ risk.Company }}</span>
-                                <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
-                              </h3>
-                            </template>
-                            <b-card-body v-html="risk.html"></b-card-body>
-                          </b-card>
-                        </div>
-                        <div v-else>
-                          <!-- NOT PRIVATE AND NOT PUBLISHED -->
-                          <div v-if="isSubcontractor">
-                            <div v-if="risk.Company == Company">
-                              <b-card border-variant="warning" text-variant="dark">
-                                <template v-slot:header>
-                                  <h3 class="mb-0">
-                                    <span class="ml-0">{{ risk.Company }}</span>
-                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                  </h3>
-                                </template>
-                                <b-card-body v-html="risk.html"></b-card-body>
-                              </b-card>
-                            </div>
-                          </div>
-                          <div v-else-if="isWPManager">
-                            <b-card border-variant="warning" text-variant="dark">
-                              <template v-slot:header>
-                                <h3 class="mb-0">
-                                  <span class="ml-0">{{ risk.Company }}</span>
-                                  <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                </h3>
-                              </template>
-                              <b-card-body v-html="risk.html"></b-card-body>
-                            </b-card>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <br />
-                  <h2>
-                    Opportunities
-                  </h2>
-                  <br />
-                  <div id="Opportunities">
-                    <div v-for="opportunity in Opportunities" :key="opportunity" class="text-left mb-2">
-                      <div v-if="opportunity.Private == 'Yes'">
-                        <!-- PRIVATE -->
-                        <div v-if="opportunity.Published == 'Yes'">
-                          <!-- PRIVATE AND PUBLISHED -->
-                          <div v-if="isSubcontractor">
-                            <div v-if="opportunity.Company == Company">
-                              <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
-                              <b-card border-variant="success" text-variant="dark">
-                                <template v-slot:header>
-                                  <h3 class="mb-0">
-                                    <span class="ml-0">{{ opportunity.Company }}</span>
-                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                    <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
-                                  </h3>
-                                </template>
-                                <b-card-body v-html="opportunity.html"></b-card-body>
-                              </b-card>
-                            </div>
-                          </div>
-                          <div v-else>
-                            <b-card border-variant="success" text-variant="dark">
-                              <template v-slot:header>
-                                <h3 class="mb-0">
-                                  <span class="ml-0">{{ opportunity.Company }}</span>
-                                  <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                  <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
-                                </h3>
-                              </template>
-                              <b-card-body v-html="opportunity.html"></b-card-body>
-                            </b-card>
-                          </div>
-                        </div>
-                        <!-- PRIVATE BUT NOT PUBLISHED (DENOTED BY 'WARNING COLOR) -->
-                        <div v-else>
-                          <div v-if="isSubcontractor">
-                            <div v-if="opportunity.Company == Company">
-                              <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
-                              <b-card border-variant="warning" text-variant="dark">
-                                <template v-slot:header>
-                                  <h3 class="mb-0">
-                                    <span class="ml-0">{{ opportunity.Company }}</span>
-                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                  </h3>
-                                </template>
-                                <b-card-body v-html="opportunity.html"></b-card-body>
-                              </b-card>
-                            </div>
-                          </div>
-                          <div v-else-if="isWPManager">
-                            <!-- OTHER USERS ABLE TO SEE ITEM. -->
-                            <b-card border-variant="warning" text-variant="dark">
-                              <template v-slot:header>
-                                <h3 class="mb-0">
-                                  <span class="ml-0">{{ opportunity.Company }}</span>
-                                  <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                  <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                </h3>
-                              </template>
-                              <b-card-body v-html="opportunity.html"></b-card-body>
-                            </b-card>
-                          </div>
-                        </div>
-                      </div>
-                      <div v-else>
-                        <!-- NOT PRIVATE -->
-                        <div v-if="opportunity.Published == 'Yes'">
-                          <!-- NOT PRIVATE AND PUBLISHED -->
-                          <b-card border-variant="success" text-variant="dark">
-                            <template v-slot:header>
-                              <h3 class="mb-0">
-                                <span class="ml-0">{{ opportunity.Company }}</span>
-                                <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
-                              </h3>
-                            </template>
-                            <b-card-body v-html="opportunity.html"></b-card-body>
-                          </b-card>
-                        </div>
-                        <div v-else>
-                          <!-- NOT PRIVATE AND NOT PUBLISHED -->
-                          <div v-if="isSubcontractor">
-                            <div v-if="opportunity.Company == Company">
-                              <b-card border-variant="warning" text-variant="dark">
-                                <template v-slot:header>
-                                  <h3 class="mb-0">
-                                    <span class="ml-0">{{ opportunity.Company }}</span>
-                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                  </h3>
-                                </template>
-                                <b-card-body v-html="opportunity.html"></b-card-body>
-                              </b-card>
-                            </div>
-                          </div>
-                          <div v-else-if="isWPManager">
-                            <b-card border-variant="warning" text-variant="dark">
-                              <template v-slot:header>
-                                <h3 class="mb-0">
-                                  <span class="ml-0">{{ opportunity.Company }}</span>
-                                  <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                </h3>
-                              </template>
-                              <b-card-body v-html="opportunity.html"></b-card-body>
-                            </b-card>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </b-col>
-            </b-row>
-            <b-row>
-              <b-col cols="12">
-                <div id="Section6Main" class="rtesection">
-                  <h1>
-                    6.0 Deliverables
-                  </h1>
-                  <br />
-                  <div id="Deliverables">
-                    <div v-for="deliverable in Deliverables" :key="deliverable" class="text-left mb-2">
-                      <div v-if="deliverable.Private == 'Yes'">
-                        <!-- PRIVATE -->
-                        <div v-if="deliverable.Published == 'Yes'">
-                          <!-- PRIVATE AND PUBLISHED -->
-                          <div v-if="isSubcontractor">
-                            <div v-if="deliverable.Company == Company">
-                              <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
-                              <b-card border-variant="success" text-variant="dark">
-                                <template v-slot:header>
-                                  <h3 class="mb-0">
-                                    <span class="ml-0">{{ deliverable.Company }}</span>
-                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                    <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
-                                  </h3>
-                                </template>
-                                <b-card-body v-html="deliverable.html"></b-card-body>
-                              </b-card>
-                            </div>
-                          </div>
-                          <div v-else>
-                            <b-card border-variant="success" text-variant="dark">
-                              <template v-slot:header>
-                                <h3 class="mb-0">
-                                  <span class="ml-0">{{ deliverable.Company }}</span>
-                                  <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                  <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
-                                </h3>
-                              </template>
-                              <b-card-body v-html="deliverable.html"></b-card-body>
-                            </b-card>
-                          </div>
-                        </div>
-                        <!-- PRIVATE BUT NOT PUBLISHED (DENOTED BY 'WARNING COLOR) -->
-                        <div v-else>
-                          <div v-if="isSubcontractor">
-                            <div v-if="deliverable.Company == Company">
-                              <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
-                              <b-card border-variant="warning" text-variant="dark">
-                                <template v-slot:header>
-                                  <h3 class="mb-0">
-                                    <span class="ml-0">{{ deliverable.Company }}</span>
-                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                  </h3>
-                                </template>
-                                <b-card-body v-html="deliverable.html"></b-card-body>
-                              </b-card>
-                            </div>
-                          </div>
-                          <div v-else-if="isWPManager">
-                            <!-- OTHER USERS ABLE TO SEE ITEM. -->
-                            <b-card border-variant="warning" text-variant="dark">
-                              <template v-slot:header>
-                                <h3 class="mb-0">
-                                  <span class="ml-0">{{ deliverable.Company }}</span>
-                                  <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
-                                  <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                </h3>
-                              </template>
-                              <b-card-body v-html="deliverable.html"></b-card-body>
-                            </b-card>
-                          </div>
-                        </div>
-                      </div>
-                      <div v-else>
-                        <!-- NOT PRIVATE -->
-                        <div v-if="deliverable.Published == 'Yes'">
-                          <!-- NOT PRIVATE AND PUBLISHED -->
-                          <b-card border-variant="success" text-variant="dark">
-                            <template v-slot:header>
-                              <h3 class="mb-0">
-                                <span class="ml-0">{{ deliverable.Company }}</span>
-                                <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
-                              </h3>
-                            </template>
-                            <b-card-body v-html="deliverable.html"></b-card-body>
-                          </b-card>
-                        </div>
-                        <div v-else>
-                          <!-- NOT PRIVATE AND NOT PUBLISHED -->
-                          <div v-if="isSubcontractor">
-                            <div v-if="deliverable.Company == Company">
-                              <b-card border-variant="warning" text-variant="dark">
-                                <template v-slot:header>
-                                  <h3 class="mb-0">
-                                    <span class="ml-0">{{ deliverable.Company }}</span>
-                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                  </h3>
-                                </template>
-                                <b-card-body v-html="deliverable.html"></b-card-body>
-                              </b-card>
-                            </div>
-                          </div>
-                          <div v-else-if="isWPManager">
-                            <b-card border-variant="warning" text-variant="dark">
-                              <template v-slot:header>
-                                <h3 class="mb-0">
-                                  <span class="ml-0">{{ deliverable.Company }}</span>
-                                  <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
-                                </h3>
-                              </template>
-                              <b-card-body v-html="deliverable.html"></b-card-body>
-                            </b-card>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </b-col>
-            </b-row>
-            <b-row>
-              <b-col cols="12">
-                <div id="Section7Main" class="rtesection">
-                  <h1>
-                    7.0 Distribution
-                  </h1>
-                  <br />
-                  <div id="Distribution" v-html="Distribution"></div>
-                </div>
-              </b-col>
-            </b-row>
-          </b-tab>
-          <b-tab :disabled="!isPM || !isDeveloper" class="mtab">
-            <template slot="title">
-              <font-awesome-icon fas icon="upload" class="icon"></font-awesome-icon>
-              Publish
-            </template>
-            <div id="Publish">
+    <div id="MsrForm" ref="MsrForm">
+      <b-row class="bg-warning text-black formheader">
+        <b-col cols="4" class="p-0 text-left"></b-col>
+        <b-col cols="4" class="p-0 text-center">{{ headerText }}</b-col>
+        <b-col cols="4" class="p-0 text-right"></b-col>
+      </b-row>
+      <b-row id="Tabs" class="tabrow formbody m-0">
+        <b-card no-body>
+          <b-tabs ref="dashboardtabs" class="tabArea" card v-model="tabIndex" @activate-tab="onTabSelected">
+            <b-tab :disabled="isSubcontractor" class="mtab Section1" active>
+              <template slot="title">
+                <font-awesome-icon fas icon="search-dollar" class="icon"></font-awesome-icon>
+                Funding and Staffing Summary
+              </template>
               <b-row>
                 <b-col cols="12">
-                  <div>
-                    <h2>
-                      1.0 Funding and Staffing Summary
-                    </h2>
-                    <br />
-                    <h3>
-                      1.1 Funding
-                    </h3>
-                    <br />
-                    <div id="PublishFunding" v-html="Funding"></div>
-                    <br />
-                    <h3>
-                      1.2 Engineering Effort/Staffing
-                    </h3>
-                    <br />
-                    <div id="PublishStaffing" v-html="Staffing"></div>
-                    <br />
-                    <h3>
-                      1.3 Cost Report
-                    </h3>
-                    <br />
-                    <div id="PublishCostReport" v-html="CostReport"></div>
+                  <div id="Section1" class="rtesection">
+                    <b-card no-body>
+                      <b-tabs ref="fundingtabs" class="tabArea" card>
+                        <b-tab class="mtab" active>
+                          <template slot="title">
+                            <font-awesome-icon fas icon="search-dollar" class="icon"></font-awesome-icon>
+                            1.1 Funding
+                          </template>
+                          <b-row class="m-1">
+                            <b-button :disabled="isEditing" class="formbutton" id="btn_Funding" ref="btn_Funding" variant="outline-danger" @click="handleit('edit', 'Funding', 'FundingForm')">Add/Edit Funding</b-button>
+                          </b-row>
+                          <b-form v-if="FundingForm">
+                            <b-row>
+                              <ejs-richtexteditor ref="rte_Funding" id="rte_Funding" height="600" :fontFamily="fontFamily" :cssClass="cssClass" v-model="Funding" :pasteCleanupSettings="pasteCleanupSettings" :toolbarSettings="toolbarSettings"></ejs-richtexteditor>
+                            </b-row>
+                            <b-row>
+                              <b-button id="btn_Clear" ref="btn_Clear" class="formbutton" variant="warning" @click="handleit('clear', '', '')">Clear Contents</b-button>
+                              <b-button id="btn_CancelFunding" ref="btn_CancelFunding" class="formbutton" variant="info" @click="handleit('cancel', 'Funding', 'FundingForm')">Cancel</b-button>
+                              <b-button id="btn_SaveFunding" ref="btn_SaveFunding" class="formbutton ml-auto" variant="success" @click="handleit('save', 'Funding', 'FundingForm')" title="Inputs are complete for this section.">Complete</b-button>
+                            </b-row>
+                          </b-form>
+                          <div v-else class="e-rte-content" id="FundingHtml" v-html="Funding"></div>
+                        </b-tab>
+                        <b-tab class="mtab">
+                          <template slot="title">
+                            <font-awesome-icon fas icon="search-dollar" class="icon"></font-awesome-icon>
+                            1.2 Engineering Effort/Staffing
+                          </template>
+                          <b-row class="m-1">
+                            <b-button :disabled="isEditing" class="formbutton" id="btn_Staffing" ref="btn_Staffing" variant="outline-danger" @click="handleit('edit', 'Staffing', 'StaffingForm')">Add/Edit Engineering Effort/Staffing</b-button>
+                          </b-row>
+                          <b-form v-if="StaffingForm">
+                            <b-row>
+                              <ejs-richtexteditor ref="rte_Staffing" id="rte_Staffing" height="600" :fontFamily="fontFamily" :cssClass="cssClass" v-model="Staffing" @change="onRTEChanged" :pasteCleanupSettings="pasteCleanupSettings" :toolbarSettings="toolbarSettings"></ejs-richtexteditor>
+                            </b-row>
+                            <b-row id="StaffingAnchor">
+                              <b-button id="btn_Clear" ref="btn_Clear" class="formbutton" variant="warning" @click="handleit('clear', '', '')">Clear Contents</b-button>
+                              <b-button id="btn_CancelStaffing" ref="btn_CancelStaffing" class="formbutton" variant="info" @click="handleit('cancel', 'Staffing', 'StaffingForm')">Cancel</b-button>
+                              <b-button id="btn_SaveStaffing" ref="btn_SaveStaffing" class="formbutton ml-auto" variant="success" @click="handleit('save', 'Staffing', 'StaffingForm')" title="Inputs are complete for this section.">Complete</b-button>
+                            </b-row>
+                          </b-form>
+                          <div v-else id="StaffingHtml" v-html="Staffing"></div>
+                        </b-tab>
+                        <b-tab class="mtab">
+                          <template slot="title">
+                            <font-awesome-icon fas icon="search-dollar" class="icon"></font-awesome-icon>
+                            1.3 Cost Report
+                          </template>
+                          <b-row class="m-1">
+                            <b-button :disabled="isEditing" class="formbutton" id="btn_CostReport" ref="btn_CostReport" variant="outline-danger" @click="handleit('edit', 'CostReport', 'CostReportForm')">Add/Edit Cost Report</b-button>
+                          </b-row>
+                          <b-form v-if="CostReportForm">
+                            <b-row>
+                              <ejs-richtexteditor ref="rte_CostReport" id="rte_CostReport" height="600" :fontFamily="fontFamily" :cssClass="cssClass" v-model="CostReport" @change="onRTEChanged" :pasteCleanupSettings="pasteCleanupSettings" :toolbarSettings="toolbarSettings"></ejs-richtexteditor>
+                            </b-row>
+                            <b-row id="CostReportAnchor">
+                              <b-button id="btn_Clear" ref="btn_Clear" class="formbutton" variant="warning" @click="handleit('clear', '', '')">Clear Contents</b-button>
+                              <b-button id="btn_CancelCostReport" ref="btn_CancelCostReport" class="formbutton" variant="info" @click="handleit('cancel', 'CostReport', 'CostReportForm')">Cancel</b-button>
+                              <b-button id="btn_SaveCostReport" ref="btn_SaveCostReport" class="formbutton ml-auto" variant="success" @click="handleit('save', 'CostReport', 'CostReportForm')" title="Inputs are complete for this section.">Complete</b-button>
+                            </b-row>
+                          </b-form>
+                          <div v-else id="CostReportHtml" v-html="CostReport"></div>
+                        </b-tab>
+                      </b-tabs>
+                    </b-card>
                   </div>
                 </b-col>
               </b-row>
+            </b-tab>
+            <b-tab :disabled="isSubcontractor" class="mtab Section2">
+              <template slot="title">
+                <font-awesome-icon fas icon="bus-alt" class="icon"></font-awesome-icon>
+                Travel &amp; ODC
+              </template>
               <b-row>
                 <b-col cols="12">
-                  <div>
-                    <h2>
-                      2.0 Travel
-                    </h2>
-                    <br />
-                    <h3>
-                      2.1 Travel
-                    </h3>
-                    <br />
-                    <h4>
-                      2.1.1 Travel Accomplished
-                    </h4>
-                    <br />
-                    <div id="PublishTravelAccomplished" v-html="TravelAccomplished"></div>
-                    <br />
-                    <h4>
-                      2.1.2 Travel Planned
-                    </h4>
-                    <br />
-                    <div id="PublishTravelPlanned" v-html="TravelPlanned"></div>
-                    <br />
-                    <h4>
-                      2.1.3 Travel Costs To Date
-                    </h4>
-                    <br />
-                    <div id="PublishTravelCosts" v-html="TravelCosts"></div>
-                    <h3>
-                      2.2 ODCs
-                    </h3>
-                    <br />
-                    <h4>
-                      2.2.1 ODCs Accomplished
-                    </h4>
-                    <br />
-                    <div id="PublishODCAccomplished" v-html="ODCAccomplished"></div>
-                    <br />
-                    <h4>
-                      2.2.2 ODCs Planned
-                    </h4>
-                    <br />
-                    <div id="PublishODCPlanned" v-html="ODCPlanned"></div>
-                    <br />
-                    <h4>
-                      2.2.3 ODC Costs To Date
-                    </h4>
-                    <br />
-                    <div id="PublishODCCosts" v-html="ODCCosts"></div>
+                  <div id="Section2" class="rtesection">
+                    <b-card no-body>
+                      <b-tabs ref="traveltabs" class="tabArea" card>
+                        <b-tab class="mtab" active>
+                          <template slot="title">
+                            <font-awesome-icon fas icon="bus-alt" class="icon"></font-awesome-icon>
+                            2.1.1 Travel Accomplished
+                          </template>
+                          <b-row class="m-1">
+                            <b-button :disabled="isEditing" class="formbutton" id="btn_TravelAccomplished" ref="btn_TravelAccomplished" variant="outline-danger" @click="handleit('edit', 'TravelAccomplished', 'TravelAccomplishedForm')">Add/Edit Travel Accomplished</b-button>
+                          </b-row>
+                          <b-form v-if="TravelAccomplishedForm">
+                            <b-row>
+                              <ejs-richtexteditor ref="rte_TravelAccomplished" id="rte_TravelAccomplished" height="600" :fontFamily="fontFamily" :cssClass="cssClass" v-model="TravelAccomplished" :pasteCleanupSettings="pasteCleanupSettings" :toolbarSettings="toolbarSettings"></ejs-richtexteditor>
+                            </b-row>
+                            <b-row id="TravelAccomplishedAnchor">
+                              <b-button id="btn_Clear" ref="btn_Clear" class="formbutton" variant="warning" @click="handleit('clear', '', '')">Clear Contents</b-button>
+                              <b-button id="btn_CancelTravelAccomplished" ref="btn_CancelTravelAccomplished" class="formbutton" variant="info" @click="handleit('cancel', 'TravelAccomplished', 'TravelAccomplishedForm')">Cancel</b-button>
+                              <b-button id="btn_SaveTravelAccomplished" ref="btn_SaveTravelAccomplished" class="formbutton ml-auto" variant="success" @click="handleit('save', 'TravelAccomplished', 'TravelAccomplishedForm')" title="Inputs are complete for this section.">Complete</b-button>
+                            </b-row>
+                          </b-form>
+                          <div v-else id="TravelAccomplishedHtml" v-html="TravelAccomplished"></div>
+                        </b-tab>
+                        <b-tab class="mtab" active>
+                          <template slot="title">
+                            <font-awesome-icon fas icon="bus-alt" class="icon"></font-awesome-icon>
+                            2.1.2 Travel Planned
+                          </template>
+                          <b-row class="m-1">
+                            <b-button :disabled="isEditing" class="formbutton" id="btn_TravelPlanned" ref="btn_TravelPlanned" variant="outline-danger" @click="handleit('edit', 'TravelPlanned', 'TravelPlannedForm')">Add/Edit Travel Planned</b-button>
+                          </b-row>
+                          <b-form v-if="TravelPlannedForm">
+                            <b-row>
+                              <ejs-richtexteditor ref="rte_TravelPlanned" id="rte_TravelPlanned" height="600" :fontFamily="fontFamily" :cssClass="cssClass" v-model="TravelPlanned" :pasteCleanupSettings="pasteCleanupSettings" :toolbarSettings="toolbarSettings"></ejs-richtexteditor>
+                            </b-row>
+                            <b-row id="TravelPlannedAnchor">
+                              <b-button id="btn_Clear" ref="btn_Clear" class="formbutton" variant="warning" @click="handleit('clear', '', '')">Clear Contents</b-button>
+                              <b-button id="btn_CancelTravelPlanned" ref="btn_CancelTravelPlanned" class="formbutton" variant="info" @click="handleit('cancel', 'TravelPlanned', 'TravelPlannedForm')">Cancel</b-button>
+                              <b-button id="btn_SaveTravelPlanned" ref="btn_SaveTravelPlanned" class="formbutton ml-auto" variant="success" @click="handleit('save', 'TravelPlanned', 'TravelPlannedForm')" title="Inputs are complete for this section.">Complete</b-button>
+                            </b-row>
+                          </b-form>
+                          <div v-else id="TravelPlannedHtml" v-html="TravelPlanned"></div>
+                        </b-tab>
+                        <b-tab class="mtab">
+                          <template slot="title">
+                            <font-awesome-icon fas icon="bus-alt" class="icon"></font-awesome-icon>
+                            2.1.3 Travel Costs To Date
+                          </template>
+                          <b-row class="m-1">
+                            <b-button :disabled="isEditing" class="formbutton" id="btn_TravelCosts" ref="btn_TravelCosts" variant="outline-danger" @click="handleit('edit', 'TravelCosts', 'TravelCostsForm')">Add/Edit Travel Costs to Date</b-button>
+                          </b-row>
+                          <b-form v-if="TravelCostsForm">
+                            <b-row>
+                              <ejs-richtexteditor ref="rte_TravelCosts" id="rte_TravelCosts" height="600" :fontFamily="fontFamily" :cssClass="cssClass" v-model="TravelCosts" @change="onRTEChanged" :pasteCleanupSettings="pasteCleanupSettings" :toolbarSettings="toolbarSettings"></ejs-richtexteditor>
+                            </b-row>
+                            <b-row id="TravelCostsAnchor">
+                              <b-button id="btn_Clear" ref="btn_Clear" class="formbutton" variant="warning" @click="handleit('clear', '', '')">Clear Contents</b-button>
+                              <b-button id="btn_CancelTravelCosts" ref="btn_CancelTravelCosts" class="formbutton" variant="info" @click="handleit('cancel', 'TravelCosts', 'TravelCostsForm')">Cancel</b-button>
+                              <b-button id="btn_SaveTravelCosts" ref="btn_SaveTravelCosts" class="formbutton ml-auto" variant="success" @click="handleit('save', 'TravelCosts', 'TravelCostsForm')" title="Inputs are complete for this section.">Complete</b-button>
+                            </b-row>
+                          </b-form>
+                          <div v-else id="TravelCostsHtml" v-html="TravelCosts"></div>
+                        </b-tab>
+                        <b-tab class="mtab">
+                          <template slot="title">
+                            <font-awesome-icon fas icon="bus-alt" class="icon"></font-awesome-icon>
+                            2.2.1 ODCs Accomplished
+                          </template>
+                          <b-row class="m-1">
+                            <b-button :disabled="isEditing" class="formbutton" id="btn_ODCAccomplished" ref="btn_ODCAccomplished" variant="outline-danger" @click="handleit('edit', 'ODCAccomplished', 'ODCAccomplishedForm')">Add/Edit ODC Accomplished</b-button>
+                          </b-row>
+                          <b-form v-if="ODCAccomplishedForm">
+                            <b-row>
+                              <ejs-richtexteditor ref="rte_ODCAccomplished" id="rte_ODCAccomplished" height="600" :fontFamily="fontFamily" :cssClass="cssClass" v-model="ODCAccomplished" :pasteCleanupSettings="pasteCleanupSettings" :toolbarSettings="toolbarSettings"></ejs-richtexteditor>
+                            </b-row>
+                            <b-row id="ODCAccomplishedAnchor">
+                              <b-button id="btn_Clear" ref="btn_Clear" class="formbutton" variant="warning" @click="handleit('clear', '', '')">Clear Contents</b-button>
+                              <b-button id="btn_CancelODCAccomplished" ref="btn_CancelODCAccomplished" class="formbutton" variant="info" @click="handleit('cancel', 'ODCAccomplished', 'ODCAccomplishedForm')">Cancel</b-button>
+                              <b-button id="btn_SaveODCAccomplished" ref="btn_SaveODCAccomplished" class="formbutton ml-auto" variant="success" @click="handleit('save', 'ODCAccomplished', 'ODCAccomplishedForm')" title="Inputs are complete for this section.">Complete</b-button>
+                            </b-row>
+                          </b-form>
+                          <div v-else id="ODCAccomplishedHtml" v-html="ODCAccomplished"></div>
+                        </b-tab>
+                        <b-tab class="mtab">
+                          <template slot="title">
+                            <font-awesome-icon fas icon="bus-alt" class="icon"></font-awesome-icon>
+                            2.2.2 ODCs Planned
+                          </template>
+                          <b-row class="m-1">
+                            <b-button :disabled="isEditing" class="formbutton" id="btn_ODCPlanned" ref="btn_ODCPlanned" variant="outline-danger" @click="handleit('edit', 'ODCPlanned', 'ODCPlannedForm')">Add/Edit ODC Planned</b-button>
+                          </b-row>
+                          <b-form v-if="ODCPlannedForm">
+                            <b-row>
+                              <ejs-richtexteditor ref="rte_ODCPlanned" id="rte_ODCPlanned" height="600" :fontFamily="fontFamily" :cssClass="cssClass" v-model="ODCPlanned" :pasteCleanupSettings="pasteCleanupSettings" :toolbarSettings="toolbarSettings"></ejs-richtexteditor>
+                            </b-row>
+                            <b-row id="ODCPlannedAnchor">
+                              <b-button id="btn_Clear" ref="btn_Clear" class="formbutton" variant="warning" @click="handleit('clear', '', '')">Clear Contents</b-button>
+                              <b-button id="btn_CancelODCPlanned" ref="btn_CancelODCPlanned" class="formbutton" variant="info" @click="handleit('cancel', 'ODCPlanned', 'ODCPlannedForm')">Cancel</b-button>
+                              <b-button id="btn_SaveODCPlanned" ref="btn_SaveODCPlanned" class="formbutton ml-auto" variant="success" @click="handleit('save', 'ODCPlanned', 'ODCPlannedForm')" title="Inputs are complete for this section.">Complete</b-button>
+                            </b-row>
+                          </b-form>
+                          <div v-else id="ODCPlannedHtml" v-html="ODCPlanned"></div>
+                        </b-tab>
+                        <b-tab class="mtab">
+                          <template slot="title">
+                            <font-awesome-icon fas icon="bus-alt" class="icon"></font-awesome-icon>
+                            2.2.3 ODC Costs To Date
+                          </template>
+                          <b-row class="m-1">
+                            <b-button :disabled="isEditing" class="formbutton" id="btn_ODCCosts" ref="btn_ODCCosts" variant="outline-danger" @click="handleit('edit', 'ODCCosts', 'ODCCostsForm')">Add/Edit ODC Costs to Date</b-button>
+                          </b-row>
+                          <b-form v-if="ODCCostsForm">
+                            <b-row>
+                              <ejs-richtexteditor ref="rte_ODCCosts" id="rte_ODCCosts" height="600" :fontFamily="fontFamily" :cssClass="cssClass" v-model="ODCCosts" @change="onRTEChanged" :pasteCleanupSettings="pasteCleanupSettings" :toolbarSettings="toolbarSettings"></ejs-richtexteditor>
+                            </b-row>
+                            <b-row id="ODCCostsAnchor">
+                              <b-button id="btn_Clear" ref="btn_Clear" class="formbutton" variant="warning" @click="handleit('clear', '', '')">Clear Contents</b-button>
+                              <b-button id="btn_CancelODCCosts" ref="btn_CancelODCCosts" class="formbutton" variant="info" @click="handleit('cancel', 'ODCCosts', 'ODCCostsForm')">Cancel</b-button>
+                              <b-button id="btn_SaveODCCosts" ref="btn_SaveODCCosts" class="formbutton ml-auto" variant="success" @click="handleit('save', 'ODCCosts', 'ODCCostsForm')" title="Inputs are complete for this section.">Complete</b-button>
+                            </b-row>
+                          </b-form>
+                          <div v-else id="ODCCostsHtml" v-html="ODCCosts"></div>
+                        </b-tab>
+                      </b-tabs>
+                    </b-card>
                   </div>
                 </b-col>
               </b-row>
-              <b-row>
+            </b-tab>
+            <b-tab class="mtab Section3">
+              <template slot="title">
+                <font-awesome-icon fas icon="tasks" class="icon"></font-awesome-icon>
+                Accomplishments
+              </template>
+              <div class="row">
                 <b-col cols="12">
-                  <div>
-                    <h2>
-                      3.0 Accomplishments
-                    </h2>
-                    <br />
-                    <div id="PublishAccomplishments" ref="Accomplishments">
+                  <div id="Section3Main" class="rtesection">
+                    <b-row class="m-1">
+                      <div class="m-1" v-if="!isSubcontractor">
+                        <b-dropdown :disabled="isEditing" text="Edit Accomplishments" v-if="Accomplishments.length > 0" split split-variant="outline-danger" variant="danger">
+                          <b-dropdown-item v-for="accomplishment in Accomplishments" :key="accomplishment" @click="handleit('editaccomplishment', accomplishment.Company, accomplishment.Index)">Edit {{ accomplishment.Company }} Accomplishments</b-dropdown-item>
+                        </b-dropdown>
+                      </div>
+                      <div class="m-1" v-if="isSubcontractor && Accomplishments.length > 0">
+                        <div v-for="accomplishment in Accomplishments" :key="accomplishment">
+                          <b-button :disabled="isEditing" v-if="accomplishment.Company == Company && accomplishment.Completed == 'No'" class="formbutton" id="btn_Accomplishments" ref="btn_Accomplishments" variant="outline-danger" @click="handleit('editaccomplishment', accomplishment.Company, accomplishment.Index)">Edit Accomplishments</b-button>
+                        </div>
+                      </div>
+                    </b-row>
+                    <b-form v-if="AccomplishmentsForm">
+                      <b-row>
+                        <ejs-richtexteditor ref="rte_Accomplishments" id="rte_Accomplishments" height="600" :fontFamily="fontFamily" :cssClass="cssClass" v-model="SelectedAccomplishment" :pasteCleanupSettings="pasteCleanupSettings" :toolbarSettings="toolbarSettings"></ejs-richtexteditor>
+                      </b-row>
+                      <b-row id="AccomplishmentsAnchor">
+                        <b-button id="btn_Clear" ref="btn_Clear" class="formbutton" variant="warning" @click="handleit('clearaccomplishment', '', '')">Clear Contents</b-button>
+                        <b-button id="btn_CancelAccomplishments" ref="btn_CancelAccomplishments" class="formbutton" variant="info" @click="handleit('cancelaccomplishment', '', '')">Cancel</b-button>
+                        <b-button id="btn_SaveAccomplishments" ref="btn_SaveAccomplishments" class="formbutton" variant="success" @click="handleit('saveaccomplishment', 'Accomplishments', 'AccomplishmentsForm')" title="Save and Edit Later">Save</b-button>
+                        <b-button id="btn_PrivateAccomplishment" ref="btn_PrivateAccomplishment" class="formbutton" variant="primary" title="Ensure that others can't see the input" @click="handleit('privateaccomplishment', '', '')">Make Private</b-button>
+                        <b-button id="btn_CompleteAccomplishment" ref="btn_CompleteAccomplishment" class="formbutton ml-auto" variant="success" title="Inputs are complete for this section." @click="handleit('completeaccomplishment', '', '')">Complete</b-button>
+                      </b-row>
+                    </b-form>
+                    <div v-else id="Accomplishments">
                       <div v-for="accomplishment in Accomplishments" :key="accomplishment" class="text-left mb-2">
-                        <h4 class="mb-0">
-                          <span class="ml-0">{{ accomplishment.Company }}</span>
-                        </h4>
-                        <div class="ml-1" v-html="accomplishment.html"></div>
+                        <div v-if="accomplishment.Private == 'Yes'">
+                          <!-- PRIVATE -->
+                          <div v-if="accomplishment.Completed == 'Yes'">
+                            <!-- PRIVATE AND COMPLETED -->
+                            <div v-if="isSubcontractor">
+                              <div v-if="accomplishment.Company == Company">
+                                <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
+                                <b-card border-variant="success" text-variant="dark">
+                                  <template v-slot:header>
+                                    <h3 class="mb-0">
+                                      <span class="ml-0">{{ accomplishment.Company }}</span>
+                                      <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                      <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
+                                    </h3>
+                                  </template>
+                                  <b-card-body v-html="accomplishment.HTML"></b-card-body>
+                                </b-card>
+                              </div>
+                            </div>
+                            <div v-else>
+                              <b-card border-variant="success" text-variant="dark">
+                                <template v-slot:header>
+                                  <h3 class="mb-0">
+                                    <span class="ml-0">{{ accomplishment.Company }}</span>
+                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                    <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
+                                  </h3>
+                                </template>
+                                <b-card-body v-html="accomplishment.HTML"></b-card-body>
+                              </b-card>
+                            </div>
+                          </div>
+                          <!-- PRIVATE BUT NOT COMPLETED (DENOTED BY 'WARNING COLOR) -->
+                          <div v-else>
+                            <div v-if="isSubcontractor">
+                              <div v-if="accomplishment.Company == Company">
+                                <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
+                                <b-card border-variant="warning" text-variant="dark">
+                                  <template v-slot:header>
+                                    <h3 class="mb-0">
+                                      <span class="ml-0">{{ accomplishment.Company }}</span>
+                                      <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                      <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                    </h3>
+                                  </template>
+                                  <b-card-body v-html="accomplishment.HTML"></b-card-body>
+                                </b-card>
+                              </div>
+                            </div>
+                            <div v-else>
+                              <!-- Workplan Manager ABLE TO SEE ITEM. -->
+                              <b-card border-variant="warning" text-variant="dark">
+                                <template v-slot:header>
+                                  <h3 class="mb-0">
+                                    <span class="ml-0">{{ accomplishment.Company }}</span>
+                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                  </h3>
+                                </template>
+                                <b-card-body v-html="accomplishment.HTML"></b-card-body>
+                              </b-card>
+                            </div>
+                          </div>
+                        </div>
+                        <div v-else>
+                          <!-- NOT PRIVATE -->
+                          <div v-if="accomplishment.Completed == 'Yes'">
+                            <!-- NOT PRIVATE AND COMPLETED -->
+                            <b-card border-variant="success" text-variant="dark">
+                              <template v-slot:header>
+                                <h3 class="mb-0">
+                                  <span class="ml-0">{{ accomplishment.Company }}</span>
+                                  <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
+                                </h3>
+                              </template>
+                              <b-card-body v-html="accomplishment.HTML"></b-card-body>
+                            </b-card>
+                          </div>
+                          <div v-else>
+                            <!-- NOT PRIVATE AND NOT COMPLETED -->
+                            <div v-if="isSubcontractor">
+                              <div v-if="accomplishment.Company == Company">
+                                <b-card border-variant="warning" text-variant="dark">
+                                  <template v-slot:header>
+                                    <h3 class="mb-0">
+                                      <span class="ml-0">{{ accomplishment.Company }}</span>
+                                      <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                    </h3>
+                                  </template>
+                                  <b-card-body v-html="accomplishment.HTML"></b-card-body>
+                                </b-card>
+                              </div>
+                            </div>
+                            <div v-else>
+                              <!-- Workplan Manager ABLE TO SEE ITEM. -->
+                              <b-card border-variant="warning" text-variant="dark">
+                                <template v-slot:header>
+                                  <h3 class="mb-0">
+                                    <span class="ml-0">{{ accomplishment.Company }}</span>
+                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                  </h3>
+                                </template>
+                                <b-card-body v-html="accomplishment.HTML"></b-card-body>
+                              </b-card>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </b-col>
-              </b-row>
-              <b-row>
+              </div>
+            </b-tab>
+            <b-tab class="mtab Section4">
+              <template slot="title">
+                <font-awesome-icon fas icon="ruler-combined" class="icon"></font-awesome-icon>
+                Plans
+              </template>
+              <div class="row">
                 <b-col cols="12">
-                  <div>
-                    <h2>
-                      4.0 Plans
-                    </h2>
-                    <br />
-                    <div id="PublishPlans">
+                  <div id="Section4Main" class="rtesection">
+                    <b-row class="m-1">
+                      <div class="m-1" v-if="!isSubcontractor">
+                        <b-dropdown :disabled="isEditing" text="Edit Plans" v-if="Plans.length > 0" split split-variant="outline-danger" variant="danger">
+                          <b-dropdown-item v-for="plan in Plans" :key="plan" @click="handleit('editplan', plan.Company, plan.Index)">Edit {{ plan.Company }} Plans</b-dropdown-item>
+                        </b-dropdown>
+                      </div>
+                      <div class="m-1" v-if="isSubcontractor && Plans.length > 0">
+                        <div v-for="plan in Plans" :key="plan">
+                          <b-button :disabled="isEditing" v-if="plan.Company == Company && plan.Completed == 'No'" class="formbutton" id="btn_Plans" ref="btn_Plans" variant="outline-danger" @click="handleit('editplan', plan.Company, plan.Index)">Edit Plans</b-button>
+                        </div>
+                      </div>
+                    </b-row>
+                    <b-form v-if="PlansForm">
+                      <b-row>
+                        <ejs-richtexteditor ref="rte_Plans" id="rte_Plans" height="600" :fontFamily="fontFamily" :cssClass="cssClass" v-model="SelectedPlan" :pasteCleanupSettings="pasteCleanupSettings" :toolbarSettings="toolbarSettings"></ejs-richtexteditor>
+                      </b-row>
+                      <b-row id="PlansAnchor">
+                        <b-button id="btn_Clear" ref="btn_Clear" class="formbutton" variant="warning" @click="handleit('clearplan', '', '')">Clear Contents</b-button>
+                        <b-button id="btn_CancelPlans" ref="btn_CancelPlans" class="formbutton" variant="info" @click="handleit('cancelplan', '', '')">Cancel</b-button>
+                        <b-button id="btn_SavePlans" ref="btn_SavePlans" class="formbutton" variant="success" @click="handleit('saveplan', 'Plans', 'PlansForm')" title="Save and Edit Later">Save</b-button>
+                        <b-button id="btn_PrivatePlan" ref="btn_PrivatePlan" class="formbutton" variant="primary" title="Ensure that others can't see the input" @click="handleit('privateplan', '', '')">Make Private</b-button>
+                        <b-button id="btn_CompletePlan" ref="btn_CompletePlan" class="formbutton ml-auto" variant="success" title="Inputs are complete for this section." @click="handleit('completeplan', '', '')">Complete</b-button>
+                      </b-row>
+                    </b-form>
+                    <div v-else id="Plans">
                       <div v-for="plan in Plans" :key="plan" class="text-left mb-2">
-                        <h4 class="mb-0">
-                          <span class="ml-0">{{ plan.Company }}</span>
-                        </h4>
-                        <div class="ml-1" v-html="plan.html"></div>
+                        <div v-if="plan.Private == 'Yes'">
+                          <!-- PRIVATE -->
+                          <div v-if="plan.Completed == 'Yes'">
+                            <!-- PRIVATE AND COMPLETED -->
+                            <div v-if="isSubcontractor">
+                              <div v-if="plan.Company == Company">
+                                <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
+                                <b-card border-variant="success" text-variant="dark">
+                                  <template v-slot:header>
+                                    <h3 class="mb-0">
+                                      <span class="ml-0">{{ plan.Company }}</span>
+                                      <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                      <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
+                                    </h3>
+                                  </template>
+                                  <b-card-body v-html="plan.HTML"></b-card-body>
+                                </b-card>
+                              </div>
+                            </div>
+                            <div v-else>
+                              <b-card border-variant="success" text-variant="dark">
+                                <template v-slot:header>
+                                  <h3 class="mb-0">
+                                    <span class="ml-0">{{ plan.Company }}</span>
+                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                    <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
+                                  </h3>
+                                </template>
+                                <b-card-body v-html="plan.HTML"></b-card-body>
+                              </b-card>
+                            </div>
+                          </div>
+                          <!-- PRIVATE BUT NOT COMPLETED (DENOTED BY 'WARNING COLOR) -->
+                          <div v-else>
+                            <div v-if="isSubcontractor">
+                              <div v-if="plan.Company == Company">
+                                <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
+                                <b-card border-variant="warning" text-variant="dark">
+                                  <template v-slot:header>
+                                    <h3 class="mb-0">
+                                      <span class="ml-0">{{ plan.Company }}</span>
+                                      <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                      <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                    </h3>
+                                  </template>
+                                  <b-card-body v-html="plan.HTML"></b-card-body>
+                                </b-card>
+                              </div>
+                            </div>
+                            <div v-else>
+                              <!-- OTHER USERS ABLE TO SEE ITEM. -->
+                              <b-card border-variant="warning" text-variant="dark">
+                                <template v-slot:header>
+                                  <h3 class="mb-0">
+                                    <span class="ml-0">{{ plan.Company }}</span>
+                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                  </h3>
+                                </template>
+                                <b-card-body v-html="plan.HTML"></b-card-body>
+                              </b-card>
+                            </div>
+                          </div>
+                        </div>
+                        <div v-else>
+                          <!-- NOT PRIVATE -->
+                          <div v-if="plan.Completed == 'Yes'">
+                            <!-- NOT PRIVATE AND COMPLETED -->
+                            <b-card border-variant="success" text-variant="dark">
+                              <template v-slot:header>
+                                <h3 class="mb-0">
+                                  <span class="ml-0">{{ plan.Company }}</span>
+                                  <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
+                                </h3>
+                              </template>
+                              <b-card-body v-html="plan.HTML"></b-card-body>
+                            </b-card>
+                          </div>
+                          <div v-else>
+                            <!-- NOT PRIVATE AND NOT COMPLETED -->
+                            <div v-if="isSubcontractor">
+                              <div v-if="plan.Company == Company">
+                                <b-card border-variant="warning" text-variant="dark">
+                                  <template v-slot:header>
+                                    <h3 class="mb-0">
+                                      <span class="ml-0">{{ plan.Company }}</span>
+                                      <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                    </h3>
+                                  </template>
+                                  <b-card-body v-html="plan.HTML"></b-card-body>
+                                </b-card>
+                              </div>
+                            </div>
+                            <div v-else>
+                              <b-card border-variant="warning" text-variant="dark">
+                                <template v-slot:header>
+                                  <h3 class="mb-0">
+                                    <span class="ml-0">{{ plan.Company }}</span>
+                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                  </h3>
+                                </template>
+                                <b-card-body v-html="plan.HTML"></b-card-body>
+                              </b-card>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </b-col>
-              </b-row>
+              </div>
+            </b-tab>
+            <b-tab class="mtab Section5">
+              <template slot="title">
+                <font-awesome-icon fas icon="microscope" class="icon"></font-awesome-icon>
+                Assumptions, Risks, Opportunities
+              </template>
               <b-row>
                 <b-col cols="12">
-                  <div>
-                    <h2>
-                      5.0 Assumptions / Risks / Opportunities
-                    </h2>
-                    <br />
-                    <h3>
-                      Assumptions and Dependencies
-                    </h3>
-                    <br />
-                    <div id="PublishAssumptions">
-                      <div v-for="assumption in Assumptions" :key="assumption" class="text-left mb-2">
-                        <h4 class="mb-0">
-                          <span class="ml-0">{{ assumption.Company }}</span>
-                        </h4>
-                        <div class="ml-1" v-html="assumption.html"></div>
-                      </div>
-                    </div>
-                    <br />
-                    <h3>
-                      Risks and Mitigation
-                    </h3>
-                    <br />
-                    <div id="PublishRisks">
-                      <div v-for="risk in Risks" :key="risk" class="text-left mb-2">
-                        <h4 class="mb-0">
-                          <span class="ml-0">{{ risk.Company }}</span>
-                        </h4>
-                        <div class="ml-1" v-html="risk.html"></div>
-                      </div>
-                    </div>
-                    <br />
-                    <h3>
-                      Opportunities
-                    </h3>
-                    <br />
-                    <div id="PublishOpportunities">
-                      <div v-for="opportunity in Opportunities" :key="opportunity" class="text-left mb-2">
-                        <h4 class="mb-0">
-                          <span class="ml-0">{{ opportunity.Company }}</span>
-                        </h4>
-                        <div class="ml-1" v-html="opportunity.html"></div>
-                      </div>
-                    </div>
+                  <div id="Section5Main" class="rtesection">
+                    <b-card no-body>
+                      <b-tabs ref="arotabs" class="tabArea" card>
+                        <b-tab class="mtab" active>
+                          <template slot="title">
+                            <font-awesome-icon fas icon="microscope" class="icon"></font-awesome-icon>
+                            Assumptions and Dependencies
+                          </template>
+                          <b-row class="m-1">
+                            <div class="m-1" v-if="!isSubcontractor">
+                              <b-dropdown :disabled="isEditing" text="Edit Assumptions" v-if="Assumptions.length > 0" split split-variant="outline-danger" variant="danger">
+                                <b-dropdown-item v-for="assumption in Assumptions" :key="assumption" @click="handleit('editassumption', assumption.Company, assumption.Index)">Edit {{ assumption.Company }} Assumptions</b-dropdown-item>
+                              </b-dropdown>
+                            </div>
+                            <div class="m-1" v-if="isSubcontractor && Assumptions.length > 0">
+                              <div v-for="assumption in Assumptions" :key="assumption">
+                                <b-button :disabled="isEditing" v-if="assumption.Company == Company && assumption.Completed == 'No'" class="formbutton" id="btn_Assumptions" ref="btn_Assumptions" variant="outline-danger" @click="handleit('editassumption', assumption.Company, assumption.Index)">Edit Assumptions</b-button>
+                              </div>
+                            </div>
+                          </b-row>
+                          <b-form v-if="AssumptionsForm">
+                            <b-row>
+                              <ejs-richtexteditor ref="rte_Assumptions" id="rte_Assumptions" height="600" :fontFamily="fontFamily" :cssClass="cssClass" v-model="SelectedAssumption" :pasteCleanupSettings="pasteCleanupSettings" :toolbarSettings="toolbarSettings"></ejs-richtexteditor>
+                            </b-row>
+                            <b-row id="AssumptionsAnchor">
+                              <b-button id="btn_Clear" ref="btn_Clear" class="formbutton" variant="warning" @click="handleit('clearassumption', '', '')">Clear Contents</b-button>
+                              <b-button id="btn_CancelAssumptions" ref="btn_CancelAssumptions" class="formbutton" variant="info" @click="handleit('cancelassumption', '', '')">Cancel</b-button>
+                              <b-button id="btn_SaveAssumptions" ref="btn_SaveAssumptions" class="formbutton" variant="success" @click="handleit('saveassumption', 'Assumptions', 'AssumptionsForm')" title="Save and Edit Later">Save</b-button>
+                              <b-button id="btn_PrivateAssumption" ref="btn_PrivateAssumption" class="formbutton" variant="primary" title="Ensure that others can't see the input" @click="handleit('privateassumption', '', '')">Make Private</b-button>
+                              <b-button id="btn_CompleteAssumption" ref="btn_CompleteAssumption" class="formbutton ml-auto" variant="success" title="Inputs are complete for this section." @click="handleit('completeassumption', '', '')">Complete</b-button>
+                            </b-row>
+                          </b-form>
+                          <div v-else id="Assumptions">
+                            <div v-for="assumption in Assumptions" :key="assumption" class="text-left mb-2">
+                              <div v-if="assumption.Private == 'Yes'">
+                                <!-- PRIVATE -->
+                                <div v-if="assumption.Completed == 'Yes'">
+                                  <!-- PRIVATE AND COMPLETED -->
+                                  <div v-if="isSubcontractor">
+                                    <div v-if="assumption.Company == Company">
+                                      <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
+                                      <b-card border-variant="success" text-variant="dark">
+                                        <template v-slot:header>
+                                          <h3 class="mb-0">
+                                            <span class="ml-0">{{ assumption.Company }}</span>
+                                            <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                            <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
+                                          </h3>
+                                        </template>
+                                        <b-card-body v-html="assumption.HTML"></b-card-body>
+                                      </b-card>
+                                    </div>
+                                  </div>
+                                  <div v-else>
+                                    <b-card border-variant="success" text-variant="dark">
+                                      <template v-slot:header>
+                                        <h3 class="mb-0">
+                                          <span class="ml-0">{{ assumption.Company }}</span>
+                                          <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                          <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
+                                        </h3>
+                                      </template>
+                                      <b-card-body v-html="assumption.HTML"></b-card-body>
+                                    </b-card>
+                                  </div>
+                                </div>
+                                <!-- PRIVATE BUT NOT COMPLETED (DENOTED BY 'WARNING COLOR) -->
+                                <div v-else>
+                                  <div v-if="isSubcontractor">
+                                    <div v-if="assumption.Company == Company">
+                                      <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
+                                      <b-card border-variant="warning" text-variant="dark">
+                                        <template v-slot:header>
+                                          <h3 class="mb-0">
+                                            <span class="ml-0">{{ assumption.Company }}</span>
+                                            <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                            <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                          </h3>
+                                        </template>
+                                        <b-card-body v-html="assumption.HTML"></b-card-body>
+                                      </b-card>
+                                    </div>
+                                  </div>
+                                  <div v-else>
+                                    <!-- OTHER USERS ABLE TO SEE ITEM. -->
+                                    <b-card border-variant="warning" text-variant="dark">
+                                      <template v-slot:header>
+                                        <h3 class="mb-0">
+                                          <span class="ml-0">{{ assumption.Company }}</span>
+                                          <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                          <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                        </h3>
+                                      </template>
+                                      <b-card-body v-html="assumption.HTML"></b-card-body>
+                                    </b-card>
+                                  </div>
+                                </div>
+                              </div>
+                              <div v-else>
+                                <!-- NOT PRIVATE -->
+                                <div v-if="assumption.Completed == 'Yes'">
+                                  <!-- NOT PRIVATE AND COMPLETED -->
+                                  <b-card border-variant="success" text-variant="dark">
+                                    <template v-slot:header>
+                                      <h3 class="mb-0">
+                                        <span class="ml-0">{{ assumption.Company }}</span>
+                                        <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
+                                      </h3>
+                                    </template>
+                                    <b-card-body v-html="assumption.HTML"></b-card-body>
+                                  </b-card>
+                                </div>
+                                <div v-else>
+                                  <!-- NOT PRIVATE AND NOT COMPLETED -->
+                                  <div v-if="isSubcontractor">
+                                    <div v-if="assumption.Company == Company">
+                                      <b-card border-variant="warning" text-variant="dark">
+                                        <template v-slot:header>
+                                          <h3 class="mb-0">
+                                            <span class="ml-0">{{ assumption.Company }}</span>
+                                            <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                          </h3>
+                                        </template>
+                                        <b-card-body v-html="assumption.HTML"></b-card-body>
+                                      </b-card>
+                                    </div>
+                                  </div>
+                                  <div v-else>
+                                    <b-card border-variant="warning" text-variant="dark">
+                                      <template v-slot:header>
+                                        <h3 class="mb-0">
+                                          <span class="ml-0">{{ assumption.Company }}</span>
+                                          <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                        </h3>
+                                      </template>
+                                      <b-card-body v-html="assumption.HTML"></b-card-body>
+                                    </b-card>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </b-tab>
+                        <b-tab class="mtab">
+                          <template slot="title">
+                            <font-awesome-icon fas icon="microscope" class="icon"></font-awesome-icon>
+                            Risks and Mitigation
+                          </template>
+                          <b-row class="m-1">
+                            <div class="m-1" v-if="!isSubcontractor">
+                              <b-dropdown :disabled="isEditing" text="Edit Risks" v-if="Risks.length > 0" split split-variant="outline-danger" variant="danger">
+                                <b-dropdown-item v-for="risk in Risks" :key="risk" @click="handleit('editrisk', risk.Company, risk.Index)">Edit {{ risk.Company }} Risks</b-dropdown-item>
+                              </b-dropdown>
+                            </div>
+                            <div class="m-1" v-if="isSubcontractor && Risks.length > 0">
+                              <div v-for="risk in Risks" :key="risk">
+                                <b-button :disabled="isEditing" v-if="risk.Company == Company && risk.Completed == 'No'" class="formbutton" id="btn_Risks" ref="btn_Risks" variant="outline-danger" @click="handleit('editrisk', risk.Company, risk.Index)">Edit Risks</b-button>
+                              </div>
+                            </div>
+                          </b-row>
+                          <b-form v-if="RisksForm">
+                            <b-row>
+                              <ejs-richtexteditor ref="rte_Risks" id="rte_Risks" height="600" class="rtesection" v-model="SelectedRisk" :pasteCleanupSettings="pasteCleanupSettings" :toolbarSettings="toolbarSettings"></ejs-richtexteditor>
+                            </b-row>
+                            <b-row id="RisksAnchor">
+                              <b-button id="btn_Clear" ref="btn_Clear" class="formbutton" variant="warning" @click="handleit('clearrisk', '', '')">Clear Contents</b-button>
+                              <b-button id="btn_CancelRisks" ref="btn_CancelRisks" class="formbutton" variant="info" @click="handleit('cancelrisk', '', '')">Cancel</b-button>
+                              <b-button id="btn_SaveRisks" ref="btn_SaveRisks" class="formbutton" variant="success" @click="handleit('saverisk', 'Risks', 'RisksForm')" title="Save and Edit Later">Save</b-button>
+                              <b-button id="btn_PrivateRisk" ref="btn_PrivateRisk" class="formbutton" variant="primary" title="Ensure that others can't see the input" @click="handleit('privaterisk', '', '')">Make Private</b-button>
+                              <b-button id="btn_CompleteRisk" ref="btn_CompleteRisk" class="formbutton ml-auto" variant="success" title="Inputs are complete for this section." @click="handleit('completerisk', '', '')">Complete</b-button>
+                            </b-row>
+                          </b-form>
+                          <div v-else id="Risks">
+                            <div v-for="risk in Risks" :key="risk" class="text-left mb-2">
+                              <div v-if="risk.Private == 'Yes'">
+                                <!-- PRIVATE -->
+                                <div v-if="risk.Completed == 'Yes'">
+                                  <!-- PRIVATE AND COMPLETED -->
+                                  <div v-if="isSubcontractor">
+                                    <div v-if="risk.Company == Company">
+                                      <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
+                                      <b-card border-variant="success" text-variant="dark">
+                                        <template v-slot:header>
+                                          <h3 class="mb-0">
+                                            <span class="ml-0">{{ risk.Company }}</span>
+                                            <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                            <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
+                                          </h3>
+                                        </template>
+                                        <b-card-body v-html="risk.HTML"></b-card-body>
+                                      </b-card>
+                                    </div>
+                                  </div>
+                                  <div v-else>
+                                    <b-card border-variant="success" text-variant="dark">
+                                      <template v-slot:header>
+                                        <h3 class="mb-0">
+                                          <span class="ml-0">{{ risk.Company }}</span>
+                                          <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                          <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
+                                        </h3>
+                                      </template>
+                                      <b-card-body v-html="risk.HTML"></b-card-body>
+                                    </b-card>
+                                  </div>
+                                </div>
+                                <!-- PRIVATE BUT NOT COMPLETED (DENOTED BY 'WARNING COLOR) -->
+                                <div v-else>
+                                  <div v-if="isSubcontractor">
+                                    <div v-if="risk.Company == Company">
+                                      <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
+                                      <b-card border-variant="warning" text-variant="dark">
+                                        <template v-slot:header>
+                                          <h3 class="mb-0">
+                                            <span class="ml-0">{{ risk.Company }}</span>
+                                            <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                            <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                          </h3>
+                                        </template>
+                                        <b-card-body v-html="risk.HTML"></b-card-body>
+                                      </b-card>
+                                    </div>
+                                  </div>
+                                  <div v-else>
+                                    <!-- OTHER USERS ABLE TO SEE ITEM. -->
+                                    <b-card border-variant="warning" text-variant="dark">
+                                      <template v-slot:header>
+                                        <h3 class="mb-0">
+                                          <span class="ml-0">{{ risk.Company }}</span>
+                                          <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                          <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                        </h3>
+                                      </template>
+                                      <b-card-body v-html="risk.HTML"></b-card-body>
+                                    </b-card>
+                                  </div>
+                                </div>
+                              </div>
+                              <div v-else>
+                                <!-- NOT PRIVATE -->
+                                <div v-if="risk.Completed == 'Yes'">
+                                  <!-- NOT PRIVATE AND COMPLETED -->
+                                  <b-card border-variant="success" text-variant="dark">
+                                    <template v-slot:header>
+                                      <h3 class="mb-0">
+                                        <span class="ml-0">{{ risk.Company }}</span>
+                                        <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
+                                      </h3>
+                                    </template>
+                                    <b-card-body v-html="risk.HTML"></b-card-body>
+                                  </b-card>
+                                </div>
+                                <div v-else>
+                                  <!-- NOT PRIVATE AND NOT COMPLETED -->
+                                  <div v-if="isSubcontractor">
+                                    <div v-if="risk.Company == Company">
+                                      <b-card border-variant="warning" text-variant="dark">
+                                        <template v-slot:header>
+                                          <h3 class="mb-0">
+                                            <span class="ml-0">{{ risk.Company }}</span>
+                                            <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                          </h3>
+                                        </template>
+                                        <b-card-body v-html="risk.HTML"></b-card-body>
+                                      </b-card>
+                                    </div>
+                                  </div>
+                                  <div v-else>
+                                    <b-card border-variant="warning" text-variant="dark">
+                                      <template v-slot:header>
+                                        <h3 class="mb-0">
+                                          <span class="ml-0">{{ risk.Company }}</span>
+                                          <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                        </h3>
+                                      </template>
+                                      <b-card-body v-html="risk.HTML"></b-card-body>
+                                    </b-card>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </b-tab>
+                        <b-tab class="mtab">
+                          <template slot="title">
+                            <font-awesome-icon fas icon="microscope" class="icon"></font-awesome-icon>
+                            Opportunities
+                          </template>
+                          <b-row class="m-1">
+                            <div class="m-1" v-if="!isSubcontractor">
+                              <b-dropdown :disabled="isEditing" text="Edit Opportunities" v-if="Opportunities.length > 0" split split-variant="outline-danger" variant="danger">
+                                <b-dropdown-item v-for="opportunity in Opportunities" :key="opportunity" @click="handleit('editopportunity', opportunity.Company, opportunity.Index)">Edit {{ opportunity.Company }} Opportunities</b-dropdown-item>
+                              </b-dropdown>
+                            </div>
+                            <div class="m-1" v-if="isSubcontractor && Opportunities.length > 0">
+                              <div v-for="opportunity in Opportunities" :key="opportunity">
+                                <b-button :disabled="isEditing" v-if="opportunity.Company == Company && opportunity.Completed == 'No'" class="formbutton" id="btn_Opportunities" ref="btn_Opportunities" variant="outline-danger" @click="handleit('editopportunity', opportunity.Company, opportunity.Index)">Edit Opportunities</b-button>
+                              </div>
+                            </div>
+                          </b-row>
+                          <b-form v-if="OpportunitiesForm">
+                            <b-row>
+                              <ejs-richtexteditor ref="rte_Opportunities" id="rte_Opportunities" height="600" class="rtesection" v-model="SelectedOpportunity" :pasteCleanupSettings="pasteCleanupSettings" :toolbarSettings="toolbarSettings"></ejs-richtexteditor>
+                            </b-row>
+                            <b-row id="OpportunitiesAnchor">
+                              <b-button id="btn_Clear" ref="btn_Clear" class="formbutton" variant="warning" @click="handleit('clearopportunity', '', '')">Clear Contents</b-button>
+                              <b-button id="btn_CancelOpportunitys" ref="btn_CancelOpportunitys" class="formbutton" variant="info" @click="handleit('cancelopportunity', '', '')">Cancel</b-button>
+                              <b-button id="btn_SaveOpportunitys" ref="btn_SaveOpportunitys" class="formbutton" variant="success" @click="handleit('saveopportunity', 'Opportunities', 'OpportunitiesForm')" title="Save and Edit Later">Save</b-button>
+                              <b-button id="btn_PrivateOpportunity" ref="btn_PrivateOpportunity" class="formbutton" variant="primary" title="Ensure that others can't see the input" @click="handleit('privateopportunity', '', '')">Make Private</b-button>
+                              <b-button id="btn_CompleteOpportunity" ref="btn_CompleteOpportunity" class="formbutton ml-auto" variant="success" title="Inputs are complete for this section." @click="handleit('completeopportunity', '', '')">Complete</b-button>
+                            </b-row>
+                          </b-form>
+                          <div v-else id="Opportunities">
+                            <div v-for="opportunity in Opportunities" :key="opportunity" class="text-left mb-2">
+                              <div v-if="opportunity.Private == 'Yes'">
+                                <!-- PRIVATE -->
+                                <div v-if="opportunity.Completed == 'Yes'">
+                                  <!-- PRIVATE AND COMPLETED -->
+                                  <div v-if="isSubcontractor">
+                                    <div v-if="opportunity.Company == Company">
+                                      <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
+                                      <b-card border-variant="success" text-variant="dark">
+                                        <template v-slot:header>
+                                          <h3 class="mb-0">
+                                            <span class="ml-0">{{ opportunity.Company }}</span>
+                                            <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                            <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
+                                          </h3>
+                                        </template>
+                                        <b-card-body v-html="opportunity.HTML"></b-card-body>
+                                      </b-card>
+                                    </div>
+                                  </div>
+                                  <div v-else>
+                                    <b-card border-variant="success" text-variant="dark">
+                                      <template v-slot:header>
+                                        <h3 class="mb-0">
+                                          <span class="ml-0">{{ opportunity.Company }}</span>
+                                          <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                          <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
+                                        </h3>
+                                      </template>
+                                      <b-card-body v-html="opportunity.HTML"></b-card-body>
+                                    </b-card>
+                                  </div>
+                                </div>
+                                <!-- PRIVATE BUT NOT COMPLETED (DENOTED BY 'WARNING COLOR) -->
+                                <div v-else>
+                                  <div v-if="isSubcontractor">
+                                    <div v-if="opportunity.Company == Company">
+                                      <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
+                                      <b-card border-variant="warning" text-variant="dark">
+                                        <template v-slot:header>
+                                          <h3 class="mb-0">
+                                            <span class="ml-0">{{ opportunity.Company }}</span>
+                                            <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                            <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                          </h3>
+                                        </template>
+                                        <b-card-body v-html="opportunity.HTML"></b-card-body>
+                                      </b-card>
+                                    </div>
+                                  </div>
+                                  <div v-else>
+                                    <!-- OTHER USERS ABLE TO SEE ITEM. -->
+                                    <b-card border-variant="warning" text-variant="dark">
+                                      <template v-slot:header>
+                                        <h3 class="mb-0">
+                                          <span class="ml-0">{{ opportunity.Company }}</span>
+                                          <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                          <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                        </h3>
+                                      </template>
+                                      <b-card-body v-html="opportunity.HTML"></b-card-body>
+                                    </b-card>
+                                  </div>
+                                </div>
+                              </div>
+                              <div v-else>
+                                <!-- NOT PRIVATE -->
+                                <div v-if="opportunity.Completed == 'Yes'">
+                                  <!-- NOT PRIVATE AND COMPLETED -->
+                                  <b-card border-variant="success" text-variant="dark">
+                                    <template v-slot:header>
+                                      <h3 class="mb-0">
+                                        <span class="ml-0">{{ opportunity.Company }}</span>
+                                        <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
+                                      </h3>
+                                    </template>
+                                    <b-card-body v-html="opportunity.HTML"></b-card-body>
+                                  </b-card>
+                                </div>
+                                <div v-else>
+                                  <!-- NOT PRIVATE AND NOT COMPLETED -->
+                                  <div v-if="isSubcontractor">
+                                    <div v-if="opportunity.Company == Company">
+                                      <b-card border-variant="warning" text-variant="dark">
+                                        <template v-slot:header>
+                                          <h3 class="mb-0">
+                                            <span class="ml-0">{{ opportunity.Company }}</span>
+                                            <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                          </h3>
+                                        </template>
+                                        <b-card-body v-html="opportunity.HTML"></b-card-body>
+                                      </b-card>
+                                    </div>
+                                  </div>
+                                  <div v-else>
+                                    <b-card border-variant="warning" text-variant="dark">
+                                      <template v-slot:header>
+                                        <h3 class="mb-0">
+                                          <span class="ml-0">{{ opportunity.Company }}</span>
+                                          <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                        </h3>
+                                      </template>
+                                      <b-card-body v-html="opportunity.HTML"></b-card-body>
+                                    </b-card>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </b-tab>
+                      </b-tabs>
+                    </b-card>
                   </div>
                 </b-col>
               </b-row>
+            </b-tab>
+            <b-tab class="mtab Section6">
+              <template slot="title">
+                <font-awesome-icon fas icon="truck" class="icon"></font-awesome-icon>
+                Deliverables
+              </template>
               <b-row>
                 <b-col cols="12">
-                  <div>
-                    <h2>
-                      6.0 Deliverables
-                    </h2>
-                    <br />
-                    <div id="PublishDeliverables">
+                  <div id="Section6Main" class="rtesection">
+                    <b-row class="m-1">
+                      <div class="m-1" v-if="!isSubcontractor">
+                        <b-dropdown :disabled="isEditing" text="Edit Deliverables" v-if="Deliverables.length > 0" split split-variant="outline-danger" variant="danger">
+                          <b-dropdown-item v-for="deliverable in Deliverables" :key="deliverable" @click="handleit('editdeliverable', deliverable.Company, deliverable.Index)">Edit {{ deliverable.Company }} Deliverables</b-dropdown-item>
+                        </b-dropdown>
+                      </div>
+                      <div class="m-1" v-if="isSubcontractor && Deliverables.length > 0">
+                        <div v-for="deliverable in Deliverables" :key="deliverable">
+                          <b-button :disabled="isEditing" v-if="deliverable.Company == Company && deliverable.Completed == 'No'" class="formbutton" id="btn_Deliverables" ref="btn_Deliverables" variant="outline-danger" @click="handleit('editdeliverable', deliverable.Company, deliverable.Index)">Edit Deliverables</b-button>
+                        </div>
+                      </div>
+                    </b-row>
+                    <b-form v-if="DeliverablesForm">
+                      <b-row>
+                        <ejs-richtexteditor ref="rte_Deliverables" id="rte_Deliverables" height="600" :fontFamily="fontFamily" :cssClass="cssClass" v-model="SelectedDeliverable" :pasteCleanupSettings="pasteCleanupSettings" :toolbarSettings="toolbarSettings"></ejs-richtexteditor>
+                      </b-row>
+                      <b-row id="DeliverablesAnchor">
+                        <b-button id="btn_Clear" ref="btn_Clear" class="formbutton" variant="warning" @click="handleit('cleardeliverable', '', '')">Clear Contents</b-button>
+                        <b-button id="btn_CancelDeliverables" ref="btn_CancelDeliverables" class="formbutton" variant="info" @click="handleit('canceldeliverable', '', '')">Cancel</b-button>
+                        <b-button id="btn_SaveDeliverables" ref="btn_SaveDeliverables" class="formbutton" variant="success" @click="handleit('savedeliverable', 'Deliverables', 'DeliverablesForm')" title="Save and Edit Later">Save</b-button>
+                        <b-button id="btn_PrivateDeliverable" ref="btn_PrivateDeliverable" class="formbutton" variant="primary" title="Ensure that others can't see the input" @click="handleit('privatedeliverable', '', '')">Make Private</b-button>
+                        <b-button id="btn_CompleteDeliverable" ref="btn_CompleteDeliverable" class="formbutton ml-auto" variant="success" title="Inputs are complete for this section." @click="handleit('completedeliverable', '', '')">Complete</b-button>
+                      </b-row>
+                    </b-form>
+                    <div v-else id="Deliverables">
                       <div v-for="deliverable in Deliverables" :key="deliverable" class="text-left mb-2">
-                        <h4 class="mb-0">
-                          <span class="ml-0">{{ deliverable.Company }}</span>
-                        </h4>
-                        <div class="ml-1" v-html="deliverable.html"></div>
+                        <div v-if="deliverable.Private == 'Yes'">
+                          <!-- PRIVATE -->
+                          <div v-if="deliverable.Completed == 'Yes'">
+                            <!-- PRIVATE AND COMPLETED -->
+                            <div v-if="isSubcontractor">
+                              <div v-if="deliverable.Company == Company">
+                                <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
+                                <b-card border-variant="success" text-variant="dark">
+                                  <template v-slot:header>
+                                    <h3 class="mb-0">
+                                      <span class="ml-0">{{ deliverable.Company }}</span>
+                                      <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                      <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
+                                    </h3>
+                                  </template>
+                                  <b-card-body v-html="deliverable.HTML"></b-card-body>
+                                </b-card>
+                              </div>
+                            </div>
+                            <div v-else>
+                              <b-card border-variant="success" text-variant="dark">
+                                <template v-slot:header>
+                                  <h3 class="mb-0">
+                                    <span class="ml-0">{{ deliverable.Company }}</span>
+                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                    <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
+                                  </h3>
+                                </template>
+                                <b-card-body v-html="deliverable.HTML"></b-card-body>
+                              </b-card>
+                            </div>
+                          </div>
+                          <!-- PRIVATE BUT NOT COMPLETED (DENOTED BY 'WARNING COLOR) -->
+                          <div v-else>
+                            <div v-if="isSubcontractor">
+                              <div v-if="deliverable.Company == Company">
+                                <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
+                                <b-card border-variant="warning" text-variant="dark">
+                                  <template v-slot:header>
+                                    <h3 class="mb-0">
+                                      <span class="ml-0">{{ deliverable.Company }}</span>
+                                      <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                      <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                    </h3>
+                                  </template>
+                                  <b-card-body v-html="deliverable.HTML"></b-card-body>
+                                </b-card>
+                              </div>
+                            </div>
+                            <div v-else>
+                              <!-- OTHER USERS ABLE TO SEE ITEM. -->
+                              <b-card border-variant="warning" text-variant="dark">
+                                <template v-slot:header>
+                                  <h3 class="mb-0">
+                                    <span class="ml-0">{{ deliverable.Company }}</span>
+                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                  </h3>
+                                </template>
+                                <b-card-body v-html="deliverable.HTML"></b-card-body>
+                              </b-card>
+                            </div>
+                          </div>
+                        </div>
+                        <div v-else>
+                          <!-- NOT PRIVATE -->
+                          <div v-if="deliverable.Completed == 'Yes'">
+                            <!-- NOT PRIVATE AND COMPLETED -->
+                            <b-card border-variant="success" text-variant="dark">
+                              <template v-slot:header>
+                                <h3 class="mb-0">
+                                  <span class="ml-0">{{ deliverable.Company }}</span>
+                                  <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
+                                </h3>
+                              </template>
+                              <b-card-body v-html="deliverable.HTML"></b-card-body>
+                            </b-card>
+                          </div>
+                          <div v-else>
+                            <!-- NOT PRIVATE AND NOT COMPLETED -->
+                            <div v-if="isSubcontractor">
+                              <div v-if="deliverable.Company == Company">
+                                <b-card border-variant="warning" text-variant="dark">
+                                  <template v-slot:header>
+                                    <h3 class="mb-0">
+                                      <span class="ml-0">{{ deliverable.Company }}</span>
+                                      <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                    </h3>
+                                  </template>
+                                  <b-card-body v-html="deliverable.HTML"></b-card-body>
+                                </b-card>
+                              </div>
+                            </div>
+                            <div v-else>
+                              <b-card border-variant="warning" text-variant="dark">
+                                <template v-slot:header>
+                                  <h3 class="mb-0">
+                                    <span class="ml-0">{{ deliverable.Company }}</span>
+                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                  </h3>
+                                </template>
+                                <b-card-body v-html="deliverable.HTML"></b-card-body>
+                              </b-card>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </b-col>
+              </b-row>
+            </b-tab>
+            <b-tab :disabled="isSubcontractor" class="mtab Section7">
+              <template slot="title">
+                <font-awesome-icon fas icon="thumbs-up" class="icon"></font-awesome-icon>
+                Distribution
+              </template>
+              <div class="row">
+                <b-col cols="12">
+                  <div id="Section7Main" class="rtesection">
+                    <b-row class="m-1">
+                      <b-button :disabled="isEditing" class="formbutton" id="btn_Distribution" ref="btn_Distribution" variant="outline-danger" @click="handleit('edit', 'Distribution', 'DistributionForm')">Add/Edit Distribution</b-button>
+                    </b-row>
+                    <b-form v-if="DistributionForm">
+                      <b-row>
+                        <ejs-richtexteditor ref="rte_Distribution" id="rte_Distribution" height="600" :fontFamily="fontFamily" :cssClass="cssClass" v-model="Distribution" :pasteCleanupSettings="pasteCleanupSettings" :toolbarSettings="toolbarSettings"></ejs-richtexteditor>
+                      </b-row>
+                      <b-row id="DistributionAnchor">
+                        <b-button id="btn_Clear" ref="btn_Clear" class="formbutton" variant="warning" @click="handleit('clear', '', '')">Clear Contents</b-button>
+                        <b-button id="btn_CancelDistribution" ref="btn_CancelDistribution" class="formbutton" variant="info" @click="handleit('cancel', 'Distribution', 'DistributionForm')">Cancel</b-button>
+                        <b-button id="btn_SaveDistribution" ref="btn_SaveDistribution" class="formbutton ml-auto" variant="success" @click="handleit('save', 'Distribution', 'DistributionForm')" title="Inputs are complete for this section.">Complete</b-button>
+                      </b-row>
+                    </b-form>
+                    <div v-else id="Distribution" v-html="Distribution"></div>
+                  </div>
+                </b-col>
+              </div>
+            </b-tab>
+            <b-tab class="mtab Summary">
+              <template slot="title">
+                <font-awesome-icon fas icon="traffic-light" class="icon"></font-awesome-icon>
+                Summary
+              </template>
+              <b-row v-if="!isSubcontractor">
+                <b-col cols="12">
+                  <div id="Section1" class="rtesection">
+                    <h1>
+                      1.0 Funding and Staffing Summary
+                    </h1>
+                    <br />
+                    <h2>
+                      1.1 Funding
+                    </h2>
+                    <br />
+                    <div id="FundingHtml" v-html="Funding"></div>
+                    <br />
+                    <h2>
+                      1.2 Engineering Effort/Staffing
+                    </h2>
+                    <br />
+                    <div id="StaffingHtml" v-html="Staffing"></div>
+                    <br />
+                    <h2>
+                      1.3 Cost Report
+                    </h2>
+                    <br />
+                    <div id="CostReportHtml" v-html="CostReport"></div>
+                  </div>
+                </b-col>
+              </b-row>
+              <b-row v-if="!isSubcontractor">
+                <b-col cols="12">
+                  <div id="Section2" class="rtesection">
+                    <h1>
+                      2.0 Travel
+                    </h1>
+                    <br />
+                    <h2>
+                      2.1 Travel
+                    </h2>
+                    <br />
+                    <h3>
+                      2.1.1 Travel Accomplished
+                    </h3>
+                    <br />
+                    <div id="TravelAccomplishedHtml" v-html="TravelAccomplished"></div>
+                    <br />
+                    <h3>
+                      2.1.2 Travel Planned
+                    </h3>
+                    <br />
+                    <div id="TravelPlannedHtml" v-html="TravelPlanned"></div>
+                    <br />
+                    <h3>
+                      2.1.3 Travel Costs To Date
+                    </h3>
+                    <br />
+                    <div id="TravelCostsHtml" v-html="TravelCosts"></div>
+                    <h2>
+                      2.2 ODCs
+                    </h2>
+                    <br />
+                    <h3>
+                      2.2.1 ODCs Accomplished
+                    </h3>
+                    <br />
+                    <div id="ODCAccomplishedHtml" v-html="ODCAccomplished"></div>
+                    <br />
+                    <h3>
+                      2.2.2 ODCs Planned
+                    </h3>
+                    <br />
+                    <div id="ODCPlannedHtml" v-html="ODCPlanned"></div>
+                    <br />
+                    <h3>
+                      2.2.3 ODC Costs To Date
+                    </h3>
+                    <br />
+                    <div id="ODCCostsHtml" v-html="ODCCosts"></div>
+                  </div>
+                </b-col>
+              </b-row>
+              <b-row>
+                <b-col cols="12">
+                  <div id="Section3Main" class="rtesection">
+                    <h1>
+                      3.0 Accomplishments
+                    </h1>
+                    <br />
+                    <div id="Accomplishments">
+                      <div v-for="accomplishment in Accomplishments" :key="accomplishment" class="text-left mb-2">
+                        <div v-if="accomplishment.Private == 'Yes'">
+                          <!-- PRIVATE -->
+                          <div v-if="accomplishment.Completed == 'Yes'">
+                            <!-- PRIVATE AND PUBLISHED -->
+                            <div v-if="isSubcontractor">
+                              <div v-if="accomplishment.Company == Company">
+                                <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
+                                <b-card border-variant="success" text-variant="dark">
+                                  <template v-slot:header>
+                                    <h3 class="mb-0">
+                                      <span class="ml-0">{{ accomplishment.Company }}</span>
+                                      <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                      <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
+                                    </h3>
+                                  </template>
+                                  <b-card-body v-html="accomplishment.HTML"></b-card-body>
+                                </b-card>
+                              </div>
+                            </div>
+                            <div v-else>
+                              <b-card border-variant="success" text-variant="dark">
+                                <template v-slot:header>
+                                  <h3 class="mb-0">
+                                    <span class="ml-0">{{ accomplishment.Company }}</span>
+                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                    <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
+                                  </h3>
+                                </template>
+                                <b-card-body v-html="accomplishment.HTML"></b-card-body>
+                              </b-card>
+                            </div>
+                          </div>
+                          <!-- PRIVATE BUT NOT PUBLISHED (DENOTED BY 'WARNING COLOR) -->
+                          <div v-else>
+                            <div v-if="isSubcontractor">
+                              <div v-if="accomplishment.Company == Company">
+                                <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
+                                <b-card border-variant="warning" text-variant="dark">
+                                  <template v-slot:header>
+                                    <h3 class="mb-0">
+                                      <span class="ml-0">{{ accomplishment.Company }}</span>
+                                      <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                      <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                    </h3>
+                                  </template>
+                                  <b-card-body v-html="accomplishment.HTML"></b-card-body>
+                                </b-card>
+                              </div>
+                            </div>
+                            <div v-else>
+                              <!-- OTHER USERS ABLE TO SEE ITEM. -->
+                              <b-card border-variant="warning" text-variant="dark">
+                                <template v-slot:header>
+                                  <h3 class="mb-0">
+                                    <span class="ml-0">{{ accomplishment.Company }}</span>
+                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                  </h3>
+                                </template>
+                                <b-card-body v-html="accomplishment.HTML"></b-card-body>
+                              </b-card>
+                            </div>
+                          </div>
+                        </div>
+                        <div v-else>
+                          <!-- NOT PRIVATE -->
+                          <div v-if="accomplishment.Completed == 'Yes'">
+                            <!-- NOT PRIVATE AND PUBLISHED -->
+                            <b-card border-variant="success" text-variant="dark">
+                              <template v-slot:header>
+                                <h3 class="mb-0">
+                                  <span class="ml-0">{{ accomplishment.Company }}</span>
+                                  <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
+                                </h3>
+                              </template>
+                              <b-card-body v-html="accomplishment.HTML"></b-card-body>
+                            </b-card>
+                          </div>
+                          <div v-else>
+                            <!-- NOT PRIVATE AND NOT PUBLISHED -->
+                            <div v-if="isSubcontractor">
+                              <div v-if="accomplishment.Company == Company">
+                                <b-card border-variant="warning" text-variant="dark">
+                                  <template v-slot:header>
+                                    <h3 class="mb-0">
+                                      <span class="ml-0">{{ accomplishment.Company }}</span>
+                                      <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                    </h3>
+                                  </template>
+                                  <b-card-body v-html="accomplishment.HTML"></b-card-body>
+                                </b-card>
+                              </div>
+                            </div>
+                            <div v-else>
+                              <b-card border-variant="warning" text-variant="dark">
+                                <template v-slot:header>
+                                  <h3 class="mb-0">
+                                    <span class="ml-0">{{ accomplishment.Company }}</span>
+                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                  </h3>
+                                </template>
+                                <b-card-body v-html="accomplishment.HTML"></b-card-body>
+                              </b-card>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -2135,214 +1337,970 @@
               </b-row>
               <b-row>
                 <b-col cols="12">
-                  <div>
-                    <h2>
-                      7.0 Distribution
-                    </h2>
+                  <div id="Section4Main" class="rtesection">
+                    <h1>
+                      4.0 Plans
+                    </h1>
                     <br />
-                    <div id="PublishDistribution" v-html="Distribution"></div>
+                    <div id="Plans">
+                      <div v-for="plan in Plans" :key="plan" class="text-left mb-2">
+                        <div v-if="plan.Private == 'Yes'">
+                          <!-- PRIVATE -->
+                          <div v-if="plan.Completed == 'Yes'">
+                            <!-- PRIVATE AND PUBLISHED -->
+                            <div v-if="isSubcontractor">
+                              <div v-if="plan.Company == Company">
+                                <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
+                                <b-card border-variant="success" text-variant="dark">
+                                  <template v-slot:header>
+                                    <h3 class="mb-0">
+                                      <span class="ml-0">{{ plan.Company }}</span>
+                                      <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                      <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
+                                    </h3>
+                                  </template>
+                                  <b-card-body v-html="plan.HTML"></b-card-body>
+                                </b-card>
+                              </div>
+                            </div>
+                            <div v-else>
+                              <b-card border-variant="success" text-variant="dark">
+                                <template v-slot:header>
+                                  <h3 class="mb-0">
+                                    <span class="ml-0">{{ plan.Company }}</span>
+                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                    <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
+                                  </h3>
+                                </template>
+                                <b-card-body v-html="plan.HTML"></b-card-body>
+                              </b-card>
+                            </div>
+                          </div>
+                          <!-- PRIVATE BUT NOT PUBLISHED (DENOTED BY 'WARNING COLOR) -->
+                          <div v-else>
+                            <div v-if="isSubcontractor">
+                              <div v-if="plan.Company == Company">
+                                <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
+                                <b-card border-variant="warning" text-variant="dark">
+                                  <template v-slot:header>
+                                    <h3 class="mb-0">
+                                      <span class="ml-0">{{ plan.Company }}</span>
+                                      <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                      <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                    </h3>
+                                  </template>
+                                  <b-card-body v-html="plan.HTML"></b-card-body>
+                                </b-card>
+                              </div>
+                            </div>
+                            <div v-else>
+                              <!-- OTHER USERS ABLE TO SEE ITEM. -->
+                              <b-card border-variant="warning" text-variant="dark">
+                                <template v-slot:header>
+                                  <h3 class="mb-0">
+                                    <span class="ml-0">{{ plan.Company }}</span>
+                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                  </h3>
+                                </template>
+                                <b-card-body v-html="plan.HTML"></b-card-body>
+                              </b-card>
+                            </div>
+                          </div>
+                        </div>
+                        <div v-else>
+                          <!-- NOT PRIVATE -->
+                          <div v-if="plan.Completed == 'Yes'">
+                            <!-- NOT PRIVATE AND PUBLISHED -->
+                            <b-card border-variant="success" text-variant="dark">
+                              <template v-slot:header>
+                                <h3 class="mb-0">
+                                  <span class="ml-0">{{ plan.Company }}</span>
+                                  <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
+                                </h3>
+                              </template>
+                              <b-card-body v-html="plan.HTML"></b-card-body>
+                            </b-card>
+                          </div>
+                          <div v-else>
+                            <!-- NOT PRIVATE AND NOT PUBLISHED -->
+                            <div v-if="isSubcontractor">
+                              <div v-if="plan.Company == Company">
+                                <b-card border-variant="warning" text-variant="dark">
+                                  <template v-slot:header>
+                                    <h3 class="mb-0">
+                                      <span class="ml-0">{{ plan.Company }}</span>
+                                      <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                    </h3>
+                                  </template>
+                                  <b-card-body v-html="plan.HTML"></b-card-body>
+                                </b-card>
+                              </div>
+                            </div>
+                            <div v-else>
+                              <b-card border-variant="warning" text-variant="dark">
+                                <template v-slot:header>
+                                  <h3 class="mb-0">
+                                    <span class="ml-0">{{ plan.Company }}</span>
+                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                  </h3>
+                                </template>
+                                <b-card-body v-html="plan.HTML"></b-card-body>
+                              </b-card>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </b-col>
               </b-row>
-            </div>
-          </b-tab>
-        </b-tabs>
-      </b-card>
-    </b-row>
-    <b-row class="buttonrow">
-      <b-col cols="4" class="p-0 text-left">
-        <b-form-checkbox v-if="isWPManager || isDeveloper" id="WPMReview" ref="WPMReview" v-model="WPMReview" name="WPMReview" @input="handleit('review', 'WPMReview', '')" inline>
-          WPM Review
-        </b-form-checkbox>
-        <b-form-checkbox v-if="isQA || isDeveloper" id="QAReview" ref="QAReview" v-model="QAReview" name="QAReview" @input="handleit('review', 'QAReview', '')" inline>
-          QA Review
-        </b-form-checkbox>
-        <b-form-checkbox v-if="isPCA || isDeveloper" id="PCAReview" ref="PCAReview" v-model="PCAReview" name="PCAReview" @input="handleit('review', 'PCAReview', '')" inline>
-          PCA Review
-        </b-form-checkbox>
-      </b-col>
-      <b-col cols="4" class="p-0 text-center">
-        <b-button-group class="mt-2">
-          <b-button v-if="tabIndex > 0" ref="btnPrev" variant="outline-info" @click="tabIndex--">
-            <font-awesome-icon fas icon="angle-left" class="icon"></font-awesome-icon>
-            Previous
-          </b-button>
-          <b-button v-if="tabIndex < 7" ref="btnNext" variant="outline-info" @click="tabIndex++"
-            >Next
-            <font-awesome-icon fas icon="angle-right" class="icon ml-1"></font-awesome-icon>
-          </b-button>
-        </b-button-group>
-      </b-col>
-      <b-col cols="4" class="p-0 text-right">
-        <b-button variant="danger" ref="btnCancel" class="mr-2" @click="onModalHide">Cancel</b-button>
-        <b-button v-if="isPM || isDeveloper" ref="btnPublish" variant="success" @click="publishMSR">Publish MSR</b-button>
-      </b-col>
-    </b-row>
+              <b-row>
+                <b-col cols="12">
+                  <div id="Section5Main" class="rtesection">
+                    <h1>
+                      5.0 Assumptions / Risks / Opportunities
+                    </h1>
+                    <br />
+                    <h2>
+                      Assumptions and Dependencies
+                    </h2>
+                    <br />
+                    <div id="Assumptions">
+                      <div v-for="assumption in Assumptions" :key="assumption" class="text-left mb-2">
+                        <div v-if="assumption.Private == 'Yes'">
+                          <!-- PRIVATE -->
+                          <div v-if="assumption.Completed == 'Yes'">
+                            <!-- PRIVATE AND PUBLISHED -->
+                            <div v-if="isSubcontractor">
+                              <div v-if="assumption.Company == Company">
+                                <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
+                                <b-card border-variant="success" text-variant="dark">
+                                  <template v-slot:header>
+                                    <h3 class="mb-0">
+                                      <span class="ml-0">{{ assumption.Company }}</span>
+                                      <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                      <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
+                                    </h3>
+                                  </template>
+                                  <b-card-body v-html="assumption.HTML"></b-card-body>
+                                </b-card>
+                              </div>
+                            </div>
+                            <div v-else>
+                              <b-card border-variant="success" text-variant="dark">
+                                <template v-slot:header>
+                                  <h3 class="mb-0">
+                                    <span class="ml-0">{{ assumption.Company }}</span>
+                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                    <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
+                                  </h3>
+                                </template>
+                                <b-card-body v-html="assumption.HTML"></b-card-body>
+                              </b-card>
+                            </div>
+                          </div>
+                          <!-- PRIVATE BUT NOT PUBLISHED (DENOTED BY 'WARNING COLOR) -->
+                          <div v-else>
+                            <div v-if="isSubcontractor">
+                              <div v-if="assumption.Company == Company">
+                                <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
+                                <b-card border-variant="warning" text-variant="dark">
+                                  <template v-slot:header>
+                                    <h3 class="mb-0">
+                                      <span class="ml-0">{{ assumption.Company }}</span>
+                                      <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                      <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                    </h3>
+                                  </template>
+                                  <b-card-body v-html="assumption.HTML"></b-card-body>
+                                </b-card>
+                              </div>
+                            </div>
+                            <div v-else>
+                              <!-- OTHER USERS ABLE TO SEE ITEM. -->
+                              <b-card border-variant="warning" text-variant="dark">
+                                <template v-slot:header>
+                                  <h3 class="mb-0">
+                                    <span class="ml-0">{{ assumption.Company }}</span>
+                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                  </h3>
+                                </template>
+                                <b-card-body v-html="assumption.HTML"></b-card-body>
+                              </b-card>
+                            </div>
+                          </div>
+                        </div>
+                        <div v-else>
+                          <!-- NOT PRIVATE -->
+                          <div v-if="assumption.Completed == 'Yes'">
+                            <!-- NOT PRIVATE AND PUBLISHED -->
+                            <b-card border-variant="success" text-variant="dark">
+                              <template v-slot:header>
+                                <h3 class="mb-0">
+                                  <span class="ml-0">{{ assumption.Company }}</span>
+                                  <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
+                                </h3>
+                              </template>
+                              <b-card-body v-html="assumption.HTML"></b-card-body>
+                            </b-card>
+                          </div>
+                          <div v-else>
+                            <!-- NOT PRIVATE AND NOT PUBLISHED -->
+                            <div v-if="isSubcontractor">
+                              <div v-if="assumption.Company == Company">
+                                <b-card border-variant="warning" text-variant="dark">
+                                  <template v-slot:header>
+                                    <h3 class="mb-0">
+                                      <span class="ml-0">{{ assumption.Company }}</span>
+                                      <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                    </h3>
+                                  </template>
+                                  <b-card-body v-html="assumption.HTML"></b-card-body>
+                                </b-card>
+                              </div>
+                            </div>
+                            <div v-else>
+                              <b-card border-variant="warning" text-variant="dark">
+                                <template v-slot:header>
+                                  <h3 class="mb-0">
+                                    <span class="ml-0">{{ assumption.Company }}</span>
+                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                  </h3>
+                                </template>
+                                <b-card-body v-html="assumption.HTML"></b-card-body>
+                              </b-card>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <br />
+                    <h2>
+                      Risks and Mitigation
+                    </h2>
+                    <br />
+                    <div id="Risks">
+                      <div v-for="risk in Risks" :key="risk" class="text-left mb-2">
+                        <div v-if="risk.Private == 'Yes'">
+                          <!-- PRIVATE -->
+                          <div v-if="risk.Completed == 'Yes'">
+                            <!-- PRIVATE AND PUBLISHED -->
+                            <div v-if="isSubcontractor">
+                              <div v-if="risk.Company == Company">
+                                <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
+                                <b-card border-variant="success" text-variant="dark">
+                                  <template v-slot:header>
+                                    <h3 class="mb-0">
+                                      <span class="ml-0">{{ risk.Company }}</span>
+                                      <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                      <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
+                                    </h3>
+                                  </template>
+                                  <b-card-body v-html="risk.HTML"></b-card-body>
+                                </b-card>
+                              </div>
+                            </div>
+                            <div v-else>
+                              <b-card border-variant="success" text-variant="dark">
+                                <template v-slot:header>
+                                  <h3 class="mb-0">
+                                    <span class="ml-0">{{ risk.Company }}</span>
+                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                    <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
+                                  </h3>
+                                </template>
+                                <b-card-body v-html="risk.HTML"></b-card-body>
+                              </b-card>
+                            </div>
+                          </div>
+                          <!-- PRIVATE BUT NOT PUBLISHED (DENOTED BY 'WARNING COLOR) -->
+                          <div v-else>
+                            <div v-if="isSubcontractor">
+                              <div v-if="risk.Company == Company">
+                                <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
+                                <b-card border-variant="warning" text-variant="dark">
+                                  <template v-slot:header>
+                                    <h3 class="mb-0">
+                                      <span class="ml-0">{{ risk.Company }}</span>
+                                      <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                      <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                    </h3>
+                                  </template>
+                                  <b-card-body v-html="risk.HTML"></b-card-body>
+                                </b-card>
+                              </div>
+                            </div>
+                            <div v-else>
+                              <!-- OTHER USERS ABLE TO SEE ITEM. -->
+                              <b-card border-variant="warning" text-variant="dark">
+                                <template v-slot:header>
+                                  <h3 class="mb-0">
+                                    <span class="ml-0">{{ risk.Company }}</span>
+                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                  </h3>
+                                </template>
+                                <b-card-body v-html="risk.HTML"></b-card-body>
+                              </b-card>
+                            </div>
+                          </div>
+                        </div>
+                        <div v-else>
+                          <!-- NOT PRIVATE -->
+                          <div v-if="risk.Completed == 'Yes'">
+                            <!-- NOT PRIVATE AND PUBLISHED -->
+                            <b-card border-variant="success" text-variant="dark">
+                              <template v-slot:header>
+                                <h3 class="mb-0">
+                                  <span class="ml-0">{{ risk.Company }}</span>
+                                  <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
+                                </h3>
+                              </template>
+                              <b-card-body v-html="risk.HTML"></b-card-body>
+                            </b-card>
+                          </div>
+                          <div v-else>
+                            <!-- NOT PRIVATE AND NOT PUBLISHED -->
+                            <div v-if="isSubcontractor">
+                              <div v-if="risk.Company == Company">
+                                <b-card border-variant="warning" text-variant="dark">
+                                  <template v-slot:header>
+                                    <h3 class="mb-0">
+                                      <span class="ml-0">{{ risk.Company }}</span>
+                                      <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                    </h3>
+                                  </template>
+                                  <b-card-body v-html="risk.HTML"></b-card-body>
+                                </b-card>
+                              </div>
+                            </div>
+                            <div v-else>
+                              <b-card border-variant="warning" text-variant="dark">
+                                <template v-slot:header>
+                                  <h3 class="mb-0">
+                                    <span class="ml-0">{{ risk.Company }}</span>
+                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                  </h3>
+                                </template>
+                                <b-card-body v-html="risk.HTML"></b-card-body>
+                              </b-card>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <br />
+                    <h2>
+                      Opportunities
+                    </h2>
+                    <br />
+                    <div id="Opportunities">
+                      <div v-for="opportunity in Opportunities" :key="opportunity" class="text-left mb-2">
+                        <div v-if="opportunity.Private == 'Yes'">
+                          <!-- PRIVATE -->
+                          <div v-if="opportunity.Completed == 'Yes'">
+                            <!-- PRIVATE AND PUBLISHED -->
+                            <div v-if="isSubcontractor">
+                              <div v-if="opportunity.Company == Company">
+                                <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
+                                <b-card border-variant="success" text-variant="dark">
+                                  <template v-slot:header>
+                                    <h3 class="mb-0">
+                                      <span class="ml-0">{{ opportunity.Company }}</span>
+                                      <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                      <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
+                                    </h3>
+                                  </template>
+                                  <b-card-body v-html="opportunity.HTML"></b-card-body>
+                                </b-card>
+                              </div>
+                            </div>
+                            <div v-else>
+                              <b-card border-variant="success" text-variant="dark">
+                                <template v-slot:header>
+                                  <h3 class="mb-0">
+                                    <span class="ml-0">{{ opportunity.Company }}</span>
+                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                    <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
+                                  </h3>
+                                </template>
+                                <b-card-body v-html="opportunity.HTML"></b-card-body>
+                              </b-card>
+                            </div>
+                          </div>
+                          <!-- PRIVATE BUT NOT PUBLISHED (DENOTED BY 'WARNING COLOR) -->
+                          <div v-else>
+                            <div v-if="isSubcontractor">
+                              <div v-if="opportunity.Company == Company">
+                                <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
+                                <b-card border-variant="warning" text-variant="dark">
+                                  <template v-slot:header>
+                                    <h3 class="mb-0">
+                                      <span class="ml-0">{{ opportunity.Company }}</span>
+                                      <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                      <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                    </h3>
+                                  </template>
+                                  <b-card-body v-html="opportunity.HTML"></b-card-body>
+                                </b-card>
+                              </div>
+                            </div>
+                            <div v-else>
+                              <!-- OTHER USERS ABLE TO SEE ITEM. -->
+                              <b-card border-variant="warning" text-variant="dark">
+                                <template v-slot:header>
+                                  <h3 class="mb-0">
+                                    <span class="ml-0">{{ opportunity.Company }}</span>
+                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                  </h3>
+                                </template>
+                                <b-card-body v-html="opportunity.HTML"></b-card-body>
+                              </b-card>
+                            </div>
+                          </div>
+                        </div>
+                        <div v-else>
+                          <!-- NOT PRIVATE -->
+                          <div v-if="opportunity.Completed == 'Yes'">
+                            <!-- NOT PRIVATE AND PUBLISHED -->
+                            <b-card border-variant="success" text-variant="dark">
+                              <template v-slot:header>
+                                <h3 class="mb-0">
+                                  <span class="ml-0">{{ opportunity.Company }}</span>
+                                  <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
+                                </h3>
+                              </template>
+                              <b-card-body v-html="opportunity.HTML"></b-card-body>
+                            </b-card>
+                          </div>
+                          <div v-else>
+                            <!-- NOT PRIVATE AND NOT PUBLISHED -->
+                            <div v-if="isSubcontractor">
+                              <div v-if="opportunity.Company == Company">
+                                <b-card border-variant="warning" text-variant="dark">
+                                  <template v-slot:header>
+                                    <h3 class="mb-0">
+                                      <span class="ml-0">{{ opportunity.Company }}</span>
+                                      <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                    </h3>
+                                  </template>
+                                  <b-card-body v-html="opportunity.HTML"></b-card-body>
+                                </b-card>
+                              </div>
+                            </div>
+                            <div v-else>
+                              <b-card border-variant="warning" text-variant="dark">
+                                <template v-slot:header>
+                                  <h3 class="mb-0">
+                                    <span class="ml-0">{{ opportunity.Company }}</span>
+                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                  </h3>
+                                </template>
+                                <b-card-body v-html="opportunity.HTML"></b-card-body>
+                              </b-card>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </b-col>
+              </b-row>
+              <b-row>
+                <b-col cols="12">
+                  <div id="Section6Main" class="rtesection">
+                    <h1>
+                      6.0 Deliverables
+                    </h1>
+                    <br />
+                    <div id="Deliverables">
+                      <div v-for="deliverable in Deliverables" :key="deliverable" class="text-left mb-2">
+                        <div v-if="deliverable.Private == 'Yes'">
+                          <!-- PRIVATE -->
+                          <div v-if="deliverable.Completed == 'Yes'">
+                            <!-- PRIVATE AND PUBLISHED -->
+                            <div v-if="isSubcontractor">
+                              <div v-if="deliverable.Company == Company">
+                                <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
+                                <b-card border-variant="success" text-variant="dark">
+                                  <template v-slot:header>
+                                    <h3 class="mb-0">
+                                      <span class="ml-0">{{ deliverable.Company }}</span>
+                                      <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                      <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
+                                    </h3>
+                                  </template>
+                                  <b-card-body v-html="deliverable.HTML"></b-card-body>
+                                </b-card>
+                              </div>
+                            </div>
+                            <div v-else>
+                              <b-card border-variant="success" text-variant="dark">
+                                <template v-slot:header>
+                                  <h3 class="mb-0">
+                                    <span class="ml-0">{{ deliverable.Company }}</span>
+                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                    <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
+                                  </h3>
+                                </template>
+                                <b-card-body v-html="deliverable.HTML"></b-card-body>
+                              </b-card>
+                            </div>
+                          </div>
+                          <!-- PRIVATE BUT NOT PUBLISHED (DENOTED BY 'WARNING COLOR) -->
+                          <div v-else>
+                            <div v-if="isSubcontractor">
+                              <div v-if="deliverable.Company == Company">
+                                <!-- SUBCONTRACTOR OF COMPANY CAN SEE THE ITEM WHILE OTHER SUBCONTRACTORS CAN NOT. -->
+                                <b-card border-variant="warning" text-variant="dark">
+                                  <template v-slot:header>
+                                    <h3 class="mb-0">
+                                      <span class="ml-0">{{ deliverable.Company }}</span>
+                                      <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                      <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                    </h3>
+                                  </template>
+                                  <b-card-body v-html="deliverable.HTML"></b-card-body>
+                                </b-card>
+                              </div>
+                            </div>
+                            <div v-else>
+                              <!-- OTHER USERS ABLE TO SEE ITEM. -->
+                              <b-card border-variant="warning" text-variant="dark">
+                                <template v-slot:header>
+                                  <h3 class="mb-0">
+                                    <span class="ml-0">{{ deliverable.Company }}</span>
+                                    <font-awesome-icon fas icon="user-shield" class="icon text-danger float-right ml-1"></font-awesome-icon>
+                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                  </h3>
+                                </template>
+                                <b-card-body v-html="deliverable.HTML"></b-card-body>
+                              </b-card>
+                            </div>
+                          </div>
+                        </div>
+                        <div v-else>
+                          <!-- NOT PRIVATE -->
+                          <div v-if="deliverable.Completed == 'Yes'">
+                            <!-- NOT PRIVATE AND PUBLISHED -->
+                            <b-card border-variant="success" text-variant="dark">
+                              <template v-slot:header>
+                                <h3 class="mb-0">
+                                  <span class="ml-0">{{ deliverable.Company }}</span>
+                                  <font-awesome-icon fas icon="folder" class="icon text-success float-right ml-1"></font-awesome-icon>
+                                </h3>
+                              </template>
+                              <b-card-body v-html="deliverable.HTML"></b-card-body>
+                            </b-card>
+                          </div>
+                          <div v-else>
+                            <!-- NOT PRIVATE AND NOT PUBLISHED -->
+                            <div v-if="isSubcontractor">
+                              <div v-if="deliverable.Company == Company">
+                                <b-card border-variant="warning" text-variant="dark">
+                                  <template v-slot:header>
+                                    <h3 class="mb-0">
+                                      <span class="ml-0">{{ deliverable.Company }}</span>
+                                      <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                    </h3>
+                                  </template>
+                                  <b-card-body v-html="deliverable.HTML"></b-card-body>
+                                </b-card>
+                              </div>
+                            </div>
+                            <div v-else>
+                              <b-card border-variant="warning" text-variant="dark">
+                                <template v-slot:header>
+                                  <h3 class="mb-0">
+                                    <span class="ml-0">{{ deliverable.Company }}</span>
+                                    <font-awesome-icon fas icon="folder-open" class="icon text-warning float-right ml-1"></font-awesome-icon>
+                                  </h3>
+                                </template>
+                                <b-card-body v-html="deliverable.HTML"></b-card-body>
+                              </b-card>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </b-col>
+              </b-row>
+              <b-row>
+                <b-col cols="12">
+                  <div id="Section7Main" class="rtesection">
+                    <h1>
+                      7.0 Distribution
+                    </h1>
+                    <br />
+                    <div id="Distribution" v-html="Distribution"></div>
+                  </div>
+                </b-col>
+              </b-row>
+            </b-tab>
+            <b-tab :disabled="isSubcontractor" class="mtab">
+              <template slot="title">
+                <font-awesome-icon fas icon="traffic-light" class="icon"></font-awesome-icon>
+                Review
+              </template>
+              <b-row class="buttonrow">
+                <b-col cols="4" class="p-0 text-left">
+                  <b-form-checkbox v-if="isWPManager || isDeveloper" title="Checking this box will denote that you have completed your review." id="WPMReview" ref="WPMReview" v-model="WPMReview" name="WPMReview" value="Complete" unchecked-value="Pending">
+                    WPM Review
+                  </b-form-checkbox>
+                  <b-form-checkbox v-if="isQA || isDeveloper" title="Checking this box will denote that you have completed your review." id="QAReview" ref="QAReview" v-model="QAReview" name="QAReview" value="Complete" unchecked-value="Pending">
+                    QA Review
+                  </b-form-checkbox>
+                  <b-form-checkbox v-if="isPCA || isDeveloper" title="Checking this box will denote that you have completed your review." id="PCAReview" ref="PCAReview" v-model="PCAReview" name="PCAReview" value="Complete" unchecked-value="Pending">
+                    PCA Review
+                  </b-form-checkbox>
+                </b-col>
+              </b-row>
+            </b-tab>
+            <b-tab :disabled="!isPM" class="mtab">
+              <template slot="title">
+                <font-awesome-icon fas icon="upload" class="icon"></font-awesome-icon>
+                Publish
+              </template>
+              <b-row class="buttonrow">
+                <b-button ref="btnPublish" variant="success" @click="publishMSR">Publish MSR</b-button>
+              </b-row>
+              <b-row>
+                <div id="Publish">
+                  <b-row>
+                    <b-col cols="12">
+                      <div>
+                        <h2>
+                          1.0 Funding and Staffing Summary
+                        </h2>
+                        <br />
+                        <h3>
+                          1.1 Funding
+                        </h3>
+                        <br />
+                        <div id="PublishFunding" v-html="Funding"></div>
+                        <br />
+                        <h3>
+                          1.2 Engineering Effort/Staffing
+                        </h3>
+                        <br />
+                        <div id="PublishStaffing" v-html="Staffing"></div>
+                        <br />
+                        <h3>
+                          1.3 Cost Report
+                        </h3>
+                        <br />
+                        <div id="PublishCostReport" v-html="CostReport"></div>
+                      </div>
+                    </b-col>
+                  </b-row>
+                  <b-row>
+                    <b-col cols="12">
+                      <div>
+                        <h2>
+                          2.0 Travel
+                        </h2>
+                        <br />
+                        <h3>
+                          2.1 Travel
+                        </h3>
+                        <br />
+                        <h4>
+                          2.1.1 Travel Accomplished
+                        </h4>
+                        <br />
+                        <div id="PublishTravelAccomplished" v-html="TravelAccomplished"></div>
+                        <br />
+                        <h4>
+                          2.1.2 Travel Planned
+                        </h4>
+                        <br />
+                        <div id="PublishTravelPlanned" v-html="TravelPlanned"></div>
+                        <br />
+                        <h4>
+                          2.1.3 Travel Costs To Date
+                        </h4>
+                        <br />
+                        <div id="PublishTravelCosts" v-html="TravelCosts"></div>
+                        <h3>
+                          2.2 ODCs
+                        </h3>
+                        <br />
+                        <h4>
+                          2.2.1 ODCs Accomplished
+                        </h4>
+                        <br />
+                        <div id="PublishODCAccomplished" v-html="ODCAccomplished"></div>
+                        <br />
+                        <h4>
+                          2.2.2 ODCs Planned
+                        </h4>
+                        <br />
+                        <div id="PublishODCPlanned" v-html="ODCPlanned"></div>
+                        <br />
+                        <h4>
+                          2.2.3 ODC Costs To Date
+                        </h4>
+                        <br />
+                        <div id="PublishODCCosts" v-html="ODCCosts"></div>
+                      </div>
+                    </b-col>
+                  </b-row>
+                  <b-row>
+                    <b-col cols="12">
+                      <div>
+                        <h2>
+                          3.0 Accomplishments
+                        </h2>
+                        <br />
+                        <div id="PublishAccomplishments" ref="Accomplishments">
+                          <div v-for="accomplishment in Accomplishments" :key="accomplishment" class="text-left mb-2">
+                            <h4 class="mb-0">
+                              <span class="ml-0">{{ accomplishment.Company }}</span>
+                            </h4>
+                            <div class="ml-1" v-html="accomplishment.HTML"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </b-col>
+                  </b-row>
+                  <b-row>
+                    <b-col cols="12">
+                      <div>
+                        <h2>
+                          4.0 Plans
+                        </h2>
+                        <br />
+                        <div id="PublishPlans">
+                          <div v-for="plan in Plans" :key="plan" class="text-left mb-2">
+                            <h4 class="mb-0">
+                              <span class="ml-0">{{ plan.Company }}</span>
+                            </h4>
+                            <div class="ml-1" v-html="plan.HTML"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </b-col>
+                  </b-row>
+                  <b-row>
+                    <b-col cols="12">
+                      <div>
+                        <h2>
+                          5.0 Assumptions / Risks / Opportunities
+                        </h2>
+                        <br />
+                        <h3>
+                          Assumptions and Dependencies
+                        </h3>
+                        <br />
+                        <div id="PublishAssumptions">
+                          <div v-for="assumption in Assumptions" :key="assumption" class="text-left mb-2">
+                            <h4 class="mb-0">
+                              <span class="ml-0">{{ assumption.Company }}</span>
+                            </h4>
+                            <div class="ml-1" v-html="assumption.HTML"></div>
+                          </div>
+                        </div>
+                        <br />
+                        <h3>
+                          Risks and Mitigation
+                        </h3>
+                        <br />
+                        <div id="PublishRisks">
+                          <div v-for="risk in Risks" :key="risk" class="text-left mb-2">
+                            <h4 class="mb-0">
+                              <span class="ml-0">{{ risk.Company }}</span>
+                            </h4>
+                            <div class="ml-1" v-html="risk.HTML"></div>
+                          </div>
+                        </div>
+                        <br />
+                        <h3>
+                          Opportunities
+                        </h3>
+                        <br />
+                        <div id="PublishOpportunities">
+                          <div v-for="opportunity in Opportunities" :key="opportunity" class="text-left mb-2">
+                            <h4 class="mb-0">
+                              <span class="ml-0">{{ opportunity.Company }}</span>
+                            </h4>
+                            <div class="ml-1" v-html="opportunity.HTML"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </b-col>
+                  </b-row>
+                  <b-row>
+                    <b-col cols="12">
+                      <div>
+                        <h2>
+                          6.0 Deliverables
+                        </h2>
+                        <br />
+                        <div id="PublishDeliverables">
+                          <div v-for="deliverable in Deliverables" :key="deliverable" class="text-left mb-2">
+                            <h4 class="mb-0">
+                              <span class="ml-0">{{ deliverable.Company }}</span>
+                            </h4>
+                            <div class="ml-1" v-html="deliverable.HTML"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </b-col>
+                  </b-row>
+                  <b-row>
+                    <b-col cols="12">
+                      <div>
+                        <h2>
+                          7.0 Distribution
+                        </h2>
+                        <br />
+                        <div id="PublishDistribution" v-html="Distribution"></div>
+                      </div>
+                    </b-col>
+                  </b-row>
+                </div>
+              </b-row>
+              <b-row class="buttonrow">
+                <b-button ref="btnPublish" variant="success" @click="publishMSR">Publish MSR</b-button>
+              </b-row>
+            </b-tab>
+          </b-tabs>
+        </b-card>
+      </b-row>
+      <b-row class="bg-warning formfooter">
+        <b-col cols="4" class="p-0 text-left"></b-col>
+        <b-col cols="4" class="p-0 text-center">
+          <b-button-group class="mt-1">
+            <b-button v-if="tabIndex > 0" ref="btnPrev" variant="info" @click="tabIndex--">
+              <font-awesome-icon fas icon="angle-left" class="icon"></font-awesome-icon>
+              Previous
+            </b-button>
+            <b-button v-if="tabIndex < 9" ref="btnNext" variant="info" @click="tabIndex++"
+              >Next
+              <font-awesome-icon fas icon="angle-right" class="icon ml-1"></font-awesome-icon>
+            </b-button>
+          </b-button-group>
+        </b-col>
+        <b-col cols="4" class="p-0 text-right">
+          <b-button-group class="mt-1">
+            <b-button variant="danger" ref="btnCancel" class="mr-2" @click="onFormClose">Close MSR</b-button>
+          </b-button-group>
+        </b-col>
+      </b-row>
+    </div>
   </b-container>
 </template>
 
 <script>
-/* eslint-disable */ // remove when finished
-import {
-  Document,
-  BorderStyle,
-  Footer,
-  Header,
-  Packer,
-  Paragraph,
-  Table,
-  TableFromHTML,
-  TableCell,
-  TableRow,
-  VerticalAlign,
-  TextDirection,
-  WidthType,
-  AlignmentType,
-  PageNumber,
-  PageNumberFormat,
-  TextRun,
-  HeightRule,
-  TableGenerator,
-  CreateDocFromHtml
-} from "caci-docx/lib";
-import fileSaver from "file-saver";
-import axios from "axios";
-import Workplan from "@/models/WorkPlan"; // used to get sub data
-import MSR from "@/models/MSR";
-import User from "@/models/User";
-import {
-  Toolbar,
-  Link,
-  Image,
-  Count,
-  HtmlEditor,
-  QuickToolbar,
-  Table as RTETable
-} from "@syncfusion/ej2-vue-richtexteditor";
+import { BorderStyle, Packer, Paragraph, Table, TableCell, TableRow, VerticalAlign, WidthType, AlignmentType, PageNumber, TextRun, CreateDocFromHtml } from 'caci-docx/lib'
+// import fileSaver from 'file-saver'
+import axios from 'axios'
+import Workplan from '@/models/WorkPlan' // used to get sub data
+import MSR from '@/models/MSR'
+import User from '@/models/User'
+import { Toolbar, Link, Image, Count, HtmlEditor, QuickToolbar, Table as RTETable } from '@syncfusion/ej2-vue-richtexteditor'
 
-let SPCI = null;
+let SPCI = null
 if (window._spPageContextInfo) {
-  SPCI = window._spPageContextInfo;
+  SPCI = window._spPageContextInfo
 }
 
-let months = [
-  "JAN",
-  "FEB",
-  "MAR",
-  "APR",
-  "MAY",
-  "JUN",
-  "JUL",
-  "AUG",
-  "SEP",
-  "OCT",
-  "NOV",
-  "DEC"
-];
-let vm = null;
-let server = SPCI.webAbsoluteUrl;
-let library = "MSRImages";
+let months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
+let vm = null
+let server = SPCI.webAbsoluteUrl
+let library = 'MSRImages'
 
 export default {
-  name: "MsrForm",
+  name: 'MsrForm',
   props: {
     msrdata: {
       type: Object
     },
-    height: {
+    id: {
       type: String
     }
   },
   computed: {
     loaded() {
-      return MSR.getters("Loaded");
+      return MSR.getters('Loaded')
     },
     msrloaded() {
-      return MSR.getters("MSRLoaded");
+      return MSR.getters('MSRLoaded')
     },
     msr() {
-      return MSR.getters("MSR");
-    },
-    accomplishments() {
-      return MSR.getters("Accomplishments");
-    },
-    plans() {
-      return MSR.getters("Plans");
-    },
-    assumptions() {
-      return MSR.getters("Assumptions");
-    },
-    risks() {
-      return MSR.getters("Risks");
-    },
-    opportunities() {
-      return MSR.getters("Opportunities");
-    },
-    deliverables() {
-      return MSR.getters("Deliverables");
+      return MSR.getters('MSR')
     },
     user() {
-      return User.getters("CurrentUser");
+      return User.getters('CurrentUser')
     },
     userid() {
-      return User.getters("CurrentUserId");
+      return User.getters('CurrentUserId')
     },
     appversion() {
-      return User.getters("AppVersion");
+      return User.getters('AppVersion')
     },
     isDeveloper() {
-      return User.getters("isDeveloper");
+      return User.getters('isDeveloper')
     },
     isPM() {
-      return User.getters("isPM");
+      return User.getters('isPM')
     },
     isWPManager() {
-      return User.getters("isWPManager");
+      return User.getters('isWPManager')
     },
     isPCA() {
-      return User.getters("isPCA");
+      return User.getters('isPCA')
     },
     isQA() {
-      return User.getters("isQA");
+      return User.getters('isQA')
     },
     isSubcontractor() {
-      return User.getters("isSubcontractor");
+      return User.getters('isSubcontractor')
     },
     subs() {
-      return Workplan.getters("Subs");
+      return Workplan.getters('Subs')
     },
     subsloaded() {
-      return Workplan.getters("SubsLoaded");
+      return Workplan.getters('SubsLoaded')
     },
     allworkplans() {
-      return Workplan.getters("allWorkplans");
+      return Workplan.getters('allWorkplans')
+    },
+    rect() {
+      return this.$store.state.support.contentrect
     }
   },
   errorCaptured(err, vm, info) {
     const notification = {
-      type: "danger",
-      title: "Error in MSR Form " + err,
+      type: 'danger',
+      title: 'Error in MSR Form ' + err,
       message: info,
       push: true
-    };
-    this.$store.dispatch("notification/add", notification, {
+    }
+    this.$store.dispatch('notification/add', notification, {
       root: true
-    });
+    })
   },
   data: function() {
     return {
-      busyTitle: "Getting Data. Please Wait.",
+      busyTitle: 'Getting Data. Please Wait.',
+      isDirty: false,
+      headerText: '',
       WordDocument: null,
       fileDigest: null,
       fileBuffer: null,
       fileBlob: null,
-      fileType: "",
+      fileType: '',
       fileContent: null,
       fileName: null,
       hasImage: false,
       isEditing: false,
       clipBoard: null,
-      ActiveSection: "",
+      ActiveSection: '',
       changecount: 0,
       tabIndex: 0,
       POPStart: null,
@@ -2350,7 +2308,13 @@ export default {
       fontFamily: {
         default: 'Calibri',
         items: [
-          {text: 'Calibri', value: 'Calibri', class: 'e-calibri-ui',  command: "Font", subCommand: "FontName"}
+          {
+            text: 'Calibri',
+            value: 'Calibri',
+            class: 'e-calibri-ui',
+            command: 'Font',
+            subCommand: 'FontName'
+          }
         ]
       },
       cssClass: 'defaultcalibri',
@@ -2358,33 +2322,7 @@ export default {
         keepFormat: true
       },
       toolbarSettings: {
-        items: [
-          "Bold",
-          "Italic",
-          "Underline",
-          "StrikeThrough",
-          "FontName",
-          "FontSize",
-          "FontColor",
-          "BackgroundColor",
-          "LowerCase",
-          "UpperCase",
-          "|",
-          "Formats",
-          "Alignments",
-          "UnorderedList",
-          "Outdent",
-          "Indent",
-          "|",
-          "CreateTable",
-          "CreateLink",
-          "|",
-          "ClearFormat",
-          "Print",
-          "|",
-          "Undo",
-          "Redo"
-        ]
+        items: ['Bold', 'Italic', 'Underline', 'StrikeThrough', 'FontName', 'FontSize', 'FontColor', 'BackgroundColor', 'LowerCase', 'UpperCase', '|', 'Formats', 'Alignments', 'UnorderedList', 'Outdent', 'Indent', '|', 'CreateTable', 'CreateLink', '|', 'ClearFormat', 'Print', '|', 'Undo', 'Redo']
       },
       FundingForm: false /* ---------------------------------- used for showing/hiding the form based on the current user permission   */,
       StaffingForm: false /* --------------------------------- used for showing/hiding the form based on the current user permission   */,
@@ -2402,1200 +2340,907 @@ export default {
       OpportunitiesForm: false /* ---------------------------- used for showing/hiding the form based on the current user permission   */,
       DeliverablesForm: false /* ----------------------------- used for showing/hiding the form based on the current user permission   */,
       DistributionForm: false /* ----------------------------- used for showing/hiding the form based on the current user permission   */,
-      message: "",
-      messagevariant: "success",
-      WorkplanNumber: "",
-      WorkplanTitle: "",
+      message: '',
+      messagevariant: 'success',
+      WorkplanNumber: '',
+      WorkplanTitle: '',
       PCAReview: false,
       QAReview: false,
       WPMReview: false,
-      Month: "",
-      Year: "2020",
-      Company: "",
-      Email: "",
-      Funding: "",
-      Staffing: "",
-      CostReport: "",
-      TravelPlanned: "",
-      TravelAccomplished: "",
-      TravelCosts: "",
-      ODCsAccomplished: "",
-      ODCsCostReport: "",
+      Month: '',
+      Year: '2020',
+      Company: '',
+      Email: '',
+      Funding: '',
+      Staffing: '',
+      CostReport: '',
+      TravelPlanned: '',
+      TravelAccomplished: '',
+      TravelCosts: '',
+      ODCsAccomplished: '',
+      ODCsCostReport: '',
       Accomplishments: [],
-      SelectedAccomplishment: "",
+      SelectedAccomplishment: '',
       Plans: [],
-      SelectedPlan: "",
+      SelectedPlan: '',
       Assumptions: [],
-      SelectedAssumption: "",
+      SelectedAssumption: '',
       Risks: [],
-      SelectedRisk: "",
+      SelectedRisk: '',
       Opportunities: [],
-      SelectedOpportunity: "",
+      SelectedOpportunity: '',
       Deliverables: [],
-      SelectedDeliverable: "",
-      Distribution: "",
+      SelectedDeliverable: '',
+      Distribution: '',
       SelectedIndex: 0,
       acompanies: [],
       pcompanies: [],
       legenditems: [
         {
           id: 0,
-          type: "alert",
-          name: "Published",
-          variant: "secondary",
-          classes: "text-dark",
+          type: 'alert',
+          name: 'Completed',
+          variant: 'white',
+          classes: 'text-dark',
           hasIcon: true,
-          iconVariant: "success",
-          library: "fas",
-          icon: "folder"
+          iconVariant: 'success',
+          library: 'fas',
+          icon: 'folder'
         },
         {
           id: 1,
-          type: "alert",
-          name: "Not Published",
-          variant: "secondary",
-          classes: "text-dark",
+          type: 'alert',
+          name: 'Not Completed',
+          variant: 'white',
+          classes: 'text-dark',
           hasIcon: true,
-          iconVariant: "warning",
-          library: "fas",
-          icon: "folder"
+          iconVariant: 'warning',
+          library: 'fas',
+          icon: 'folder'
         },
         {
           id: 2,
-          type: "alert",
-          name: "Private",
-          variant: "secondary",
-          classes: "text-dark",
+          type: 'alert',
+          name: 'Private',
+          variant: 'white',
+          classes: 'text-dark',
           hasIcon: true,
-          iconVariant: "danger",
-          library: "fas",
-          icon: "user-shield"
+          iconVariant: 'danger',
+          library: 'fas',
+          icon: 'user-shield'
         }
       ],
       isNew: false
-    };
+    }
   },
   mounted: function() {
-    vm = this;
-    this.WorkplanTitle = this.msrdata.WorkplanTitle;
-    this.WorkplanNumber = this.msrdata.WorkplanNumber;
-
-    this.Email = this.user[0].Email;
-    this.Company = this.user[0].Company;
-    let m = this.$moment().get("month");
-    this.Month = months[m];
-    this.Year = String(this.$moment().year());
-
-    MSR.dispatch("getDigest");
-    Workplan.dispatch("getSubs", vm.WorkplanNumber).then(function() {
-      vm.$options.interval = setInterval(vm.waitForHeight, 2000);
-    });
-  },
-  updated: function() {
-    // perform anything on updated?
+    vm = this
+    this.$bvToast.show('form-toast')
+    this.WorkplanTitle = this.msrdata.WorkplanTitle
+    this.WorkplanNumber = this.msrdata.WorkplanNumber
+    this.Email = this.user[0].Email
+    this.Company = this.user[0].Company
+    let m = this.$moment().get('month')
+    this.Month = months[m]
+    this.Year = String(this.$moment().year())
+    this.headerText = 'Edit Data For MSR ' + this.msrdata.WorkplanNumber + ' ' + this.msrdata.WorkplanTitle
+    let formbody = document.getElementById('Tabs')
+    let h = this.rect.height - 100
+    formbody.style.height = h + 'px'
+    MSR.dispatch('getDigest')
+    Workplan.dispatch('getSubs', this.WorkplanNumber).then(function() {
+      vm.getData()
+    })
   },
   beforeDestroy() {
-    this.$store.dispatch("support/setLegendItems", []);
+    this.$store.dispatch('support/setLegendItems', [])
+    this.onFormClose()
   },
   methods: {
     getFormDigest() {
       return axios.request({
-        url: SPCI.webServerRelativeUrl + "/_api/contextinfo",
-        method: "post",
+        url: SPCI.webServerRelativeUrl + '/_api/contextinfo',
+        method: 'post',
         headers: {
-          Accept: "application/json; odata=verbose"
+          Accept: 'application/json; odata=verbose'
         }
-      });
+      })
+    },
+    getData: function() {
+      if (console) {
+        console.log('MSRFORM GETDATA')
+      }
+      MSR.dispatch('getMSR', this.msrdata).then(function() {
+        vm.$store.dispatch('support/addActivity', '<div class="bg-primary">msrform-getMSR: ' + vm.$moment().format() + '</div>')
+        vm.waitForMSR()
+      })
     },
     waitForMSR: function() {
       if (this.msrloaded) {
-        clearInterval(this.$options.interval);
-        // Single MSR is loaded so update the data
-        this.WPMReview = this.msr.WPMReview;
-        this.PCAReview = this.msr.PCAReview;
-        this.QAReview = this.msr.QAReview;
-        this.Funding = this.msr.Funding;
-        this.Staffing = this.msr.Staffing;
-        this.CostReport = this.msr.CostReport;
-        this.TravelAccomplished = this.msr.TravelAccomplished;
-        this.TravelPlanned = this.msr.TravelPlanned;
-        this.TravelCosts = this.msr.TravelCosts;
-        this.ODCAccomplished = this.msr.ODCAccomplished;
-        this.ODCPlanned = this.msr.ODCPlanned;
-        this.ODCCosts = this.msr.ODCCosts;
-        this.Distribution = this.msr.Distribution;
-        // get the period of performance from the workplan. TODO: Make this a global?? or add to MSR itself??
-        for (let i = 0; i < this.allworkplans.length; i++) {
-          if (this.allworkplans[i]["Number"] == this.msr.WorkplanNumber) {
-            this.POPStart = this.$moment(
-              this.allworkplans[i]["POPStart"]
-            ).format("M/YYYY");
-            this.POPEnd = this.$moment(this.allworkplans[i]["POPEnd"]).format(
-              "M/YYYY"
-            );
-          }
-        }
-        this.$store.dispatch("support/setLegendItems", this.legenditems);
+        this.WorkplanTitle = this.msr.WorkplanTitle
+        this.WorkplanNumber = this.msr.WorkplanNumber
+        this.WPMReview = this.msr.WPMReview
+        this.PCAReview = this.msr.PCAReview
+        this.QAReview = this.msr.QAReview
+        this.Funding = this.msr.Funding
+        this.Staffing = this.msr.Staffing
+        this.CostReport = this.msr.CostReport
+        this.TravelAccomplished = this.msr.TravelAccomplished
+        this.TravelPlanned = this.msr.TravelPlanned
+        this.TravelCosts = this.msr.TravelCosts
+        this.ODCAccomplished = this.msr.ODCAccomplished
+        this.ODCPlanned = this.msr.ODCPlanned
+        this.ODCCosts = this.msr.ODCCosts
+        this.Distribution = this.msr.Distribution
+        this.Accomplishments = this.formatData2('Accomplishments', this.msr.Accomplishments)
+        this.Plans = this.formatData2('Plans', this.msr.Plans)
+        this.Assumptions = this.formatData2('Assumptions', this.msr.Assumptions)
+        this.Risks = this.formatData2('Risks', this.msr.Risks)
+        this.Opportunities = this.formatData2('Opportunities', this.msr.Opportunities)
+        this.Deliverables = this.formatData2('Deliverables', this.msr.Deliverables)
+        this.isDirty = false
+        this.$bvToast.hide('form-toast')
+        this.$store.dispatch('support/setLegendItems', this.legenditems)
+      } else {
+        this.waitForMSR()
       }
     },
-    waitForHeight: function() {
-      // console.log('HEIGHT: ' + this.height)
-      if (this.height > 0) {
-        clearInterval(this.$options.interval);
-        // set height
-        document.getElementById("MSRForm").style.height = this.height + "px";
-        document.getElementById("MSRForm").style.maxheight = this.height + "px";
-        let h = Number(this.height) - 100;
-        h = String(h) + "px";
-        document.getElementById("Tabs").style.maxheight = h;
-        Workplan.dispatch("getWorkplans");
-        this.getData();
+    getFormStatus: function() {
+      // Function to test if form should be closed if the user has not made changes in a specific time period.
+      // called by vue-cron
+      // Check if form is dirty and reset time if it is. This will keep form open. If not dirty the form should close and call the close method.
+      // Another timer is set to warn the user so that they can have a chance to continue
+      // TODO: Update timer to 15 minutes after testing.
+      if (this.isDirty) {
+        this.$cron.restart('getFormStatus')
+      } else {
+        // close the form and reset the locked property
+        // this.onFormClose()
+        this.$cron.start('closeForm')
+        this.$bvModal
+          .msgBoxConfirm('Continue Editing MSR?', {
+            title: 'Please Confirm or MSR will Close in 2 minutes.',
+            size: 'sm',
+            buttonSize: 'sm',
+            okVariant: 'success',
+            okTitle: 'YES',
+            cancelTitle: 'NO',
+            footerClass: 'p-2',
+            hideHeaderClose: false,
+            centered: true,
+            noCloseOnBackdrop: true
+          })
+          .then(value => {
+            if (value == true) {
+              this.$cron.restart('getFormStatus')
+              this.$cron.stop('closeForm')
+            } else {
+              this.onFormClose()
+            }
+          })
       }
     },
-    getData: function() {
-      // go get the single MSR object which contains all the data for this MSR.
-      MSR.dispatch("getAccomplishments", this.msrdata).then(function() {
-        vm.$store.dispatch(
-          "support/addActivity",
-          '<div class="bg-primary">msrform-getAccomplishments: ' +
-            vm.$moment().format() +
-            "</div>"
-        );
-        vm.Accomplishments = vm.formatData(
-          "Accomplishments",
-          vm.accomplishments
-        );
-      });
-      MSR.dispatch("getPlans", this.msrdata).then(function() {
-        vm.$store.dispatch(
-          "support/addActivity",
-          '<div class="bg-primary">msrform-getPlans: ' +
-            vm.$moment().format() +
-            "</div>"
-        );
-        vm.Plans = vm.formatData("Plans", vm.plans);
-      });
-      MSR.dispatch("getAssumptions", this.msrdata).then(function() {
-        vm.$store.dispatch(
-          "support/addActivity",
-          '<div class="bg-primary">msrform-getAssumptions: ' +
-            vm.$moment().format() +
-            "</div>"
-        );
-        vm.Assumptions = vm.formatData("Assumptions", vm.assumptions);
-      });
-      MSR.dispatch("getRisks", this.msrdata).then(function() {
-        vm.$store.dispatch(
-          "support/addActivity",
-          '<div class="bg-primary">msrform-getRisks: ' +
-            vm.$moment().format() +
-            "</div>"
-        );
-        vm.Risks = vm.formatData("Risks", vm.risks);
-      });
-      MSR.dispatch("getOpportunities", this.msrdata).then(function() {
-        vm.$store.dispatch(
-          "support/addActivity",
-          '<div class="bg-primary">msrform-getOpportunities: ' +
-            vm.$moment().format() +
-            "</div>"
-        );
-        vm.Opportunities = vm.formatData("Opportunities", vm.opportunities);
-      });
-      MSR.dispatch("getDeliverables", this.msrdata).then(function() {
-        vm.$store.dispatch(
-          "support/addActivity",
-          '<div class="bg-primary">msrform-getDeliverables: ' +
-            vm.$moment().format() +
-            "</div>"
-        );
-        vm.Deliverables = vm.formatData("Deliverable", vm.deliverables);
-      });
-      MSR.dispatch("getMSR", this.msrdata).then(function() {
-        vm.$store.dispatch(
-          "support/addActivity",
-          '<div class="bg-primary">msrform-getMSR: ' +
-            vm.$moment().format() +
-            "</div>"
-        );
-        vm.$options.interval = setInterval(vm.waitForMSR, 1000);
-      });
+    closeForm: function() {
+      this.onFormClose()
     },
-    onModalHide: function() {
-      this.$emit("close");
+    onFormClose: function() {
+      let payload = {}
+      payload.field = 'Locked'
+      payload.value = 'No'
+      payload.uri = this.msr.uri
+      payload.etag = this.msr.etag
+      MSR.dispatch('updateMSRData', payload).then(function() {
+        vm.$router.push({ path: '/msr/home' })
+      })
     },
     async handleit(action, field, form) {
       // can we pass attributes to show, hide, and save any content?
       switch (action) {
-        case "edit": {
-          this.isEditing = true;
-          this.ActiveSection = field;
-          this.clipBoard = this[field];
-          this[form] = true;
+        /* #region BASE */
+
+        case 'edit': {
+          this.isDirty = true
+          this.isEditing = true
+          this.ActiveSection = field
+          this.clipBoard = this[field]
+          this[form] = true
           this.$nextTick(function() {
-            let anchor = field + "Anchor";
+            let anchor = field + 'Anchor'
             try {
-              let element = document.getElementById(anchor);
-              element.scrollIntoView();
+              let element = document.getElementById(anchor)
+              element.scrollIntoView()
             } catch (err) {
               // TODO: Anything?
             }
-          });
-          break;
+          })
+          break
         }
 
-        case "cancel": {
-          this.hasImage = false;
-          this.isEditing = false;
-          this[form] = false;
-          this[this.ActiveSection] = this.clipBoard;
-          break;
+        case 'cancel': {
+          this.hasImage = false
+          this.isEditing = false
+          this[form] = false
+          this[this.ActiveSection] = this.clipBoard
+          break
         }
 
-        case "clear": {
-          this.hasImage = false;
-          this[this.ActiveSection] = "";
-          break;
+        case 'clear': {
+          this.hasImage = false
+          this[this.ActiveSection] = ''
+          break
         }
 
-        case "save": {
+        case 'save': {
           // Check to see if there was an image copied and if so, upload that to SharePoint and modify the content to reflect the image change
-          vm.busyTitle = "Saving To SharePoint";
-          vm.$bvToast.show("form-toast");
+          vm.busyTitle = 'Saving To SharePoint'
+          vm.$bvToast.show('form-toast')
           if (this.hasImage) {
-            let response = await this.getFormDigest();
-            this.fileDigest =
-              response.data.d.GetContextWebInformation.FormDigestValue;
+            let response = await this.getFormDigest()
+            this.fileDigest = response.data.d.GetContextWebInformation.FormDigestValue
             let blob = await axios({
               url: this.fileBlob,
-              method: "get",
-              responseType: "blob"
-            });
-            this.fileBuffer = await this.getFileBuffer(blob.data);
-            response = await this.uploadMSRImage(
-              this.fileName,
-              this.fileBuffer,
-              this.fileDigest
-            );
-            console.log("FILE UPLOADED: " + response);
-            let content = String(this.fileContent);
-            blob = String(this.fileBlob);
-            let imageurl = server + "/MSRImages/" + this.fileName;
-            content = content.replace(blob, imageurl);
-            this[this.ActiveSection] = content;
+              method: 'get',
+              responseType: 'blob'
+            })
+            this.fileBuffer = await this.getFileBuffer(blob.data)
+            response = await this.uploadMSRImage(this.fileName, this.fileBuffer, this.fileDigest)
+            console.log('FILE UPLOADED: ' + response)
+            let content = String(this.fileContent)
+            blob = String(this.fileBlob)
+            let imageurl = server + '/MSRImages/' + this.fileName
+            content = content.replace(blob, imageurl)
+            this[this.ActiveSection] = content
           }
-          let payload = {};
-          payload.field = field;
-          payload.value = this[field];
-          payload.uri = this.msr.uri;
-          payload.etag = this.msr.etag;
-          this[form] = false;
-          MSR.dispatch("updateMSRData", payload).then(function() {
+          let payload = {}
+          payload.field = field
+          payload.value = this[field]
+          payload.uri = this.msr.uri
+          payload.etag = this.msr.etag
+          this[form] = false
+          MSR.dispatch('updateMSRData', payload).then(function() {
             // close the toast notification and wait for the changes
-            vm.isEditing = false;
-            vm.hasImage = false;
-            vm.ActiveSection = null;
-            vm.clipBoard = "";
-            vm.$bvToast.hide("form-toast");
-            vm.getData();
-          });
-          break;
+            vm.isEditing = false
+            vm.hasImage = false
+            vm.ActiveSection = null
+            vm.clipBoard = ''
+            vm.$bvToast.hide('form-toast')
+            vm.getData()
+          })
+          break
         }
 
-        case "review": {
-          // Check to see if there was an image copied and if so, upload that to SharePoint and modify the content to reflect the image change
-          vm.busyTitle = "Saving To SharePoint";
-          vm.$bvToast.show("form-toast");
-          let payload = {};
-          payload.field = field;
-          switch (field) {
-            case "WPMReview":
-              console.log("WPMReview: " + this.$refs["WPMReview"].value);
-              payload.value = this.$refs["WPMReview"].value ? "true" : "false";
-              break;
+        /* #endregion */
 
-            case "PCAReview":
-              console.log("PCAReview: " + this.PCAReview);
-              payload.value = this.PCAReview == true ? "true" : "false";
-              break;
+        /* #region ACCOMPLISHMENTS */
 
-            case "QAReview":
-              console.log("QAReview: " + this.QAReview);
-              payload.value = this.QAReview == true ? "true" : "false";
-              break;
-          }
-          payload.value = this[field] == true ? "true" : "false";
-          payload.uri = this.msr.uri;
-          payload.etag = this.msr.etag;
-          MSR.dispatch("updateMSRData", payload).then(function() {
-            // close the toast notification and wait for the changes
-            vm.$bvToast.hide("form-toast");
-            vm.getData();
-          });
-          break;
-        }
-
-        /* --------------------------------------------------------------------------------- ACCOMPLISHMENTS ---------------------------------------------- */
-
-        case "editaccomplishment": {
+        case 'editaccomplishment': {
           // using field and form for company and index
+          this.isDirty = true
           if (console) {
-            console.log("EDIT ACCOMPLISHMENT FOR: " + field + ", " + form);
+            console.log('EDIT ACCOMPLISHMENT FOR: ' + field + ', ' + form)
           }
-          let index = form; // more readable. form in this case contains the index of the array item
-          this.isEditing = true;
-          this.AccomplishmentsForm = true;
+          let index = form // more readable. form in this case contains the index of the array item
+          this.isEditing = true
+          this.AccomplishmentsForm = true
           for (let i = 0; i < this.Accomplishments.length; i++) {
-            if (this.Accomplishments[i]["index"] == index) {
-              this.SelectedIndex = i;
-              this.SelectedAccomplishment = this.Accomplishments[i].html;
-              this.clipBoard = this.Accomplishments[i].html;
+            if (this.Accomplishments[i]['Index'] == index) {
+              this.SelectedIndex = i
+              this.SelectedAccomplishment = this.Accomplishments[i].HTML
+              this.clipBoard = this.Accomplishments[i].HTML
             }
           }
-          break;
+          break
         }
 
-        case "addaccomplishment": {
-          // using field and form for company and index
-          if (console) {
-            console.log("EDIT ACCOMPLISHMENT FOR: " + field + ", " + form);
-          }
-          this.isNew = true;
-          this.isEditing = true;
-          this.Accomplishments.push({
-            WorkplanNumber: this.WorkplanNumber,
-            Company: this.Company,
-            Email: this.Email,
-            Private: "No",
-            Published: "No",
-            Month: this.Month,
-            Year: this.Year,
-            html: ""
-          });
-          this.SelectedIndex = 0;
-          this.SelectedAccomplishment = this.Accomplishments[0].html;
-          break;
-        }
-
-        case "cancelaccomplishment": {
+        case 'cancelaccomplishment': {
           // TODO: Validate that this function is needed/ does what it should do
-          this.isEditing = false;
-          this.AccomplishmentsForm = false;
-          this.SelectedAccomplishment = this.clipBoard;
-          this.Accomplishments[this.SelectedIndex]["html"] = this.clipBoard;
-          break;
+          this.isEditing = false
+          this.AccomplishmentsForm = false
+          this.SelectedAccomplishment = this.clipBoard
+          this.Accomplishments[this.SelectedIndex]['HTML'] = this.clipBoard
+          break
         }
 
-        case "clearaccomplishment": {
-          this.SelectedAccomplishment = "";
-          this.Accomplishments[this.SelectedIndex]["html"] = "";
-          break;
+        case 'clearaccomplishment': {
+          this.SelectedAccomplishment = ''
+          this.Accomplishments[this.SelectedIndex]['HTML'] = ''
+          break
         }
 
-        case "privateaccomplishment": {
+        case 'privateaccomplishment': {
           // toggle the state of private
-          let priv = this.Accomplishments[this.SelectedIndex]["Private"];
-          if (priv == "Yes") {
-            priv = "No";
-            this.$refs["btn_PrivateAccomplishment"].innerHTML = "Make Private";
+          let priv = this.Accomplishments[this.SelectedIndex]['Private']
+          if (priv == 'Yes') {
+            priv = 'No'
+            this.$refs['btn_PrivateAccomplishment'].innerHTML = 'Make Private'
           } else {
-            priv = "Yes";
-            this.$refs["btn_PrivateAccomplishment"].innerHTML =
-              "Remove Private";
+            priv = 'Yes'
+            this.$refs['btn_PrivateAccomplishment'].innerHTML = 'Remove Private'
           }
-          this.Accomplishments[this.SelectedIndex]["Private"] = priv;
-          break;
+          this.Accomplishments[this.SelectedIndex]['Private'] = priv
+          break
         }
 
-        case "publishaccomplishment": {
-          // toggle the state of published
-          let pub = this.Accomplishments[this.SelectedIndex]["Published"];
-          if (pub == "Yes") {
-            pub = "No";
-            this.$refs["btn_PublishAccomplishment"].innerHTML =
-              "Publish Accomplishment";
+        case 'completeaccomplishment': {
+          // toggle the state of completed
+          let comp = this.Accomplishments[this.SelectedIndex]['Completed']
+          if (comp == 'Yes') {
+            comp = 'No'
           } else {
-            pub = "Yes";
-            this.$refs["btn_PublishAccomplishment"].innerHTML =
-              "Unpublish Accomplishment";
+            comp = 'Yes'
           }
-          this.Accomplishments[this.SelectedIndex]["Published"] = pub;
-          break;
+          this.Accomplishments[this.SelectedIndex]['Completed'] = comp
+          this.handleit('saveaccomplishment', 'Accomplishments', 'AccomplishmentsForm')
+          break
         }
 
-        case "saveaccomplishment": {
-          vm.busyTitle = "Saving To SharePoint";
-          vm.$bvToast.show("form-toast");
-          let payload = {};
-          payload.action = "Existing";
-          if (vm.Accomplishments[vm.SelectedIndex]["new"] == true) {
-            payload.action = "New";
-          } else {
-            payload.uri = vm.Accomplishments[vm.SelectedIndex]["uri"];
-            payload.etag = vm.Accomplishments[vm.SelectedIndex]["etag"];
+        case 'saveaccomplishment': {
+          this.busyTitle = 'Saving To SharePoint'
+          this.$bvToast.show('form-toast')
+          // update the existing HTML for the index and then save entire array
+          this.Accomplishments[this.SelectedIndex].HTML = this.SelectedAccomplishment
+          let payload = {}
+          payload.field = field
+          // value is entire array of json objects that need to be stringified to store
+          for (let i = 0; i < this.Accomplishments.length; i++) {
+            this.Accomplishments[i].HTML = encodeURIComponent(this.Accomplishments[i].HTML)
           }
-          payload.Accomplishments = vm.SelectedAccomplishment;
-          payload.WorkplanNumber =
-            vm.Accomplishments[vm.SelectedIndex]["WorkplanNumber"];
-          payload.Company = vm.Accomplishments[vm.SelectedIndex]["Company"];
-          payload.Email = vm.Accomplishments[vm.SelectedIndex]["Email"];
-          payload.Private = vm.Accomplishments[vm.SelectedIndex]["Private"];
-          payload.Published = vm.Accomplishments[vm.SelectedIndex]["Published"];
-          payload.Month = vm.Accomplishments[vm.SelectedIndex]["Month"];
-          payload.Year = vm.Accomplishments[vm.SelectedIndex]["Year"];
-          payload.MSRID = vm.Accomplishments[vm.SelectedIndex]["MSRID"];
-          MSR.dispatch("updateAccomplishment", payload).then(function() {
-            // close the toast notification and wait for the changes. Reload MSR to ensure that all changes are included
-            vm.AccomplishmentsForm = false;
-            vm.isNew = false;
-            vm.isEditing = false;
-            vm.$bvToast.hide("form-toast");
-            MSR.dispatch("getAccomplishments", vm.msrdata);
-            MSR.dispatch("getMSR", vm.msrdata).then(function() {
-              vm.getData();
-            });
-          });
-          break;
+          payload.value = JSON.stringify(this.Accomplishments)
+          payload.uri = this.msr.uri
+          payload.etag = this.msr.etag
+          this[form] = false
+          MSR.dispatch('updateMSRData', payload).then(function() {
+            vm.isEditing = false
+            vm.hasImage = false
+            vm.clipBoard = ''
+            vm.getData()
+          })
+          break
         }
 
-        /* --------------------------------------------------------------------------------- PLANS ---------------------------------------------- */
+        /* #endregion */
 
-        case "editplan": {
+        /* #region PLANS */
+
+        case 'editplan': {
           // using field and form for company and index
-          let index = form; // more readable. form in this case contains the index of the array item
-          this.isEditing = true;
-          this.PlansForm = true;
+          this.isDirty = true
+          let index = form // more readable. form in this case contains the index of the array item
+          this.isEditing = true
+          this.PlansForm = true
           for (let i = 0; i < this.Plans.length; i++) {
-            if (this.Plans[i]["index"] == index) {
-              this.SelectedIndex = i;
-              this.SelectedPlan = this.Plans[i].html;
-              this.clipBoard = this.Plans[i].html;
+            if (this.Plans[i]['Index'] == index) {
+              this.SelectedIndex = i
+              this.SelectedPlan = this.Plans[i].HTML
+              this.clipBoard = this.Plans[i].HTML
             }
           }
-          break;
+          break
         }
 
-        case "addplan": {
-          // using field and form for company and index
-          this.isNew = true;
-          this.isEditing = true;
-          this.Plans.push({
-            WorkplanNumber: this.WorkplanNumber,
-            Company: this.Company,
-            Email: this.Email,
-            Private: "No",
-            Published: "No",
-            Month: this.Month,
-            Year: this.Year,
-            html: ""
-          });
-          this.SelectedIndex = 0;
-          this.SelectedPlan = this.Plans[0].html;
-          break;
+        case 'cancelplan': {
+          this.isEditing = false
+          this.PlansForm = false
+          this.SelectedPlan = this.clipBoard
+          this.Plans[this.SelectedIndex]['HTML'] = this.clipBoard
+          break
         }
 
-        case "cancelplan": {
-          this.isEditing = false;
-          this.PlansForm = false;
-          this.SelectedPlan = this.clipBoard;
-          this.Plans[this.SelectedIndex]["html"] = this.clipBoard;
-          break;
+        case 'clearplan': {
+          this.SelectedPlan = ''
+          this.Plans[this.SelectedIndex]['HTML'] = ''
+          break
         }
 
-        case "clearplan": {
-          this.SelectedPlan = "";
-          this.Plans[this.SelectedIndex]["html"] = "";
-          break;
-        }
-
-        case "privateplan": {
+        case 'privateplan': {
           // toggle the state of private
-          let priv = this.Plans[this.SelectedIndex]["Private"];
-          if (priv == "Yes") {
-            priv = "No";
-            this.$refs["btn_PrivatePlan"].innerHTML = "Make Private";
+          let priv = this.Plans[this.SelectedIndex]['Private']
+          if (priv == 'Yes') {
+            priv = 'No'
+            this.$refs['btn_PrivatePlan'].innerHTML = 'Make Private'
           } else {
-            priv = "Yes";
-            this.$refs["btn_PrivatePlan"].innerHTML = "Remove Private";
+            priv = 'Yes'
+            this.$refs['btn_PrivatePlan'].innerHTML = 'Remove Private'
           }
-          this.Plans[this.SelectedIndex]["Private"] = priv;
-          break;
+          this.Plans[this.SelectedIndex]['Private'] = priv
+          break
         }
 
-        case "publishplan": {
-          // toggle the state of published
-          let pub = this.Plans[this.SelectedIndex]["Published"];
-          if (pub == "Yes") {
-            pub = "No";
-            this.$refs["btn_PublishPlan"].innerHTML = "Publish Plan";
+        case 'completeplan': {
+          let comp = this.Plans[this.SelectedIndex]['Completed']
+          if (comp == 'Yes') {
+            comp = 'No'
           } else {
-            pub = "Yes";
-            this.$refs["btn_PublishPlan"].innerHTML = "Unpublish Plan";
+            comp = 'Yes'
           }
-          this.Plans[this.SelectedIndex]["Published"] = pub;
-          break;
+          this.Plans[this.SelectedIndex]['Completed'] = comp
+          this.handleit('saveplan', 'Plans', 'PlansForm')
+          break
         }
 
-        case "saveplan": {
-          vm.busyTitle = "Saving To SharePoint";
-          vm.$bvToast.show("form-toast");
-          let payload = {};
-          payload.action = "Existing";
-          if (vm.Plans[vm.SelectedIndex]["new"] == true) {
-            payload.action = "New";
-          } else {
-            payload.uri = vm.Plans[vm.SelectedIndex]["uri"];
-            payload.etag = vm.Plans[vm.SelectedIndex]["etag"];
+        case 'saveplan': {
+          vm.busyTitle = 'Saving To SharePoint'
+          vm.$bvToast.show('form-toast')
+          this.Plans[this.SelectedIndex].HTML = this.SelectedPlan
+          let payload = {}
+          payload.field = field
+          for (let i = 0; i < this.Plans.length; i++) {
+            this.Plans[i].HTML = encodeURIComponent(this.Plans[i].HTML)
           }
-          payload.Plans = vm.SelectedPlan;
-          payload.WorkplanNumber = vm.Plans[vm.SelectedIndex]["WorkplanNumber"];
-          payload.Company = vm.Plans[vm.SelectedIndex]["Company"];
-          payload.Email = vm.Plans[vm.SelectedIndex]["Email"];
-          payload.Private = vm.Plans[vm.SelectedIndex]["Private"];
-          payload.Published = vm.Plans[vm.SelectedIndex]["Published"];
-          payload.Month = vm.Plans[vm.SelectedIndex]["Month"];
-          payload.Year = vm.Plans[vm.SelectedIndex]["Year"];
-          payload.MSRID = vm.Accomplishments[vm.SelectedIndex]["MSRID"];
-          MSR.dispatch("updatePlan", payload).then(function() {
-            // close the toast notification and wait for the changes. Reload MSR to ensure that all changes are included
-            vm.PlansForm = false;
-            vm.isNew = false;
-            vm.isEditing = false;
-            vm.$bvToast.hide("form-toast");
-            MSR.dispatch("getPlans", vm.msrdata);
-            MSR.dispatch("getMSR", vm.msrdata).then(function() {
-              vm.getData();
-            });
-          });
-          break;
+          payload.value = JSON.stringify(this.Plans)
+          payload.uri = this.msr.uri
+          payload.etag = this.msr.etag
+          this[form] = false
+          MSR.dispatch('updateMSRData', payload).then(function() {
+            vm.isEditing = false
+            vm.hasImage = false
+            vm.clipBoard = ''
+            vm.getData()
+          })
+          break
         }
 
-        /* --------------------------------------------------------------------------------- ASSUMPTIONS ---------------------------------------------- */
+        /* #endregion */
 
-        case "editassumption": {
+        /* #region Assumptions */
+
+        case 'editassumption': {
           // using field and form for company and index
-          let index = form; // more readable. form in this case contains the index of the array item
-          this.isEditing = true;
-          this.AssumptionsForm = true;
+          this.isDirty = true
+          let index = form // more readable. form in this case contains the index of the array item
+          this.isEditing = true
+          this.AssumptionsForm = true
           for (let i = 0; i < this.Assumptions.length; i++) {
-            if (this.Assumptions[i]["index"] == index) {
-              this.SelectedIndex = i;
-              this.SelectedAssumption = this.Assumptions[i].html;
-              this.clipBoard = this.Assumptions[i].html;
+            if (this.Assumptions[i]['Index'] == index) {
+              this.SelectedIndex = i
+              this.SelectedAssumption = this.Assumptions[i].HTML
+              this.clipBoard = this.Assumptions[i].HTML
             }
           }
-          break;
+          break
         }
 
-        case "addassumption": {
-          // using field and form for company and index
-          this.isNew = true;
-          this.isEditing = true;
-          this.Assumptions.push({
-            WorkplanNumber: this.WorkplanNumber,
-            Company: this.Company,
-            Email: this.Email,
-            Private: "No",
-            Published: "No",
-            Month: this.Month,
-            Year: this.Year,
-            html: ""
-          });
-          this.SelectedIndex = 0;
-          this.SelectedAssumption = this.Assumptions[0].html;
-          break;
+        case 'cancelassumption': {
+          this.isEditing = false
+          this.AssumptionsForm = false
+          this.SelectedAssumption = this.clipBoard
+          this.Assumptions[this.SelectedIndex]['HTML'] = this.clipBoard
+          break
         }
 
-        case "cancelassumption": {
-          this.isEditing = false;
-          this.AssumptionsForm = false;
-          this.SelectedAssumption = this.clipBoard;
-          this.Assumptions[this.SelectedIndex]["html"] = this.clipBoard;
-          break;
+        case 'clearassumption': {
+          this.SelectedAssumption = ''
+          this.Assumptions[this.SelectedIndex]['HTML'] = ''
+          break
         }
 
-        case "clearassumption": {
-          this.SelectedAssumption = "";
-          this.Assumptions[this.SelectedIndex]["html"] = "";
-          break;
-        }
-
-        case "privateassumption": {
+        case 'privateassumption': {
           // toggle the state of private
-          let priv = this.Assumptions[this.SelectedIndex]["Private"];
-          if (priv == "Yes") {
-            priv = "No";
-            this.$refs["btn_PrivateAssumption"].innerHTML = "Make Private";
+          let priv = this.Assumptions[this.SelectedIndex]['Private']
+          if (priv == 'Yes') {
+            priv = 'No'
+            this.$refs['btn_PrivateAssumption'].innerHTML = 'Make Private'
           } else {
-            priv = "Yes";
-            this.$refs["btn_PrivateAssumption"].innerHTML = "Remove Private";
+            priv = 'Yes'
+            this.$refs['btn_PrivateAssumption'].innerHTML = 'Remove Private'
           }
-          this.Assumptions[this.SelectedIndex]["Private"] = priv;
-          break;
+          this.Assumptions[this.SelectedIndex]['Private'] = priv
+          break
         }
 
-        case "publishassumption": {
-          // toggle the state of published
-          let pub = this.Assumptions[this.SelectedIndex]["Published"];
-          if (pub == "Yes") {
-            pub = "No";
-            this.$refs["btn_PublishAssumption"].innerHTML =
-              "Publish Assumption";
+        case 'completeassumption': {
+          let comp = this.Assumptions[this.SelectedIndex]['Completed']
+          if (comp == 'Yes') {
+            comp = 'No'
           } else {
-            pub = "Yes";
-            this.$refs["btn_PublishAssumption"].innerHTML =
-              "Unpublish Assumption";
+            comp = 'Yes'
           }
-          this.Assumptions[this.SelectedIndex]["Published"] = pub;
-          break;
+          this.Assumptions[this.SelectedIndex]['Completed'] = comp
+          this.handleit('saveassumption', 'Assumptions', 'AssumptionsForm')
+          break
         }
 
-        case "saveassumption": {
-          vm.busyTitle = "Saving To SharePoint";
-          vm.$bvToast.show("form-toast");
-          let payload = {};
-          payload.action = "Existing";
-          if (vm.Assumptions[vm.SelectedIndex]["new"] == true) {
-            payload.action = "New";
-          } else {
-            payload.uri = vm.Assumptions[vm.SelectedIndex]["uri"];
-            payload.etag = vm.Assumptions[vm.SelectedIndex]["etag"];
+        case 'saveassumption': {
+          vm.busyTitle = 'Saving To SharePoint'
+          vm.$bvToast.show('form-toast')
+          this.Assumptions[this.SelectedIndex].HTML = this.SelectedAssumption
+          let payload = {}
+          payload.field = field
+          for (let i = 0; i < this.Assumptions.length; i++) {
+            this.Assumptions[i].HTML = encodeURIComponent(this.Assumptions[i].HTML)
           }
-          payload.Assumptions = vm.SelectedAssumption;
-          payload.WorkplanNumber =
-            vm.Assumptions[vm.SelectedIndex]["WorkplanNumber"];
-          payload.Company = vm.Assumptions[vm.SelectedIndex]["Company"];
-          payload.Email = vm.Assumptions[vm.SelectedIndex]["Email"];
-          payload.Private = vm.Assumptions[vm.SelectedIndex]["Private"];
-          payload.Published = vm.Assumptions[vm.SelectedIndex]["Published"];
-          payload.Month = vm.Assumptions[vm.SelectedIndex]["Month"];
-          payload.Year = vm.Assumptions[vm.SelectedIndex]["Year"];
-          payload.MSRID = vm.Accomplishments[vm.SelectedIndex]["MSRID"];
-          this.$store.dispatch(
-            "support/addActivity",
-            '<div class="bg-info">msrform-saveassumption: ' +
-              JSON.stringify(payload) +
-              "</div>"
-          );
-          MSR.dispatch("updateAssumption", payload).then(function() {
-            // close the toast notification and wait for the changes. Reload MSR to ensure that all changes are included
-            vm.AssumptionsForm = false;
-            vm.isNew = false;
-            vm.isEditing = false;
-            vm.$bvToast.hide("form-toast");
-            MSR.dispatch("getAssumptions", vm.msrdata);
-            MSR.dispatch("getMSR", vm.msrdata).then(function() {
-              vm.getData();
-            });
-          });
-          break;
+          payload.value = JSON.stringify(this.Assumptions)
+          payload.uri = this.msr.uri
+          payload.etag = this.msr.etag
+          this[form] = false
+          MSR.dispatch('updateMSRData', payload).then(function() {
+            vm.isEditing = false
+            vm.hasImage = false
+            vm.clipBoard = ''
+            vm.getData()
+          })
+          break
         }
 
-        /* --------------------------------------------------------------------------------- RISKS ---------------------------------------------- */
+        /* #endregion */
 
-        case "editrisk": {
+        /* #region RISKS */
+
+        case 'editrisk': {
           // using field and form for company and index
-          let index = form; // more readable. form in this case contains the index of the array item
-          this.isEditing = true;
-          this.RisksForm = true;
+          this.isDirty = true
+          let index = form // more readable. form in this case contains the index of the array item
+          this.isEditing = true
+          this.RisksForm = true
           for (let i = 0; i < this.Risks.length; i++) {
-            if (this.Risks[i]["index"] == index) {
-              this.SelectedIndex = i;
-              this.SelectedRisk = this.Risks[i].html;
-              this.clipBoard = this.Risks[i].html;
+            if (this.Risks[i]['Index'] == index) {
+              this.SelectedIndex = i
+              this.SelectedRisk = this.Risks[i].HTML
+              this.clipBoard = this.Risks[i].HTML
             }
           }
-          break;
+          break
         }
 
-        case "addrisk": {
-          // using field and form for company and index
-          this.isNew = true;
-          this.isEditing = true;
-          this.Risks.push({
-            WorkplanNumber: this.WorkplanNumber,
-            Company: this.Company,
-            Email: this.Email,
-            Private: "No",
-            Published: "No",
-            Month: this.Month,
-            Year: this.Year,
-            html: ""
-          });
-          this.SelectedIndex = 0;
-          this.SelectedRisk = this.Risks[0].html;
-          break;
+        case 'cancelrisk': {
+          this.isEditing = false
+          this.RisksForm = false
+          this.SelectedRisk = this.clipBoard
+          this.Risks[this.SelectedIndex]['HTML'] = this.clipBoard
+          break
         }
 
-        case "cancelrisk": {
-          this.isEditing = false;
-          this.RisksForm = false;
-          this.SelectedRisk = this.clipBoard;
-          this.Risks[this.SelectedIndex]["html"] = this.clipBoard;
-          break;
+        case 'clearrisk': {
+          this.SelectedRisk = ''
+          this.Risks[this.SelectedIndex]['HTML'] = ''
+          break
         }
 
-        case "clearrisk": {
-          this.SelectedRisk = "";
-          this.Risks[this.SelectedIndex]["html"] = "";
-          break;
-        }
-
-        case "privaterisk": {
+        case 'privaterisk': {
           // toggle the state of private
-          let priv = this.Risks[this.SelectedIndex]["Private"];
-          if (priv == "Yes") {
-            priv = "No";
-            this.$refs["btn_PrivateRisk"].innerHTML = "Make Private";
+          let priv = this.Risks[this.SelectedIndex]['Private']
+          if (priv == 'Yes') {
+            priv = 'No'
+            this.$refs['btn_PrivateRisk'].innerHTML = 'Make Private'
           } else {
-            priv = "Yes";
-            this.$refs["btn_PrivateRisk"].innerHTML = "Remove Private";
+            priv = 'Yes'
+            this.$refs['btn_PrivateRisk'].innerHTML = 'Remove Private'
           }
-          this.Risks[this.SelectedIndex]["Private"] = priv;
-          break;
+          this.Risks[this.SelectedIndex]['Private'] = priv
+          break
         }
 
-        case "publishrisk": {
-          // toggle the state of published
-          let pub = this.Risks[this.SelectedIndex]["Published"];
-          if (pub == "Yes") {
-            pub = "No";
-            this.$refs["btn_PublishRisk"].innerHTML = "Publish Risk";
+        case 'completerisk': {
+          let comp = this.Risks[this.SelectedIndex]['Completed']
+          if (comp == 'Yes') {
+            comp = 'No'
           } else {
-            pub = "Yes";
-            this.$refs["btn_PublishRisk"].innerHTML = "Unpublish Risk";
+            comp = 'Yes'
           }
-          this.Risks[this.SelectedIndex]["Published"] = pub;
-          break;
+          this.Risks[this.SelectedIndex]['Completed'] = comp
+          this.handleit('saverisk', 'Risks', 'RisksForm')
+          break
         }
 
-        case "saverisk": {
-          vm.busyTitle = "Saving To SharePoint";
-          vm.$bvToast.show("form-toast");
-          let payload = {};
-          payload.action = "Existing";
-          if (vm.Risks[vm.SelectedIndex]["new"] == true) {
-            payload.action = "New";
-          } else {
-            payload.uri = vm.Risks[vm.SelectedIndex]["uri"];
-            payload.etag = vm.Risks[vm.SelectedIndex]["etag"];
+        case 'saverisk': {
+          vm.busyTitle = 'Saving To SharePoint'
+          vm.$bvToast.show('form-toast')
+          this.Risks[this.SelectedIndex].HTML = this.SelectedRisk
+          let payload = {}
+          payload.field = field
+          for (let i = 0; i < this.Risks.length; i++) {
+            this.Risks[i].HTML = encodeURIComponent(this.Risks[i].HTML)
           }
-          payload.Risks = vm.SelectedRisk;
-          payload.WorkplanNumber = vm.Risks[vm.SelectedIndex]["WorkplanNumber"];
-          payload.Company = vm.Risks[vm.SelectedIndex]["Company"];
-          payload.Email = vm.Risks[vm.SelectedIndex]["Email"];
-          payload.Private = vm.Risks[vm.SelectedIndex]["Private"];
-          payload.Published = vm.Risks[vm.SelectedIndex]["Published"];
-          payload.Month = vm.Risks[vm.SelectedIndex]["Month"];
-          payload.Year = vm.Risks[vm.SelectedIndex]["Year"];
-          payload.MSRID = vm.Accomplishments[vm.SelectedIndex]["MSRID"];
-          MSR.dispatch("updateRisk", payload).then(function() {
-            // close the toast notification and wait for the changes. Reload MSR to ensure that all changes are included
-            vm.RisksForm = false;
-            vm.isNew = false;
-            vm.isEditing = false;
-            vm.$bvToast.hide("form-toast");
-            MSR.dispatch("getRisks", vm.msrdata);
-            MSR.dispatch("getMSR", vm.msrdata).then(function() {
-              vm.getData();
-            });
-          });
-          break;
+          payload.value = JSON.stringify(this.Risks)
+          payload.uri = this.msr.uri
+          payload.etag = this.msr.etag
+          this[form] = false
+          MSR.dispatch('updateMSRData', payload).then(function() {
+            vm.isEditing = false
+            vm.hasImage = false
+            vm.clipBoard = ''
+            vm.getData()
+          })
+          break
         }
 
-        /* --------------------------------------------------------------------------------- OPPORTUNITIES ---------------------------------------------- */
+        /* #endregion */
 
-        case "editopportunity": {
+        /* #region OPPORTUNITIES */
+
+        case 'editopportunity': {
           // using field and form for company and index
-          let index = form; // more readable. form in this case contains the index of the array item
-          this.isEditing = true;
-          this.OpportunitiesForm = true;
+          this.isDirty = true
+          let index = form // more readable. form in this case contains the index of the array item
+          this.isEditing = true
+          this.OpportunitiesForm = true
           for (let i = 0; i < this.Opportunities.length; i++) {
-            if (this.Opportunities[i]["index"] == index) {
-              this.SelectedIndex = i;
-              this.SelectedOpportunity = this.Opportunities[i].html;
-              this.clipBoard = this.Opportunities[i].html;
+            if (this.Opportunities[i]['Index'] == index) {
+              this.SelectedIndex = i
+              this.SelectedOpportunity = this.Opportunities[i].HTML
+              this.clipBoard = this.Opportunities[i].HTML
             }
           }
-          break;
+          break
         }
 
-        case "addopportunity": {
-          // using field and form for company and index
-          this.isNew = true;
-          this.isEditing = true;
-          this.Opportunities.push({
-            WorkplanNumber: this.WorkplanNumber,
-            Company: this.Company,
-            Email: this.Email,
-            Private: "No",
-            Published: "No",
-            Month: this.Month,
-            Year: this.Year,
-            html: ""
-          });
-          this.SelectedIndex = 0;
-          this.SelectedOpportunity = this.Opportunities[0].html;
-          break;
+        case 'cancelopportunity': {
+          this.isEditing = false
+          this.OpportunitiesForm = false
+          this.SelectedOpportunity = this.clipBoard
+          this.Opportunities[this.SelectedIndex]['HTML'] = this.clipBoard
+          break
         }
 
-        case "cancelopportunity": {
-          this.isEditing = false;
-          this.OpportunitiesForm = false;
-          this.SelectedOpportunity = this.clipBoard;
-          this.Opportunities[this.SelectedIndex]["html"] = this.clipBoard;
-          break;
+        case 'clearopportunity': {
+          this.SelectedOpportunity = ''
+          this.Opportunities[this.SelectedIndex]['HTML'] = ''
+          break
         }
 
-        case "clearopportunity": {
-          this.SelectedOpportunity = "";
-          this.Opportunities[this.SelectedIndex]["html"] = "";
-          break;
-        }
-
-        case "privateopportunity": {
+        case 'privateopportunity': {
           // toggle the state of private
-          let priv = this.Opportunities[this.SelectedIndex]["Private"];
-          if (priv == "Yes") {
-            priv = "No";
-            this.$refs["btn_PrivateOpportunity"].innerHTML = "Make Private";
+          let priv = this.Opportunities[this.SelectedIndex]['Private']
+          if (priv == 'Yes') {
+            priv = 'No'
+            this.$refs['btn_PrivateOpportunity'].innerHTML = 'Make Private'
           } else {
-            priv = "Yes";
-            this.$refs["btn_PrivateOpportunity"].innerHTML = "Remove Private";
+            priv = 'Yes'
+            this.$refs['btn_PrivateOpportunity'].innerHTML = 'Remove Private'
           }
-          this.Opportunities[this.SelectedIndex]["Private"] = priv;
-          break;
+          this.Opportunities[this.SelectedIndex]['Private'] = priv
+          break
         }
 
-        case "publishopportunity": {
-          // toggle the state of published
-          let pub = this.Opportunities[this.SelectedIndex]["Published"];
-          if (pub == "Yes") {
-            pub = "No";
-            this.$refs["btn_PublishOpportunity"].innerHTML =
-              "Publish Opportunity";
+        case 'completeopportunity': {
+          let comp = this.Opportunities[this.SelectedIndex]['Completed']
+          if (comp == 'Yes') {
+            comp = 'No'
           } else {
-            pub = "Yes";
-            this.$refs["btn_PublishOpportunity"].innerHTML =
-              "Unpublish Opportunity";
+            comp = 'Yes'
           }
-          this.Opportunities[this.SelectedIndex]["Published"] = pub;
-          break;
+          this.Opportunities[this.SelectedIndex]['Completed'] = comp
+          this.handleit('saveopportunity', 'Opportunities', 'OpportunitiesForm')
+          break
         }
 
-        case "saveopportunity": {
-          vm.busyTitle = "Saving To SharePoint";
-          vm.$bvToast.show("form-toast");
-          let payload = {};
-          payload.action = "Existing";
-          if (vm.Opportunities[vm.SelectedIndex]["new"] == true) {
-            payload.action = "New";
-          } else {
-            payload.uri = vm.Opportunities[vm.SelectedIndex]["uri"];
-            payload.etag = vm.Opportunities[vm.SelectedIndex]["etag"];
+        case 'saveopportunity': {
+          vm.busyTitle = 'Saving To SharePoint'
+          vm.$bvToast.show('form-toast')
+          this.Opportunities[this.SelectedIndex].HTML = this.SelectedOpportunity
+          let payload = {}
+          payload.field = field
+          for (let i = 0; i < this.Opportunities.length; i++) {
+            this.Opportunities[i].HTML = encodeURIComponent(this.Opportunities[i].HTML)
           }
-          payload.Opportunities = vm.SelectedOpportunity;
-          payload.WorkplanNumber =
-            vm.Opportunities[vm.SelectedIndex]["WorkplanNumber"];
-          payload.Company = vm.Opportunities[vm.SelectedIndex]["Company"];
-          payload.Email = vm.Opportunities[vm.SelectedIndex]["Email"];
-          payload.Private = vm.Opportunities[vm.SelectedIndex]["Private"];
-          payload.Published = vm.Opportunities[vm.SelectedIndex]["Published"];
-          payload.Month = vm.Opportunities[vm.SelectedIndex]["Month"];
-          payload.Year = vm.Opportunities[vm.SelectedIndex]["Year"];
-          payload.MSRID = vm.Accomplishments[vm.SelectedIndex]["MSRID"];
-          MSR.dispatch("updateOpportunity", payload).then(function() {
-            // close the toast notification and wait for the changes. Reload MSR to ensure that all changes are included
-            vm.OpportunitiesForm = false;
-            vm.isNew = false;
-            vm.isEditing = false;
-            vm.$bvToast.hide("form-toast");
-            MSR.dispatch("getOpportunities", vm.msrdata);
-            MSR.dispatch("getMSR", vm.msrdata).then(function() {
-              vm.getData();
-            });
-          });
-          break;
+          payload.value = JSON.stringify(this.Opportunities)
+          payload.uri = this.msr.uri
+          payload.etag = this.msr.etag
+          this[form] = false
+          MSR.dispatch('updateMSRData', payload).then(function() {
+            vm.isEditing = false
+            vm.hasImage = false
+            vm.clipBoard = ''
+            vm.getData()
+          })
+          break
         }
 
-        /* --------------------------------------------------------------------------------- DELIVERABLES ---------------------------------------------- */
+        /* #endregion */
 
-        case "editdeliverable": {
+        /* #region DELIVERABLES */
+
+        case 'editdeliverable': {
           // using field and form for company and index
-          let index = form; // more readable. form in this case contains the index of the array item
-          this.isEditing = true;
-          this.DeliverablesForm = true;
+          this.isDirty = true
+          let index = form // more readable. form in this case contains the index of the array item
+          this.isEditing = true
+          this.DeliverablesForm = true
           for (let i = 0; i < this.Deliverables.length; i++) {
-            if (this.Deliverables[i]["index"] == index) {
-              this.SelectedIndex = i;
-              this.SelectedDeliverable = this.Deliverables[i].html;
-              this.clipBoard = this.Deliverables[i].html;
+            if (this.Deliverables[i]['Index'] == index) {
+              this.SelectedIndex = i
+              this.SelectedDeliverable = this.Deliverables[i].HTML
+              this.clipBoard = this.Deliverables[i].HTML
             }
           }
-          break;
+          break
         }
 
-        case "adddeliverable": {
-          // using field and form for company and index
-          this.isNew = true;
-          this.isEditing = true;
-          this.Deliverables.push({
-            WorkplanNumber: this.WorkplanNumber,
-            Company: this.Company,
-            Email: this.Email,
-            Private: "No",
-            Published: "No",
-            Month: this.Month,
-            Year: this.Year,
-            html: ""
-          });
-          this.SelectedIndex = 0;
-          this.SelectedDeliverable = this.Deliverables[0].html;
-          break;
+        case 'canceldeliverable': {
+          this.isEditing = false
+          this.DeliverablesForm = false
+          this.SelectedDeliverable = this.clipBoard
+          this.Deliverables[this.SelectedIndex]['HTML'] = this.clipBoard
+          break
         }
 
-        case "canceldeliverable": {
-          this.isEditing = false;
-          this.DeliverablesForm = false;
-          this.SelectedDeliverable = this.clipBoard;
-          this.Deliverables[this.SelectedIndex]["html"] = this.clipBoard;
-          break;
+        case 'cleardeliverable': {
+          this.SelectedDeliverable = ''
+          this.Deliverables[this.SelectedIndex]['HTML'] = ''
+          break
         }
 
-        case "cleardeliverable": {
-          this.SelectedDeliverable = "";
-          this.Deliverables[this.SelectedIndex]["html"] = "";
-          break;
-        }
-
-        case "privatedeliverable": {
+        case 'privatedeliverable': {
           // toggle the state of private
-          let priv = this.Deliverables[this.SelectedIndex]["Private"];
-          if (priv == "Yes") {
-            priv = "No";
-            this.$refs["btn_PrivateDeliverable"].innerHTML = "Make Private";
+          let priv = this.Deliverables[this.SelectedIndex]['Private']
+          if (priv == 'Yes') {
+            priv = 'No'
+            this.$refs['btn_PrivateDeliverable'].innerHTML = 'Make Private'
           } else {
-            priv = "Yes";
-            this.$refs["btn_PrivateDeliverable"].innerHTML = "Remove Private";
+            priv = 'Yes'
+            this.$refs['btn_PrivateDeliverable'].innerHTML = 'Remove Private'
           }
-          this.Deliverables[this.SelectedIndex]["Private"] = priv;
-          break;
+          this.Deliverables[this.SelectedIndex]['Private'] = priv
+          break
         }
 
-        case "publishdeliverable": {
-          // toggle the state of published
-          let pub = this.Deliverables[this.SelectedIndex]["Published"];
-          if (pub == "Yes") {
-            pub = "No";
-            this.$refs["btn_PublishDeliverable"].innerHTML =
-              "Publish Deliverable";
+        case 'completedeliverable': {
+          let comp = this.Deliverables[this.SelectedIndex]['Completed']
+          if (comp == 'Yes') {
+            comp = 'No'
           } else {
-            pub = "Yes";
-            this.$refs["btn_PublishDeliverable"].innerHTML =
-              "Unpublish Deliverable";
+            comp = 'Yes'
           }
-          this.Deliverables[this.SelectedIndex]["Published"] = pub;
-          break;
+          this.Deliverables[this.SelectedIndex]['Completed'] = comp
+          this.handleit('savedeliverable', 'Deliverables', 'DeliverablesForm')
+          break
         }
 
-        case "savedeliverable": {
-          vm.busyTitle = "Saving To SharePoint";
-          vm.$bvToast.show("form-toast");
-          let payload = {};
-          payload.action = "Existing";
-          if (vm.Deliverables[vm.SelectedIndex]["new"] == true) {
-            payload.action = "New";
-          } else {
-            payload.uri = vm.Deliverables[vm.SelectedIndex]["uri"];
-            payload.etag = vm.Deliverables[vm.SelectedIndex]["etag"];
+        case 'savedeliverable': {
+          vm.busyTitle = 'Saving To SharePoint'
+          vm.$bvToast.show('form-toast')
+          this.Deliverables[this.SelectedIndex].HTML = this.SelectedDeliverable
+          let payload = {}
+          payload.field = field
+          for (let i = 0; i < this.Deliverables.length; i++) {
+            this.Deliverables[i].HTML = encodeURIComponent(this.Deliverables[i].HTML)
           }
-          payload.Deliverables = vm.SelectedDeliverable;
-          payload.WorkplanNumber =
-            vm.Deliverables[vm.SelectedIndex]["WorkplanNumber"];
-          payload.Company = vm.Deliverables[vm.SelectedIndex]["Company"];
-          payload.Email = vm.Deliverables[vm.SelectedIndex]["Email"];
-          payload.Private = vm.Deliverables[vm.SelectedIndex]["Private"];
-          payload.Published = vm.Deliverables[vm.SelectedIndex]["Published"];
-          payload.Month = vm.Deliverables[vm.SelectedIndex]["Month"];
-          payload.Year = vm.Deliverables[vm.SelectedIndex]["Year"];
-          payload.MSRID = vm.Accomplishments[vm.SelectedIndex]["MSRID"];
-          MSR.dispatch("updateDeliverable", payload).then(function() {
-            // close the toast notification and wait for the changes. Reload MSR to ensure that all changes are included
-            vm.DeliverablesForm = false;
-            vm.isNew = false;
-            vm.isEditing = false;
-            vm.$bvToast.hide("form-toast");
-            MSR.dispatch("getDeliverables", vm.msrdata);
-            MSR.dispatch("getMSR", vm.msrdata).then(function() {
-              vm.getData();
-            });
-          });
-          break;
+          payload.value = JSON.stringify(this.Deliverables)
+          payload.uri = this.msr.uri
+          payload.etag = this.msr.etag
+          this[form] = false
+          MSR.dispatch('updateMSRData', payload).then(function() {
+            vm.isEditing = false
+            vm.hasImage = false
+            vm.clipBoard = ''
+            vm.getData()
+          })
+          break
         }
+        /* #endregion */
       }
     },
     onRTEChanged: function(args) {
-      console.log("RTECHANGED: " + args);
-      let content = String(args.value);
-      vm.fileName =
-        vm.ActiveSection +
-        "_" +
-        vm.WorkplanNumber +
-        "_" +
-        vm.msr.Month +
-        "_" +
-        vm.msr.Year +
-        ".png";
-      console.log("CONTENT CHANGED: " + content);
-      vm.fileContent = content;
-      if (content.indexOf("blob") > 0) {
-        vm.fileType = vm.ActiveSection;
-        let parts = content.split("blob:");
-        let url = parts[1].substring(0, 62); // 62 is the length of the full url 63 in O365
-        url = "blob:" + url;
+      console.log('RTECHANGED: ' + args)
+      let content = String(args.value)
+      vm.fileName = vm.ActiveSection + '_' + vm.WorkplanNumber + '_' + vm.msr.Month + '_' + vm.msr.Year + '.png'
+      console.log('CONTENT CHANGED: ' + content)
+      vm.fileContent = content
+      if (content.indexOf('blob') > 0) {
+        vm.fileType = vm.ActiveSection
+        let parts = content.split('blob:')
+        let url = parts[1].substring(0, 62) // 62 is the length of the full url 63 in O365
+        url = 'blob:' + url
         if (console) {
-          console.log("BLOB URL: " + url);
+          console.log('BLOB URL: ' + url)
         }
-        vm.fileBlob = url;
-        vm.hasImage = true;
+        vm.fileBlob = url
+        vm.hasImage = true
       }
     },
     async uploadMSRImage(name, buffer, digest) {
-      let endpoint = String.format(
-        "{0}/_api/lists/getbytitle('{1}')/RootFolder/Files/Add(url='{2}',overwrite=true)",
-        server,
-        library,
-        name
-      );
-      let data = buffer;
+      let endpoint = String.format("{0}/_api/lists/getbytitle('{1}')/RootFolder/Files/Add(url='{2}',overwrite=true)", server, library, name)
+      let data = buffer
       let headers = {
-        Accept: "application/json;odata=verbose",
-        "X-RequestDigest": digest
-      };
+        Accept: 'application/json;odata=verbose',
+        'X-RequestDigest': digest
+      }
       try {
         const response = await axios({
           url: endpoint,
-          method: "POST",
+          method: 'POST',
           data: data,
           processData: false,
           headers: headers
-        });
-        return response;
+        })
+        return response
       } catch (error) {
-        console.log("MSRService Error Uploading Image: " + error);
+        console.log('MSRService Error Uploading Image: ' + error)
       }
     },
     async uploadMSR(name, buffer, digest) {
-      let endpoint = String.format(
-        "{0}/_api/lists/getbytitle('{1}')/RootFolder/Files/Add(url='{2}',overwrite=true)",
-        server,
-        "MSRLibrary",
-        name
-      );
-      let data = buffer;
+      let endpoint = String.format("{0}/_api/lists/getbytitle('{1}')/RootFolder/Files/Add(url='{2}',overwrite=true)", server, 'MSRLibrary', name)
+      let data = buffer
       let headers = {
-        Accept: "application/json;odata=verbose",
-        "X-RequestDigest": digest
-      };
+        Accept: 'application/json;odata=verbose',
+        'X-RequestDigest': digest
+      }
       try {
         const response = await axios({
           url: endpoint,
-          method: "POST",
+          method: 'POST',
           data: data,
           processData: false,
           headers: headers
-        });
-        return response;
+        })
+        return response
       } catch (error) {
-        console.log("MSRService Error Uploading MSR: " + error);
+        console.log('MSRService Error Uploading MSR: ' + error)
       }
     },
     async getFileBuffer(file) {
       let p = new Promise(function(resolve, reject) {
-        var reader = new FileReader();
+        var reader = new FileReader()
         reader.onloadend = function(e) {
-          resolve(e.target.result);
-        };
+          resolve(e.target.result)
+        }
         reader.onerror = function(e) {
-          reject(e.target.error);
-        };
-        reader.readAsArrayBuffer(file);
-      });
-      return p;
+          reject(e.target.error)
+        }
+        reader.readAsArrayBuffer(file)
+      })
+      return p
     },
-    formatData: function(type, data) {
-      // check that this workplan has subs loaded first. TODO: There should be subs
-      // use the subs to create the accomplishments and plans as there should be an entry for each sub
-      let s = [];
+    formatData2: function(type, data) {
+      // parse data if present
+      let exists = false
+      let r = null
+      try {
+        r = JSON.parse(data)
+        for (let i = 0; i < r.length; i++) {
+          r[i].HTML = decodeURIComponent(r[i].HTML)
+        }
+        exists = true
+        console.log('PARSED DATA: ' + r)
+      } catch (e) {
+        // No real need to do anything here
+      }
+
+      let s = []
       if (this.subsloaded && this.subs.length > 1) {
-        let subs = String(this.subs);
-        if (subs.indexOf(",") > 0) {
+        let subs = String(this.subs)
+        if (subs.indexOf(',') > 0) {
           // multiple subs
-          subs = subs.split(", ");
+          subs = subs.split(', ')
           for (let h = 0; h < subs.length; h++) {
             s.push({
-              new: true,
-              index: h,
+              Index: h,
               Company: subs[h],
-              Id: "",
-              MSRID: this.msrdata.Id,
-              WorkplanNumber: this.WorkplanNumber,
               Email: this.Email,
-              Private: "No",
-              Published: "No",
-              Month: this.Month,
-              Year: this.Year,
-              etag: "",
-              uri: "",
-              html: "None"
-            });
+              Private: 'No',
+              Completed: 'No',
+              HTML: 'None'
+            })
           }
         } else {
           // only 1 sub
           s.push({
-            new: true,
-            index: 0,
+            Index: 0,
             Company: subs,
-            Id: "",
-            MSRID: this.msrdata.Id,
-            WorkplanNumber: this.WorkplanNumber,
             Email: this.Email,
-            Private: "No",
-            Published: "No",
-            Month: this.Month,
-            Year: this.Year,
-            etag: "",
-            uri: "",
-            html: "None"
-          });
+            Private: 'No',
+            Completed: 'No',
+            HTML: 'None'
+          })
         }
-        for (let k = 0; k < s.length; k++) {
-          let company = s[k]["Company"];
-          for (let i = 0; i < data.length; i++) {
-            let html = data[i][type];
-            if (data[i]["Company"] == company) {
-              s[k]["new"] = false;
-              s[k]["Id"] = data[i]["Id"];
-              s[k]["Email"] = data[i]["Email"];
-              s[k]["Private"] = data[i]["Private"];
-              s[k]["Published"] = data[i]["Published"];
-              s[k]["etag"] = data[i]["__metadata"]["etag"];
-              s[k]["uri"] = data[i]["__metadata"]["uri"];
-              s[k]["html"] = html;
+        if (exists && r.length > 0) {
+          for (let k = 0; k < s.length; k++) {
+            let company = s[k]['Company']
+            for (let i = 0; i < r.length; i++) {
+              if (r[i]['Company'] == company) {
+                s[k]['Email'] = r[i]['Email']
+                s[k]['Private'] = r[i]['Private']
+                s[k]['Completed'] = r[i]['Completed']
+                s[k]['HTML'] = r[i].HTML
+              }
             }
           }
         }
-        return s;
+        return s
       } else {
-        // no subs loaded so do nothing. TODO: Should we ever get here if things are working properly?
-        return s;
+        // TODO: Allow CACI users to add inputs
+        return s
       }
-    },
-    submit2QA: function() {
-      // set status for QA and set email for QA
-    },
-    submit2PM: function() {
-      // set status for PM and set email for PM
     },
     async publishMSR() {
       this.fileName = this.WorkplanNumber + '-' + this.msr.Month + '-' + this.msr.Year + '.docx'
@@ -3603,24 +3248,25 @@ export default {
       this.fileDigest = response.data.d.GetContextWebInformation.FormDigestValue
       let y = String(
         this.$moment()
-          .subtract(1, "months")
+          .subtract(1, 'months')
           .year()
-      );
+      )
       let m = this.$moment()
-        .subtract(1, "months")
-        .get("month");
+        .subtract(1, 'months')
+        .get('month')
       let popstart = this.$moment(m)
-        .startOf("month")
-        .date();
+        .startOf('month')
+        .date()
       let popend = this.$moment(m)
-        .endOf("month")
-        .date();
-      let pop = months[m] + " " + popstart + " - " + popend + " " + y;
-      let published = this.$moment().format("DD MMM YYYY");
+        .endOf('month')
+        .date()
+      let pop = months[m] + ' ' + popstart + ' - ' + popend + ' ' + y
+      let published = this.$moment().format('DD MMM YYYY')
 
-      this.busyTitle = "Publishing To SharePoint";
-      this.$bvToast.show("form-toast");
+      this.busyTitle = 'Publishing To SharePoint'
+      this.$bvToast.show('form-toast')
 
+      /* #region Document Creation */
       const header = new Table({
         width: {
           size: 10800,
@@ -3630,22 +3276,22 @@ export default {
           top: {
             style: BorderStyle.NONE,
             size: 0,
-            color: "#ffffff"
+            color: '#ffffff'
           },
           bottom: {
             style: BorderStyle.NONE,
             size: 0,
-            color: "#ffffff"
+            color: '#ffffff'
           },
           left: {
             style: BorderStyle.NONE,
             size: 0,
-            color: "#ffffff"
+            color: '#ffffff'
           },
           right: {
             style: BorderStyle.NONE,
             size: 0,
-            color: "#ffffff"
+            color: '#ffffff'
           }
         },
         alignment: AlignmentType.CENTER,
@@ -3662,22 +3308,22 @@ export default {
                   top: {
                     style: BorderStyle.NONE,
                     size: 0,
-                    color: "#ffffff"
+                    color: '#ffffff'
                   },
                   bottom: {
                     style: BorderStyle.NONE,
                     size: 0,
-                    color: "#ffffff"
+                    color: '#ffffff'
                   },
                   left: {
                     style: BorderStyle.NONE,
                     size: 0,
-                    color: "#ffffff"
+                    color: '#ffffff'
                   },
                   right: {
                     style: BorderStyle.NONE,
                     size: 0,
-                    color: "#ffffff"
+                    color: '#ffffff'
                   }
                 },
                 verticalAlign: VerticalAlign.CENTER
@@ -3685,7 +3331,7 @@ export default {
               new TableCell({
                 children: [
                   new Paragraph({
-                    text: "For Official Use Only",
+                    text: 'CONTROLLED UNCLASSIFIED INFORMATION (CUI)',
                     alignment: AlignmentType.CENTER
                   })
                 ],
@@ -3697,22 +3343,22 @@ export default {
                   top: {
                     style: BorderStyle.NONE,
                     size: 0,
-                    color: "#ffffff"
+                    color: '#ffffff'
                   },
                   bottom: {
                     style: BorderStyle.NONE,
                     size: 0,
-                    color: "#ffffff"
+                    color: '#ffffff'
                   },
                   left: {
                     style: BorderStyle.NONE,
                     size: 0,
-                    color: "#ffffff"
+                    color: '#ffffff'
                   },
                   right: {
                     style: BorderStyle.NONE,
                     size: 0,
-                    color: "#ffffff"
+                    color: '#ffffff'
                   }
                 },
                 verticalAlign: VerticalAlign.CENTER
@@ -3720,7 +3366,7 @@ export default {
               new TableCell({
                 children: [
                   new Paragraph({
-                    text: "CDRL A001      FA8750-19-F-1000",
+                    text: 'CDRL A001      FA8750-19-F-1000',
                     alignment: AlignmentType.RIGHT
                   })
                 ],
@@ -3732,22 +3378,22 @@ export default {
                   top: {
                     style: BorderStyle.NONE,
                     size: 0,
-                    color: "#ffffff"
+                    color: '#ffffff'
                   },
                   bottom: {
                     style: BorderStyle.NONE,
                     size: 0,
-                    color: "#ffffff"
+                    color: '#ffffff'
                   },
                   left: {
                     style: BorderStyle.NONE,
                     size: 0,
-                    color: "#ffffff"
+                    color: '#ffffff'
                   },
                   right: {
                     style: BorderStyle.NONE,
                     size: 0,
-                    color: "#ffffff"
+                    color: '#ffffff'
                   }
                 },
                 verticalAlign: VerticalAlign.CENTER
@@ -3766,22 +3412,22 @@ export default {
                   top: {
                     style: BorderStyle.NONE,
                     size: 0,
-                    color: "#ffffff"
+                    color: '#ffffff'
                   },
                   bottom: {
                     style: BorderStyle.NONE,
                     size: 0,
-                    color: "#ffffff"
+                    color: '#ffffff'
                   },
                   left: {
                     style: BorderStyle.NONE,
                     size: 0,
-                    color: "#ffffff"
+                    color: '#ffffff'
                   },
                   right: {
                     style: BorderStyle.NONE,
                     size: 0,
-                    color: "#ffffff"
+                    color: '#ffffff'
                   }
                 },
                 verticalAlign: VerticalAlign.CENTER
@@ -3789,11 +3435,7 @@ export default {
               new TableCell({
                 children: [
                   new Paragraph({
-                    text:
-                      "Work Plan:  " +
-                      this.msr.WorkplanNumber +
-                      " - " +
-                      this.msr.WorkplanTitle,
+                    text: 'Work Plan:  ' + this.msr.WorkplanNumber + ' - ' + this.msr.WorkplanTitle,
                     alignment: AlignmentType.RIGHT
                   })
                 ],
@@ -3805,22 +3447,22 @@ export default {
                   top: {
                     style: BorderStyle.NONE,
                     size: 0,
-                    color: "#ffffff"
+                    color: '#ffffff'
                   },
                   bottom: {
                     style: BorderStyle.NONE,
                     size: 0,
-                    color: "#ffffff"
+                    color: '#ffffff'
                   },
                   left: {
                     style: BorderStyle.NONE,
                     size: 0,
-                    color: "#ffffff"
+                    color: '#ffffff'
                   },
                   right: {
                     style: BorderStyle.NONE,
                     size: 0,
-                    color: "#ffffff"
+                    color: '#ffffff'
                   }
                 },
                 columnSpan: 2,
@@ -3829,7 +3471,7 @@ export default {
             ]
           })
         ]
-      });
+      })
 
       const footer = new Table({
         width: {
@@ -3840,22 +3482,22 @@ export default {
           top: {
             style: BorderStyle.NONE,
             size: 0,
-            color: "#ffffff"
+            color: '#ffffff'
           },
           bottom: {
             style: BorderStyle.NONE,
             size: 0,
-            color: "#ffffff"
+            color: '#ffffff'
           },
           left: {
             style: BorderStyle.NONE,
             size: 0,
-            color: "#ffffff"
+            color: '#ffffff'
           },
           right: {
             style: BorderStyle.NONE,
             size: 0,
-            color: "#ffffff"
+            color: '#ffffff'
           }
         },
         alignment: AlignmentType.CENTER,
@@ -3872,22 +3514,22 @@ export default {
                   top: {
                     style: BorderStyle.NONE,
                     size: 0,
-                    color: "#ffffff"
+                    color: '#ffffff'
                   },
                   bottom: {
                     style: BorderStyle.NONE,
                     size: 0,
-                    color: "#ffffff"
+                    color: '#ffffff'
                   },
                   left: {
                     style: BorderStyle.NONE,
                     size: 0,
-                    color: "#ffffff"
+                    color: '#ffffff'
                   },
                   right: {
                     style: BorderStyle.NONE,
                     size: 0,
-                    color: "#ffffff"
+                    color: '#ffffff'
                   }
                 },
                 verticalAlign: VerticalAlign.CENTER
@@ -3895,7 +3537,7 @@ export default {
               new TableCell({
                 children: [
                   new Paragraph({
-                    text: "For Official Use Only",
+                    text: 'CONTROLLED UNCLASSIFIED INFORMATION (CUI)',
                     alignment: AlignmentType.CENTER
                   })
                 ],
@@ -3907,22 +3549,22 @@ export default {
                   top: {
                     style: BorderStyle.NONE,
                     size: 0,
-                    color: "#ffffff"
+                    color: '#ffffff'
                   },
                   bottom: {
                     style: BorderStyle.NONE,
                     size: 0,
-                    color: "#ffffff"
+                    color: '#ffffff'
                   },
                   left: {
                     style: BorderStyle.NONE,
                     size: 0,
-                    color: "#ffffff"
+                    color: '#ffffff'
                   },
                   right: {
                     style: BorderStyle.NONE,
                     size: 0,
-                    color: "#ffffff"
+                    color: '#ffffff'
                   }
                 },
                 verticalAlign: VerticalAlign.CENTER
@@ -3932,10 +3574,10 @@ export default {
                   new Paragraph({
                     children: [
                       new TextRun({
-                        children: ["Page Number ", PageNumber.CURRENT]
+                        children: ['Page Number ', PageNumber.CURRENT]
                       }),
                       new TextRun({
-                        children: [" of ", PageNumber.TOTAL_PAGES]
+                        children: [' of ', PageNumber.TOTAL_PAGES]
                       })
                     ],
                     alignment: AlignmentType.RIGHT
@@ -3949,22 +3591,22 @@ export default {
                   top: {
                     style: BorderStyle.NONE,
                     size: 0,
-                    color: "#ffffff"
+                    color: '#ffffff'
                   },
                   bottom: {
                     style: BorderStyle.NONE,
                     size: 0,
-                    color: "#ffffff"
+                    color: '#ffffff'
                   },
                   left: {
                     style: BorderStyle.NONE,
                     size: 0,
-                    color: "#ffffff"
+                    color: '#ffffff'
                   },
                   right: {
                     style: BorderStyle.NONE,
                     size: 0,
-                    color: "#ffffff"
+                    color: '#ffffff'
                   }
                 },
                 verticalAlign: VerticalAlign.CENTER
@@ -3972,15 +3614,15 @@ export default {
             ]
           })
         ]
-      });
+      })
 
       const coverpage = [
         new Paragraph({
           children: [
             new TextRun({
-              text: "Progress, Status and Management Report –F3I-2",
+              text: 'Progress, Status and Management Report –F3I-2',
               bold: true,
-              font: "Calibri",
+              font: 'Calibri',
               size: 36
             })
           ],
@@ -3992,9 +3634,9 @@ export default {
         new Paragraph({
           children: [
             new TextRun({
-              text: "CDRL A001, WP " + this.msr.WorkplanNumber,
+              text: 'CDRL A001, WP ' + this.msr.WorkplanNumber,
               bold: true,
-              font: "Calibri",
+              font: 'Calibri',
               size: 36
             })
           ],
@@ -4005,7 +3647,7 @@ export default {
             new TextRun({
               text: this.msr.WorkplanTitle,
               bold: true,
-              font: "Calibri",
+              font: 'Calibri',
               size: 36
             })
           ],
@@ -4014,9 +3656,9 @@ export default {
         new Paragraph({
           children: [
             new TextRun({
-              text: "USAF, AFMC",
+              text: 'USAF, AFMC',
               bold: true,
-              font: "Calibri",
+              font: 'Calibri',
               size: 36
             })
           ],
@@ -4025,9 +3667,9 @@ export default {
         new Paragraph({
           children: [
             new TextRun({
-              text: "Air Force Research Laboratory",
+              text: 'Air Force Research Laboratory',
               bold: true,
-              font: "Calibri",
+              font: 'Calibri',
               size: 36
             })
           ],
@@ -4036,9 +3678,8 @@ export default {
         new Paragraph({
           children: [
             new TextRun({
-              text:
-                "Full-Spectrum Intelligence, Surveillance, and Reconnaissance (ISR) Innovation and Integration 2 (F3I-2)",
-              font: "Calibri",
+              text: 'Full-Spectrum Intelligence, Surveillance, and Reconnaissance (ISR) Innovation and Integration 2 (F3I-2)',
+              font: 'Calibri',
               size: 32
             })
           ],
@@ -4050,8 +3691,8 @@ export default {
         new Paragraph({
           children: [
             new TextRun({
-              text: "ContractNo.FA8750-19-F-1000",
-              font: "Calibri",
+              text: 'ContractNo.FA8750-19-F-1000',
+              font: 'Calibri',
               size: 32
             })
           ],
@@ -4060,8 +3701,8 @@ export default {
         new Paragraph({
           children: [
             new TextRun({
-              text: "Date: " + published,
-              font: "Calibri",
+              text: 'Date: ' + published,
+              font: 'Calibri',
               size: 28
             })
           ],
@@ -4073,8 +3714,8 @@ export default {
         new Paragraph({
           children: [
             new TextRun({
-              text: "Period Covered: " + pop,
-              font: "Calibri",
+              text: 'Period Covered: ' + pop,
+              font: 'Calibri',
               size: 28
             })
           ],
@@ -4083,15 +3724,14 @@ export default {
         new Paragraph({
           children: [
             new TextRun({
-              text: "DISTRIBUTION D. ",
-              font: "Calibri",
+              text: 'DISTRIBUTION D. ',
+              font: 'Calibri',
               bold: true,
               size: 22
             }),
             new TextRun({
-              text:
-                "Distribution authorized to DoD and U.S. DoD contractors only. Other requests for this document shall be referred to AF DCGS Data Management Office. AFLCMC/HBGB 235 Byron St, Suite 19A, Robins AFB, GA 31098-1670",
-              font: "Calibri",
+              text: 'Distribution authorized to DoD and U.S. DoD contractors only. Other requests for this document shall be referred to AF DCGS Data Management Office. AFLCMC/HBGB 235 Byron St, Suite 19A, Robins AFB, GA 31098-1670',
+              font: 'Calibri',
               size: 22
             })
           ],
@@ -4101,19 +3741,19 @@ export default {
             after: 300
           }
         })
-      ];
+      ]
 
       const styles = {
         paragraphStyles: [
           {
-            id: "Heading1",
-            name: "Heading 1",
-            basedOn: "Normal",
-            next: "Normal",
+            id: 'Heading1',
+            name: 'Heading 1',
+            basedOn: 'Normal',
+            next: 'Normal',
             quickFormat: true,
             run: {
               size: 36,
-              color: "black"
+              color: 'black'
             },
             paragraph: {
               spacing: {
@@ -4127,14 +3767,14 @@ export default {
             }
           },
           {
-            id: "Heading2",
-            name: "Heading 2",
-            basedOn: "Normal",
-            next: "Normal",
+            id: 'Heading2',
+            name: 'Heading 2',
+            basedOn: 'Normal',
+            next: 'Normal',
             quickFormat: true,
             run: {
               size: 32,
-              color: "black"
+              color: 'black'
             },
             paragraph: {
               spacing: {
@@ -4148,14 +3788,14 @@ export default {
             }
           },
           {
-            id: "Heading3",
-            name: "Heading 3",
-            basedOn: "Normal",
-            next: "Normal",
+            id: 'Heading3',
+            name: 'Heading 3',
+            basedOn: 'Normal',
+            next: 'Normal',
             quickFormat: true,
             run: {
               size: 28,
-              color: "black"
+              color: 'black'
             },
             paragraph: {
               spacing: {
@@ -4169,14 +3809,14 @@ export default {
             }
           },
           {
-            id: "Heading4",
-            name: "Heading 4",
-            basedOn: "Normal",
-            next: "Normal",
+            id: 'Heading4',
+            name: 'Heading 4',
+            basedOn: 'Normal',
+            next: 'Normal',
             quickFormat: true,
             run: {
               size: 24,
-              color: "black"
+              color: 'black'
             },
             paragraph: {
               spacing: {
@@ -4190,14 +3830,14 @@ export default {
             }
           },
           {
-            id: "Heading5",
-            name: "Heading 5",
-            basedOn: "Normal",
-            next: "Normal",
+            id: 'Heading5',
+            name: 'Heading 5',
+            basedOn: 'Normal',
+            next: 'Normal',
             quickFormat: true,
             run: {
               size: 22,
-              color: "black"
+              color: 'black'
             },
             paragraph: {
               spacing: {
@@ -4211,10 +3851,10 @@ export default {
             }
           }
         ]
-      };
+      }
 
       const documentCreator = new CreateDocFromHtml({
-        id: "Publish",
+        id: 'Publish',
         header: header,
         footer: footer,
         coverpage: coverpage,
@@ -4231,11 +3871,12 @@ export default {
           gutter: 0
         },
         alignment: AlignmentType.CENTER
-      });
+      })
 
-      documentCreator.getImagesFromSource();
+      documentCreator.getImagesFromSource()
+      // eslint-disable-next-line no-unused-vars
       documentCreator.loadImages().then(baboon => {
-        const doc = documentCreator.create();
+        const doc = documentCreator.create()
         Packer.toBlob(doc).then(blob => {
           // saveAs(blob, "example.docx");
           vm.getFileBuffer(blob).then(function(b) {
@@ -4256,33 +3897,69 @@ export default {
                   payload.uri = vm.msr.uri
                   payload.etag = vm.msr.etag
                   MSR.dispatch('publishMSR', payload)
-                  vm.$bvToast.hide("form-toast");
+                  vm.$bvToast.hide('form-toast')
                   vm.$emit('close')
                 })
               })
             })
-          })          
+          })
         })
       })
+      /* #endregion */
     }
   },
+  cron: [
+    {
+      time: 600000,
+      method: 'getFormStatus'
+    },
+    {
+      time: 120000,
+      method: 'closeForm',
+      autoStart: false
+    }
+  ],
   provide: {
-    richtexteditor: [
-      Toolbar,
-      Link,
-      Image,
-      Count,
-      HtmlEditor,
-      QuickToolbar,
-      RTETable
-    ]
+    richtexteditor: [Toolbar, Link, Image, Count, HtmlEditor, QuickToolbar, RTETable]
+  },
+  watch: {
+    Show: function() {
+      if (this.Show == true) {
+        this.$bvToast.show('form-toast')
+        this.WorkplanTitle = this.msrdata.WorkplanTitle
+        this.WorkplanNumber = this.msrdata.WorkplanNumber
+        this.Email = this.user[0].Email
+        this.Company = this.user[0].Company
+        let m = this.$moment().get('month')
+        this.Month = months[m]
+        this.Year = String(this.$moment().year())
+        MSR.dispatch('getDigest')
+        Workplan.dispatch('getSubs', this.WorkplanNumber).then(function() {
+          vm.$options.interval = setInterval(vm.getData, 1000)
+        })
+      } else {
+        // TODO: Do we need to clean up here? Or do some other action
+      }
+    }
   }
-};
+}
 </script>
 
 <style lang="scss">
+.formheader,
+.formfooter {
+  height: 50px !important;
+}
+.modal-footer {
+  padding: 0 !important;
+  border: none;
+}
+.formbody {
+  padding: 0 1rem !important;
+  overflow-y: scroll;
+}
 .defaultcalibri .e-rte-content .e-content {
-  font-family: "Calibri";
+  font-family: 'Calibri';
 }
 #publish h2 {
   font-size: 16px;

@@ -41,13 +41,13 @@ let msrMenu = {
     {
       path: 'home',
       name: 'Home',
-      component: () => import(/* webpackChunkName: "msr" */ '../components/MSR/msrhome2.vue'),
+      component: () => import(/* webpackChunkName: "msr" */ '../components/MSR/msrhome.vue'),
       props: true
     },
     {
       path: 'form/:id',
       name: 'MSRForm',
-      component: () => import(/* webpackChunkName: "msr" */ '../components/MSR/msrform3.vue'),
+      component: () => import(/* webpackChunkName: "msr" */ '../components/MSR/msrform.vue'),
       props: true
     },
     {

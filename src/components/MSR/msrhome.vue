@@ -1,26 +1,5 @@
 <template>
   <b-container fluid class="contentHeight p-0" id="MainContainer">
-    <b-modal
-      id="MsrForm"
-      ref="MsrForm"
-      @close="onModalHide"
-      no-close-on-esc
-      no-close-on-backdrop
-      hide-backdrop
-      :title="viewTitle"
-      hide-footer
-      modal-class="msr-modal"
-      dialog-class="msr-dialog"
-      content-class="msr-content"
-      body-class="msr-body"
-      v-model="showForm"
-      scrollable
-      @shown="onModalShown"
-    >
-      <template v-slot:default>
-        <msr-form :msrdata="selecteddata" :height="formheight" v-on:close="setClosed"></msr-form>
-      </template>
-    </b-modal>
     <b-modal id="DistributionModal" ref="DistributionModal" size="xl" centered @ok="newDistribution">
       <template v-slot:modal-title>Add Distribution</template>
       <div class="container-fluid">
@@ -60,11 +39,11 @@
         <ejs-grid id="MSRGrid" ref="MSRGrid" :dataSource="msrs" :allowPaging="true" :pageSettings="pageSettings" :dataBound="dataBound" rowHeight="20" height="100%" :actionComplete="actionComplete" v-on:request-distribution="onRequestDistributionA">
           <e-columns v-on:request-distribution="onRequestDistributionB">
             <e-column headerText="Actions" textAlign="Left" width="300" :template="ActionsTemplate" v-on:request-distribution="onRequestDistributionC"></e-column>
-            <e-column field="WPMReview" headerText="WPM Review" width="100"></e-column>
-            <e-column field="QAReview" headerText="QA Review" width="100"></e-column>
-            <e-column field="PCAReview" headerText="PCA Review" width="100"></e-column>
-            <e-column field="WorkplanNumber" headerText="Number" width="100"></e-column>
-            <e-column field="WorkplanTitle" headerText="Title" textAlign="Left" width="200"></e-column>
+            <e-column field="WPMReview" headerText="WPM Review" textAlign width="100"></e-column>
+            <e-column field="QAReview" headerText="QA Review" textAlign width="100"></e-column>
+            <e-column field="PCAReview" headerText="PCA Review" textAlign width="100"></e-column>
+            <e-column field="WorkplanNumber" headerText="Work Plan Number" width="100"></e-column>
+            <e-column field="WorkplanTitle" headerText="Work Plan Title" textAlign="Left" width="200"></e-column>
             <e-column field="Status" headerText="Status" width="100"></e-column>
             <e-column field="Month" headerText="Month" textAlign="Left" width="50"></e-column>
             <e-column field="Year" headerText="Year" textAlign="Left" width="50"></e-column>
@@ -86,16 +65,16 @@ import User from '@/models/User'
 import Workplan from '@/models/WorkPlan'
 import Personnel from '@/models/Personnel'
 import { Page, DetailRow } from '@syncfusion/ej2-vue-grids'
-import MsrForm from '@/components/MSR/msrform.vue'
 
-let months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
 let vm = null
 
 export default {
   name: 'msrhome',
-  components: {
-    MsrForm
-  },
+  /* props: {
+    refresh: {
+      type: Boolean
+    }
+  }, */
   errorCaptured(err, vm, info) {
     const notification = {
       type: 'danger',
@@ -157,14 +136,12 @@ export default {
     },
     isSubcontractor() {
       return User.getters('isSubcontractor')
-    },
-    rect() {
-      return this.$store.state.support.contentrect
     }
   },
   data: function() {
     return {
       pageSettings: { pageSize: 30 },
+      refreshcount: 0,
       formheight: 0,
       WorkplanNumber: '',
       viewTitle: 'MSR View for WP ',
@@ -181,6 +158,7 @@ export default {
       temp: [],
       count: 0,
       total: 0,
+      timer: '',
       showForm: false,
       selecteddata: null,
       distribution: {
@@ -201,10 +179,13 @@ export default {
           template: Vue.component('columnTemplate', {
             template: `
             <div>
-              <b-button variant="success" class="actionbutton" @click="view(data)" title="View">
-                <font-awesome-icon far icon="eye" class="icon"></font-awesome-icon> View MSR
+              <b-button v-if="data.Locked !== 'Yes'" variant="success" class="actionbutton" @click="edit(data)" title="Edit">
+                <font-awesome-icon far icon="eye" class="icon"></font-awesome-icon> Edit MSR
               </b-button>
-              <b-button v-if="isSubcontractor || isDeveloper" class="actionbutton ml-1" @click="distribution(data)" title="Request Distribution">
+              <b-button v-else disabled class="actionbutton" title="Locked For Editing">
+                <font-awesome-icon far icon="eye" class="icon"></font-awesome-icon> Edit MSR
+              </b-button>
+              <b-button class="actionbutton ml-1" @click="distribution(data)" title="Request Distribution">
                 <font-awesome-icon far icon="mail-bulk" class="icon"></font-awesome-icon> Request Distribution
               </b-button>
             </div>`,
@@ -228,11 +209,19 @@ export default {
               }
             },
             methods: {
-              view: function(data) {
+              edit: function(data) {
+                if (console) {
+                  console.log('Locking and Editing MSR')
+                }
                 vm.selecteddata = data
-                vm.viewTitle = 'MSR View for WP ' + vm.selecteddata.WorkplanNumber
-                vm.showForm = true
-                // vm.$bvModal.show('MsrForm')
+                let payload = {}
+                payload.field = 'Locked'
+                payload.value = 'Yes'
+                payload.uri = data.uri
+                payload.etag = data.etag
+                MSR.dispatch('updateMSRData', payload).then(function() {
+                  vm.$router.push({ name: 'MSRForm', params: { id: data.Id, msrdata: data } })
+                })
               },
               distribution: function(data) {
                 vm.onRequestDistribution(data)
@@ -247,45 +236,42 @@ export default {
     vm = this
     MSR.dispatch('getDigest')
     this.$store.dispatch('support/setLegendItems', [])
-    vm.$nextTick(function() {
-      let email = vm.user[0].Email
-      vm.Email = email
-      vm.Company = vm.user[0].Company
-      let m = this.$moment().get('month')
-      vm.Month = months[m]
-      vm.Year = this.$moment().year()
-      const notification = {
-        type: 'info',
-        title: 'Getting MSRs',
-        message: 'Please Wait...',
-        push: false
-      }
-      this.$store.dispatch('notification/add', notification, { root: true })
-      MSR.dispatch('getMSRs').then(function() {
-        vm.$options.interval = setInterval(vm.waitForMSRs, 1000)
-      })
-    })
+    const notification = {
+      type: 'success',
+      title: 'Getting MSRs',
+      message: 'Please Wait...',
+      push: false
+    }
+    this.$store.dispatch('notification/add', notification, { root: true })
+    this.getData()
   },
   beforeDestroy() {
     this.$store.dispatch('support/setLegendItems', [])
   },
   methods: {
-    waitForMSRs: function() {
+    getData: function() {
+      MSR.dispatch('getMSRs').then(function() {
+        vm.displayMSRs()
+      })
+    },
+    reloadPage: function() {
+      this.$router.push({ name: 'Refresh', params: { action: 'msrhome' } })
+    },
+    displayMSRs: function() {
       if (this.loaded) {
-        clearInterval(this.$options.interval)
         if (vm.isSubcontractor) {
-          vm.$store.dispatch('support/addActivity', '<div class="bg-primary">msrhome-waitForMSRs Step 1 isSubcontractor: ' + vm.$moment().format() + '</div>')
+          vm.$store.dispatch('support/addActivity', '<div class="bg-primary">msrhome-displayMSRs Step 1 isSubcontractor: ' + vm.$moment().format() + '</div>')
           let hasWorkplans = false
           if (vm.user[0].WPData && vm.user[0].WPData.length > 2) {
             let wpdata = JSON.parse(vm.user[0].WPData)
             for (let i = 0; i < wpdata.length; i++) {
               let ps = Number(wpdata[i]['PercentSupport'])
-              vm.$store.dispatch('support/addActivity', '<div class="bg-primary">msrhome-waitForMSRs Step 2 WPDATA Loop Percent Support: ' + ps + '</div>')
+              vm.$store.dispatch('support/addActivity', '<div class="bg-primary">msrhome-displayMSRs Step 2 WPDATA Loop Percent Support: ' + ps + '</div>')
               if (ps > 0) {
                 hasWorkplans = true
                 let wpn = wpdata[i]['WorkplanNumber']
                 // loop through msrs and assign based on wp
-                vm.$store.dispatch('support/addActivity', '<div class="bg-primary">msrhome-waitForMSRs Step 3 Checking all msrs for match: ' + vm.$moment().format() + '</div>')
+                vm.$store.dispatch('support/addActivity', '<div class="bg-primary">msrhome-displayMSRs Step 3 Checking all msrs for match: ' + vm.$moment().format() + '</div>')
                 for (let j = 0; j < vm.allmsrs.length; j++) {
                   if (vm.allmsrs[j]['WorkplanNumber'] === wpn) {
                     vm.msrs.push(vm.allmsrs[j])
@@ -304,38 +290,18 @@ export default {
             this.$store.dispatch('notification/add', notification, { root: true })
           }
         } else {
-          vm.$store.dispatch('support/addActivity', '<div class="bg-primary">msrhome-waitForMSRs Step 4: ' + vm.$moment().format() + '</div>')
+          vm.$store.dispatch('support/addActivity', '<div class="bg-primary">msrhome-displayMSRs Step 4: ' + vm.$moment().format() + '</div>')
           // User is something other than Subcontractor
-          // WPManagers only see their workplans so we need to go get those. Owners and PCA's will see all
-          if (vm.isWPManager) {
-            // console.log('SHOULD SEE ONLY MSRS FOR WORKPLANS YOU ARE MANAGER OF!')
-            // go get workplans for this wpmanager
-            let localmsrs = []
-            for (let i = 0; i < vm.allworkplans.length; i++) {
-              if (vm.allworkplans[i]['ManagerId'] == vm.userid) {
-                let wpn = vm.allworkplans[i]['Number']
-                console.log('WORKPLAN: ' + wpn)
-                // loop through msrs and assign based on wp
-                for (let j = 0; j < vm.allmsrs.length; j++) {
-                  if (vm.allmsrs[j]['WorkplanNumber'] == wpn) {
-                    localmsrs.push(vm.allmsrs[j])
-                  }
-                }
-              }
-            }
-            localmsrs = Vue._.orderBy(localmsrs, 'WorkplanNumber', 'asc')
-            vm.msrs = localmsrs
-          } else {
-            vm.msrs = Vue._.orderBy(vm.allmsrs, 'WorkplanNumber', 'asc')
-            const notification = {
-              type: 'success',
-              title: 'All Selected MSRs Loaded',
-              message: 'A total of ' + vm.msrs.length + ' MSR(s) have been loaded.',
-              push: true
-            }
-            this.$store.dispatch('notification/add', notification, { root: true })
-          }
+          vm.msrs = Vue._.orderBy(vm.allmsrs, 'WorkplanNumber', 'asc')
         }
+        // setup timer to keep reloading after 60 seconds
+        // this.timer = setInterval(this.getData, 60000)
+      } else {
+        // will we ever get here
+        if (console) {
+          console.log('NOT LOADED. LOADING AGAIN.')
+        }
+        this.getData()
       }
     },
     onModalHide: function() {
@@ -389,16 +355,11 @@ export default {
     },
     dataBound: function() {
       this.$refs.MSRGrid.autoFitColumns()
-    },
-    onModalShown: function() {
-      this.formheight = this.$refs['MsrForm'].$refs['body'].clientHeight
-      let popup = document.getElementsByClassName('msr-dialog')
-      popup[0].style.position = 'absolute'
-      popup[0].style.left = vm.rect.left + 'px'
-      popup[0].style.top = vm.rect.top + 'px'
-      popup[0].style.width = vm.rect.width + 'px'
-      popup[0].style.height = vm.rect.height + 'px'
     }
+  },
+  cron: {
+    time: 10000,
+    method: 'getData'
   },
   provide: {
     grid: [Page, DetailRow]
@@ -407,18 +368,6 @@ export default {
 </script>
 
 <style lang="scss">
-.msr-dialog {
-  max-width: none !important;
-  max-height: none !important;
-  margin: 0 !important;
-}
-.msr-content {
-  min-height: calc(100vh - 3.5rem);
-}
-.msr-body {
-  padding: 0 1rem !important;
-  overflow-y: scroll;
-}
 .flexcontainer {
   display: flex;
   flex-direction: column;
