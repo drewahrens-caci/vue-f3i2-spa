@@ -206,19 +206,21 @@
       </b-container>
       <template v-slot:modal-footer>
         <div id="editModalButtons" v-show="!approvalOnly" class="editModalButtons">
-          <b-button variant="secondary" size="sm" @click="editClose">Close</b-button><b-button variant="primary" size="sm" @click="editOk">OK</b-button>
+          <b-button variant="danger" size="sm" @click="editClose">Close</b-button>
+          <b-button variant="success" size="sm" @click="editOk">OK</b-button>
         </div>
         <div id="EditPersonnelButtons" v-show="!showDenial && approvalOnly" class="editModalButtons">
-          <b-button v-if="isWPManager" size="sm" @click="showDenial = !showDenial" variant="secondary">Deny</b-button><b-button v-if="isWPManager" size="sm" @click="btnApproveClick" variant="primary">Approve</b-button>
+          <b-button v-if="isWPManager" size="sm" @click="showDenial = !showDenial" variant="secondary">Deny</b-button>
+          <b-button v-if="isWPManager" size="sm" @click="btnApproveClick" variant="primary">Approve</b-button>
         </div>
         <div id="wpmDenial" v-show="showDenial" class="editModalButtons">
           Reason: <textarea id="DeniedReason"></textarea>
-          <b-button size="sm" @click="showDenial = !showDenial" variant="secondary">Cancel</b-button>
-          <b-button size="sm" @click="btnDenyClick" class="btn-success" variant="primary">Submit</b-button>
+          <b-button size="sm" @click="showDenial = !showDenial" variant="danger">Cancel</b-button>
+          <b-button size="sm" @click="btnDenyClick" class="btn-success" variant="success">Submit</b-button>
         </div>
       </template>
     </b-modal>
-    <b-modal id="NewModal" ref="NewModal" size="xl" centered @submit="newOk">
+    <b-modal id="NewModal" ref="NewModal" size="xl" centered @ok="newOk">
       <template v-slot:modal-title>Add New User</template>
       <div class="container-fluid">
         <table id="NewTable" class="personneltable">
@@ -683,12 +685,16 @@ export default {
     }
     this.$store.dispatch('notification/add', notification, { root: true })
     Personnel.dispatch('getDigest')
-    this.waitForPeople()
+    Workplan.dispatch('getWorkplans').then(function() {
+      Personnel.dispatch('getPersonnel').then(function() {
+        vm.$options.interval = setInterval(vm.waitForPeople, 1000)
+      })
+    })
     if (this.mode === 'edit') {
       // Don't show all of the records until after the form is submitted
       this.approvalOnly = true
       this.PersonnelId = this.id
-      Workplan.dispatch('getWorkplans').then(() => {
+      Workplan.dispatch('getWorkplans').then(function() {
         Personnel.dispatch('getPersonnelAllValuesById', this.id).then(async person => {
           let modData = {}
           if (person[0].Modification && person[0].Modification.length > 0) {
@@ -722,6 +728,8 @@ export default {
             document.getElementById('PageTitle').innerHTML = ' -  Reports'
             break
         }
+      } else {
+        this.waitForPeople()
       }
     },
     getRef: function(text, idx) {
@@ -782,12 +790,10 @@ export default {
       this.$bvModal.show('EditModal')
       this.rowData = data
     },
-    editOk: async function() {
-      if (this.WPData.length > 0) {
-        console.log('LENGTH: ' + this.WPData[0].Workplan.length)
-        if (this.WPData[0].Workplan.length > 3) {
-          this.rowData.WPData = JSON.stringify(this.WPData)
-        }
+    editOk: function() {
+      console.log('LENGTH: ' + this.WPData[0].Workplan.length)
+      if (this.WPData[0].Workplan.length > 3) {
+        this.rowData.WPData = JSON.stringify(this.WPData)
       }
       //TODO: Remove isDeveloper before moving to Testing
       if (this.isSubcontractor) {
@@ -797,9 +803,9 @@ export default {
           etag: this.rowData.etag,
           Id: this.rowData.Id
         }
-        await Personnel.dispatch('editPerson', data).then(async () => {
+        Personnel.dispatch('editPerson', data).then(async function() {
           let managerEmails = []
-          vm.user[0].WPData.length.foreach(async wp => {
+          vm.user[0].WPData.length.foreach(async function(wp) {
             let manager = await Workplan.dispatch('getManagerByWPNumber', wp)
             console.log(`Manager: ${JSON.stringify(manager)}`)
             if (manager[0]) {
@@ -807,7 +813,7 @@ export default {
             }
           })
           data.WPManagerEmails = managerEmails
-          await Personnel.dispatch('editSubEmail', data, 'edit').then(() => {
+          await Personnel.dispatch('editSubEmail', data, 'edit').then(function() {
             const notification = {
               type: 'info',
               title: 'Information',
@@ -824,15 +830,15 @@ export default {
         })
       }
     },
-    editClose: () => {
+    editClose: function() {
       vm.hideme('EditModal', 'refresh')
     },
-    newOk: async function() {
+    newOk: function() {
       if (this.isSubcontractor) {
         let data = {
           Modification: JSON.stringify(this.newData)
         }
-        let results = await Personnel.dispatch('addSub', data)
+        let results = Personnel.dispatch('addSub', data)
         let managerEmails = []
         vm.user[0].WPData.foreach(async wp => {
           let manager = await Workplan.dispatch('getManagerByWPNumber', wp)
@@ -842,7 +848,7 @@ export default {
           }
         })
         results.WPManagerEmails = managerEmails
-        await Personnel.dispatch('newSubEmail', results).then(() => {
+        Personnel.dispatch('newSubEmail', results).then(function() {
           vm.hideme('NewModal')
           const notification = {
             type: 'info',
@@ -858,7 +864,7 @@ export default {
         })
       }
     },
-    btnAddClick: () => {
+    btnAddClick: function() {
       this.Plans.push({
         Workplan: '',
         WorkplanNumber: '',
@@ -867,7 +873,7 @@ export default {
         PercentSupport: ''
       })
     },
-    btnApproveClick: () => {
+    btnApproveClick: function() {
       vm.rowData.ModDeniedReason = ''
       vm.rowData.Modification = '' // Remove previous Modification Data
       Personnel.dispatch('editPerson', vm.rowData).then(function() {
@@ -875,7 +881,7 @@ export default {
         vm.hideme('EditModal', 'refresh')
       })
     },
-    btnDenyClick: () => {
+    btnDenyClick: function() {
       // TO DO: Post Reason to ModDeniedReason
       let denyData = {
         Modification: vm.oldData.Modification,
@@ -884,7 +890,7 @@ export default {
         uri: vm.oldData.uri,
         etag: vm.oldData.etag
       }
-      Personnel.dispatch('editPerson', denyData).then(() => {
+      Personnel.dispatch('editPerson', denyData).then(function() {
         vm.approvalOnly = false
         vm.hideme('EditModal', 'refresh')
       })
