@@ -17,7 +17,7 @@
       </b-row>
       <b-row id="Tabs" class="tabrow formbody m-0">
         <b-card no-body>
-          <b-tabs ref="dashboardtabs" class="tabArea" card v-model="tabIndex" @activate-tab="onTabSelected">
+          <b-tabs class="tabArea" card v-model="dashboardtabs">
             <b-tab :disabled="isSubcontractor" class="mtab Section1" active>
               <template slot="title">
                 <font-awesome-icon fas icon="search-dollar" class="icon"></font-awesome-icon>
@@ -27,7 +27,7 @@
                 <b-col cols="12">
                   <div id="Section1" class="rtesection">
                     <b-card no-body>
-                      <b-tabs ref="fundingtabs" class="tabArea" card>
+                      <b-tabs v-model="fundingtabs" class="tabArea" card>
                         <b-tab class="mtab" active>
                           <template slot="title">
                             <font-awesome-icon fas icon="search-dollar" class="icon"></font-awesome-icon>
@@ -103,7 +103,7 @@
                 <b-col cols="12">
                   <div id="Section2" class="rtesection">
                     <b-card no-body>
-                      <b-tabs ref="traveltabs" class="tabArea" card>
+                      <b-tabs v-model="traveltabs" class="tabArea" card>
                         <b-tab class="mtab" active>
                           <template slot="title">
                             <font-awesome-icon fas icon="bus-alt" class="icon"></font-awesome-icon>
@@ -124,7 +124,7 @@
                           </b-form>
                           <div v-else id="TravelAccomplishedHtml" v-html="TravelAccomplished"></div>
                         </b-tab>
-                        <b-tab class="mtab" active>
+                        <b-tab class="mtab">
                           <template slot="title">
                             <font-awesome-icon fas icon="bus-alt" class="icon"></font-awesome-icon>
                             2.1.2 Travel Planned
@@ -532,7 +532,7 @@
                 <b-col cols="12">
                   <div id="Section5Main" class="rtesection">
                     <b-card no-body>
-                      <b-tabs ref="arotabs" class="tabArea" card>
+                      <b-tabs v-model="arotabs" class="tabArea" card>
                         <b-tab class="mtab" active>
                           <template slot="title">
                             <font-awesome-icon fas icon="microscope" class="icon"></font-awesome-icon>
@@ -2175,11 +2175,11 @@
         <b-col cols="4" class="p-0 text-left"></b-col>
         <b-col cols="4" class="p-0 text-center">
           <b-button-group class="mt-1">
-            <b-button v-if="tabIndex > 0" ref="btnPrev" variant="info" @click="tabIndex--">
+            <b-button v-if="dashboardtabs > 0" ref="btnPrev" variant="info" @click="dashboardtabs--">
               <font-awesome-icon fas icon="angle-left" class="icon"></font-awesome-icon>
               Previous
             </b-button>
-            <b-button v-if="tabIndex < 9" ref="btnNext" variant="info" @click="tabIndex++"
+            <b-button v-if="dashboardtabs < 9" ref="btnNext" variant="info" @click="dashboardtabs++"
               >Next
               <font-awesome-icon fas icon="angle-right" class="icon ml-1"></font-awesome-icon>
             </b-button>
@@ -2222,6 +2222,22 @@ export default {
     },
     id: {
       type: String
+    },
+    dashboardtab: {
+      type: Number,
+      default: 0
+    },
+    fundingtab: {
+      type: Number,
+      default: 0
+    },
+    traveltab: {
+      type: Number,
+      default: 0
+    },
+    arotab: {
+      type: Number,
+      default: 0
     }
   },
   computed: {
@@ -2302,7 +2318,10 @@ export default {
       clipBoard: null,
       ActiveSection: '',
       changecount: 0,
-      tabIndex: 0,
+      dashboardtabs: 0,
+      fundingtabs: 0,
+      traveltabs: 0,
+      arotabs: 0,
       POPStart: null,
       POPEnd: null,
       fontFamily: {
@@ -2427,6 +2446,10 @@ export default {
     let formbody = document.getElementById('Tabs')
     let h = this.rect.height - 100
     formbody.style.height = h + 'px'
+    this.dashboardtabs = this.dashboardtab
+    this.fundingtabs = this.fundingtab
+    this.traveltabs = this.traveltab
+    this.arotabs = this.arotab
     MSR.dispatch('getDigest')
     Workplan.dispatch('getSubs', this.WorkplanNumber).then(function() {
       vm.getData()
@@ -2434,7 +2457,7 @@ export default {
   },
   beforeDestroy() {
     this.$store.dispatch('support/setLegendItems', [])
-    this.onFormClose()
+    // this.onFormClose()
   },
   methods: {
     getFormDigest() {
@@ -2485,17 +2508,25 @@ export default {
         this.waitForMSR()
       }
     },
+    saveReminder: function() {
+      this.$bvModal.msgBoxOk('Please Save Your Edits By Clicking the Complete Button. The Form Will Reload So You Can Continue.', {
+        title: 'Save and Continue.',
+        size: 'md',
+        buttonSize: 'sm',
+        okVariant: 'success',
+        footerClass: 'p-2',
+        hideHeaderClose: false,
+        centered: true
+      })
+    },
     getFormStatus: function() {
       // Function to test if form should be closed if the user has not made changes in a specific time period.
       // called by vue-cron
       // Check if form is dirty and reset time if it is. This will keep form open. If not dirty the form should close and call the close method.
       // Another timer is set to warn the user so that they can have a chance to continue
-      // TODO: Update timer to 15 minutes after testing.
       if (this.isDirty) {
         this.$cron.restart('getFormStatus')
       } else {
-        // close the form and reset the locked property
-        // this.onFormClose()
         this.$cron.start('closeForm')
         this.$bvModal
           .msgBoxConfirm('Continue Editing MSR?', {
@@ -2604,7 +2635,8 @@ export default {
             vm.ActiveSection = null
             vm.clipBoard = ''
             vm.$bvToast.hide('form-toast')
-            vm.getData()
+            // refresh by changing the route
+            vm.$router.push({ name: 'Refresh', params: { action: 'msrform', id: vm.id, msrdata: vm.msrdata, dashboardtab: vm.dashboardtabs, fundingtab: vm.fundingtabs, traveltab: vm.traveltabs, arotab: vm.arotabs } })
           })
           break
         }
@@ -2693,7 +2725,8 @@ export default {
             vm.isEditing = false
             vm.hasImage = false
             vm.clipBoard = ''
-            vm.getData()
+            // refresh by changing the route
+            vm.$router.push({ name: 'Refresh', params: { action: 'msrform', id: vm.id, msrdata: vm.msrdata, dashboardtab: vm.dashboardtabs, fundingtab: vm.fundingtabs, traveltab: vm.traveltabs, arotab: vm.arotabs } })
           })
           break
         }
@@ -2775,7 +2808,8 @@ export default {
             vm.isEditing = false
             vm.hasImage = false
             vm.clipBoard = ''
-            vm.getData()
+            // refresh by changing the route
+            vm.$router.push({ name: 'Refresh', params: { action: 'msrform', id: vm.id, msrdata: vm.msrdata, dashboardtab: vm.dashboardtabs, fundingtab: vm.fundingtabs, traveltab: vm.traveltabs, arotab: vm.arotabs } })
           })
           break
         }
@@ -2857,7 +2891,8 @@ export default {
             vm.isEditing = false
             vm.hasImage = false
             vm.clipBoard = ''
-            vm.getData()
+            // refresh by changing the route
+            vm.$router.push({ name: 'Refresh', params: { action: 'msrform', id: vm.id, msrdata: vm.msrdata, dashboardtab: vm.dashboardtabs, fundingtab: vm.fundingtabs, traveltab: vm.traveltabs, arotab: vm.arotabs } })
           })
           break
         }
@@ -2939,7 +2974,8 @@ export default {
             vm.isEditing = false
             vm.hasImage = false
             vm.clipBoard = ''
-            vm.getData()
+            // refresh by changing the route
+            vm.$router.push({ name: 'Refresh', params: { action: 'msrform', id: vm.id, msrdata: vm.msrdata, dashboardtab: vm.dashboardtabs, fundingtab: vm.fundingtabs, traveltab: vm.traveltabs, arotab: vm.arotabs } })
           })
           break
         }
@@ -3021,7 +3057,8 @@ export default {
             vm.isEditing = false
             vm.hasImage = false
             vm.clipBoard = ''
-            vm.getData()
+            // refresh by changing the route
+            vm.$router.push({ name: 'Refresh', params: { action: 'msrform', id: vm.id, msrdata: vm.msrdata, dashboardtab: vm.dashboardtabs, fundingtab: vm.fundingtabs, traveltab: vm.traveltabs, arotab: vm.arotabs } })
           })
           break
         }
@@ -3103,7 +3140,8 @@ export default {
             vm.isEditing = false
             vm.hasImage = false
             vm.clipBoard = ''
-            vm.getData()
+            // refresh by changing the route
+            vm.$router.push({ name: 'Refresh', params: { action: 'msrform', id: vm.id, msrdata: vm.msrdata, dashboardtab: vm.dashboardtabs, fundingtab: vm.fundingtabs, traveltab: vm.traveltabs, arotab: vm.arotabs } })
           })
           break
         }
@@ -3917,6 +3955,11 @@ export default {
       time: 120000,
       method: 'closeForm',
       autoStart: false
+    },
+    {
+      time: 300000,
+      method: 'saveReminder',
+      autoStart: true
     }
   ],
   provide: {

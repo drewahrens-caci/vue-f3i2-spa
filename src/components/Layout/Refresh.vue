@@ -9,7 +9,13 @@
 export default {
   name: 'Refresh',
   props: {
-    action: String
+    action: String,
+    id: Number,
+    msrdata: Object,
+    dashboardtab: Number,
+    fundingtab: Number,
+    traveltab: Number,
+    arotab: Number
   },
   mounted: function() {
     switch (this.action) {
@@ -27,6 +33,10 @@ export default {
 
       case 'msrhome':
         this.$router.push({ name: 'Home',  path: '/msr/home' })
+        break
+
+      case 'msrform':
+        this.$router.push({ name: 'MSRForm', params: { id: this.id, msrdata: this.msrdata, dashboardtab: this.dashboardtab, fundingtab: this.fundingtab, traveltab: this.traveltab, arotab: this.arotab } })
         break
 
       case 'personnel':
