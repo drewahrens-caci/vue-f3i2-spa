@@ -3948,7 +3948,7 @@ export default {
   },
   cron: [
     {
-      time: 600000,
+      time: 900000,
       method: 'getFormStatus'
     },
     {
@@ -3957,7 +3957,7 @@ export default {
       autoStart: false
     },
     {
-      time: 300000,
+      time: 600000,
       method: 'saveReminder',
       autoStart: true
     }
