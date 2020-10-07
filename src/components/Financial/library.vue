@@ -13,9 +13,9 @@
       <b-dropdown :text="workplan ? workplan : 'Workplan'" class="filterSelection" v-if="workplans.length > 0" variant="secondary">
         <b-dropdown-item v-for="workplanValue in workplans" :key="workplanValue" :value="workplanValue.value" @click="workplan = workplanValue.value">{{ workplanValue.value }}</b-dropdown-item>
       </b-dropdown>
-      <b-button variant="outline-warning" class="filterSelection" @click="clearFilters()">Clear</b-button>
-      <b-button variant="outline-primary" class="filterSelection" @click="filterLibrary()">Filter</b-button>
-      <b-button variant="outline-light" class="filterSelection" @click="copyFilter()">Copy Filter Link</b-button>
+      <b-button variant="danger" class="filterSelection" @click="clearFilters()">Clear</b-button>
+      <b-button variant="success" class="filterSelection" @click="filterLibrary()">Filter</b-button>
+      <b-button variant="light" class="filterSelection" @click="copyFilter()">Copy Filter Link</b-button>
     </b-row>
     <iframe id="LibraryFrame" :src="url" height="100%" width="100%"></iframe>
   </b-container>

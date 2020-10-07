@@ -3,7 +3,7 @@
   <div class="sidebar" :style="sidebarStyle" :data-color="backgroundColor" :data-image="backgroundImage" :data-active-color="activeColor">
     <div class="sidebar-wrapper">
       <div class="logo">
-        <a class="logo-mini" href="/sites/F3I2/DEV/Pages/Home.aspx">
+        <a class="logo-mini" href="/sites/F3I2/Pages/Home.aspx">
           <div class="logo-img">
             <font-awesome-icon fas icon="fighter-jet" class="icon"></font-awesome-icon>
           </div>
