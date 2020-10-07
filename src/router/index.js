@@ -55,6 +55,48 @@ let msrMenu = {
       name: 'MSR Library',
       component: () => import(/* webpackChunkName: "msr" */ '../components/MSR/library.vue'),
       props: true
+    },
+    {
+      path: 'library/month/:month',
+      name: 'MSR Library',
+      component: () => import(/* webpackChunkName: "financial" */ '../components/MSR/library.vue'),
+      props: true
+    },
+    {
+      path: 'library/year/:year',
+      name: 'MSR Library',
+      component: () => import(/* webpackChunkName: "financial" */ '../components/MSR/library.vue'),
+      props: true
+    },
+    {
+      path: 'library/workplan/:workplan',
+      name: 'MSR Library',
+      component: () => import(/* webpackChunkName: "financial" */ '../components/MSR/library.vue'),
+      props: true
+    },
+    {
+      path: 'library/month/:month/year/:year',
+      name: 'MSR Library',
+      component: () => import(/* webpackChunkName: "financial" */ '../components/MSR/library.vue'),
+      props: true
+    },
+    {
+      path: 'library/month/:month/workplan/:workplan',
+      name: 'MSR Library',
+      component: () => import(/* webpackChunkName: "financial" */ '../components/MSR/library.vue'),
+      props: true
+    },
+    {
+      path: 'library/year/:year/workplan/:workplan',
+      name: 'MSR Library',
+      component: () => import(/* webpackChunkName: "financial" */ '../components/MSR/library.vue'),
+      props: true
+    },
+    {
+      path: 'library/month/:month/year/:year/workplan/:workplan',
+      name: 'MSR Library',
+      component: () => import(/* webpackChunkName: "financial" */ '../components/MSR/library.vue'),
+      props: true
     }
   ]
 }
@@ -72,6 +114,78 @@ let financialMenu = {
     },
     {
       path: 'library',
+      name: 'Financial Documents',
+      component: () => import('../components/Financial/library.vue'),
+      props: true
+    },
+    {
+      path: 'library/clin/:clin',
+      name: 'Financial Documents',
+      component: () => import(/* webpackChunkName: "financial" */ '../components/Financial/library.vue'),
+      props: true
+    },
+    {
+      path: 'library/clin/:clin/month/:month',
+      name: 'Financial Documents',
+      component: () => import(/* webpackChunkName: "financial" */ '../components/Financial/library.vue'),
+      props: true
+    },
+    {
+      path: 'library/clin/:clin/year/:year',
+      name: 'Financial Documents',
+      component: () => import(/* webpackChunkName: "financial" */ '../components/Financial/library.vue'),
+      props: true
+    },
+    {
+      path: 'library/clin/:clin/workplan/:workplan',
+      name: 'Financial Documents',
+      component: () => import(/* webpackChunkName: "financial" */ '../components/Financial/library.vue'),
+      props: true
+    },
+    {
+      path: 'library/clin/:clin/month/:month/year/:year',
+      name: 'Financial Documents',
+      component: () => import(/* webpackChunkName: "financial" */ '../components/Financial/library.vue'),
+      props: true
+    },
+    {
+      path: 'library/clin/:clin/month/:month/year/:year/workplan/:workplan',
+      name: 'Financial Documents',
+      component: () => import(/* webpackChunkName: "financial" */ '../components/Financial/library.vue'),
+      props: true
+    },
+    {
+      path: 'library/month/:month/',
+      name: 'Financial Documents',
+      component: () => import(/* webpackChunkName: "financial" */ '../components/Financial/library.vue'),
+      props: true
+    },
+    {
+      path: 'library/month/:month/year/:year',
+      name: 'Financial Documents',
+      component: () => import(/* webpackChunkName: "financial" */ '../components/Financial/library.vue'),
+      props: true
+    },
+    {
+      path: 'library/month/:month/workplan/:workplan',
+      name: 'Financial Documents',
+      component: () => import(/* webpackChunkName: "financial" */ '../components/Financial/library.vue'),
+      props: true
+    },
+    {
+      path: 'library/year/:year/',
+      name: 'Financial Documents',
+      component: () => import(/* webpackChunkName: "financial" */ '../components/Financial/library.vue'),
+      props: true
+    },
+    {
+      path: 'library/year/:year/workplan/:workplan',
+      name: 'Financial Documents',
+      component: () => import(/* webpackChunkName: "financial" */ '../components/Financial/library.vue'),
+      props: true
+    },
+    {
+      path: 'library/workplan/:workplan',
       name: 'Financial Documents',
       component: () => import(/* webpackChunkName: "financial" */ '../components/Financial/library.vue'),
       props: true

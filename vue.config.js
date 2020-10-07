@@ -4,7 +4,8 @@ module.exports = {
   },
 
   assetsDir: 'static',
-  publicPath: '/sites/f3i2/SiteAssets/html/',
+  //publicPath: '/sites/f3i2/SiteAssets/html/',
+  publicPath: '/sites/f3i2/SiteAssets/development/drew/html',
 
   configureWebpack: {
     optimization: {
